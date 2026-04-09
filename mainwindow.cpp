@@ -2,10 +2,15 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <QHBoxLayout>
+#include <QFile>
+#include <QJsonDocument>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+    //加载需要的Json文件
+    loadVendorMapFromJson();
+
     // --- 初始化各功能Agent---
     //（不共用1个是为了让上下文不串联）
     m_chatAgent = new AgentCore(this);
@@ -77,7 +82,7 @@ void MainWindow::setupUI()
     )");
 
     mainStack = new QStackedWidget(this);
-    homePageWidget = new HomePage(VENDOR_MAP, this);
+    homePageWidget = new HomePage(m_vendorMap, this);
     chatPageWidget = new ChatPage(this);
     translationPageWidget = new TranslationPage(m_translateAgent, this);
     settingsPage = new QWidget(this);
@@ -118,5 +123,38 @@ void MainWindow::setupUI()
             m_titleAgent->setConfig(c.baseUrl, c.apiKey, c.model);
         }
     });
+}
 
+void MainWindow::loadVendorMapFromJson()
+{
+    QFile file(":/vendormap.json");
+
+    // TODO:回头这些报错也在客户端某个位置反馈一下
+    if(!file.open(QIODevice::ReadOnly))
+    {
+        qWarning() << "无法打开模型配置文件，使用空配置";
+        return;
+    }
+
+    QByteArray data = file.readAll();
+    file.close();
+
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    if(!doc.isObject()) return;
+
+    QJsonObject root = doc.object();
+    QJsonArray vendors = root["vendors"].toArray();
+
+    m_vendorMap.clear();
+    for (int i = 0; i < vendors.size(); ++i) {
+        QJsonObject v = vendors[i].toObject();
+        QString name = v["name"].toString();
+        QString baseUrl = v["baseUrl"].toString();
+        QJsonArray modelArray = v["models"].toArray();
+
+        QStringList models;
+        for (auto m : modelArray) models << m.toString();
+
+        m_vendorMap.insert(name, {models, baseUrl});
+    }
 }

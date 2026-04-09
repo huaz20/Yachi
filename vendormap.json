@@ -1,0 +1,19 @@
+{
+    "vendors" : [
+        {
+            "name" : "Anthropic",
+            "baseUrl" : "https://api.anthropic.com/v1/",
+            "models" : ["claude-3-5-sonnet-20241022", "claude-3-opus-20240229"]
+        },
+        {
+            "name" : "OpenAI",
+            "baseUrl" : "https://api.deepseek.com/v1",
+            "models" : ["deepseek-chat", "deepseek-reasoner"]
+        },
+        {
+            "name" : "Ollama 本地模型",
+            "baseUrl" : "http://localhost:11434/v1",
+            "models" : ["qwen2.5", "llama3.1", "deepseek-coder"]
+        }
+    ]
+}

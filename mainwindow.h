@@ -43,12 +43,8 @@ private:
     AgentCore *m_titleAgent; //专职生成对话标题的
 
     //厂商映射表
-    const QMap<QString, ModelInfo> VENDOR_MAP = {
-        {"Anthropic", {{"claude-3-5-sonnet-20241022", "claude-3-opus-20240229"}, "https://api.anthropic.com/v1/"}},
-        {"OpenAI", {{"gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo"}, "https://api.openai.com/v1/"}},
-        {"Ollama 本地模型", {{"qwen2.5", "llama3.1", "deepseek-coder"}, "http://localhost:11434/v1"}},
-        {"deepseek", {{"deepseek-chat", "deepseek-coder"}, "https://api.deepseek.com/v1"}}
-    };
+    QMap<QString, ModelInfo> m_vendorMap;
+    void loadVendorMapFromJson();  //vendormap.json
 };
 
 #endif // MAINWINDOW_H

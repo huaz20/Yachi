@@ -32,6 +32,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         modelconfigwidget.cpp
         chatpage.cpp
         translationpage.h translationpage.cpp
+        res.qrc
+
+
 
 
     )
