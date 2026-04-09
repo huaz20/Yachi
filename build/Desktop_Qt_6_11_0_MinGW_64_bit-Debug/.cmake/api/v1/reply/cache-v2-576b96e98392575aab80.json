@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "c:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug"
+			"value" : "c:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -467,7 +467,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/CMakeFiles/pkgRedirects"
+			"value" : "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -551,7 +551,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent"
+			"value" : "C:/Programming/cpp/Yachi"
 		},
 		{
 			"name" : "CMAKE_INSTALL_BINDIR",
@@ -1051,7 +1051,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/.qtcreator/cmake-helper/qtcreator-project.cmake"
+			"value" : "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/.qtcreator/cmake-helper/qtcreator-project.cmake"
 		},
 		{
 			"name" : "CMAKE_PROJECT_NAME",
@@ -1551,7 +1551,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/.qtcreator/cmake-helper"
+			"value" : "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/.qtcreator/cmake-helper"
 		},
 		{
 			"name" : "QT_ADDITIONAL_HOST_PACKAGES_PREFIX_PATH",
@@ -7183,7 +7183,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug"
+			"value" : "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug"
 		},
 		{
 			"name" : "YachiAgent_IS_TOP_LEVEL",
@@ -7207,7 +7207,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent"
+			"value" : "C:/Programming/cpp/Yachi"
 		},
 		{
 			"name" : "_CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED",

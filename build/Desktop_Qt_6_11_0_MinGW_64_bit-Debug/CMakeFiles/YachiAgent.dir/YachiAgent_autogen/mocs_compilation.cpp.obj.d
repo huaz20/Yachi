@@ -1,7 +1,7 @@
 CMakeFiles/YachiAgent.dir/YachiAgent_autogen/mocs_compilation.cpp.obj: \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\mocs_compilation.cpp \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_agentcore.cpp \
- C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/agentcore.h \
+ C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\mocs_compilation.cpp \
+ C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_agentcore.cpp \
+ C:/Programming/cpp/Yachi/agentcore.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QObject \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qobject.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qobjectdefs.h \
@@ -401,8 +401,8 @@ CMakeFiles/YachiAgent.dir/YachiAgent_autogen/mocs_compilation.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qtmochelpers.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qtmocconstants.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/q20algorithm.h \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_chatPage.cpp \
- C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/chatPage.h \
+ C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_chatPage.cpp \
+ C:/Programming/cpp/Yachi/chatPage.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QWidget \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qwidget.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -509,12 +509,12 @@ CMakeFiles/YachiAgent.dir/YachiAgent_autogen/mocs_compilation.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtreewidgetitemiterator.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QMenu \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qmenu.h \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_homepage.cpp \
- C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/homepage.h \
+ C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_homepage.cpp \
+ C:/Programming/cpp/Yachi/homepage.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QScrollArea \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qscrollarea.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QList \
- C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/modelconfigwidget.h \
+ C:/Programming/cpp/Yachi/modelconfigwidget.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QComboBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcombobox.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLineEdit \
@@ -523,20 +523,19 @@ CMakeFiles/YachiAgent.dir/YachiAgent_autogen/mocs_compilation.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qformlayout.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLayout \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QMap \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_mainwindow.cpp \
- C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/mainwindow.h \
+ C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_mainwindow.cpp \
+ C:/Programming/cpp/Yachi/mainwindow.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QMainWindow \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qmainwindow.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QListWidget \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlistwidget.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlistview.h \
- C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/homepage.h \
- C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/chatPage.h \
- C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/agentcore.h \
- C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/translationpage.h \
+ C:/Programming/cpp/Yachi/homepage.h C:/Programming/cpp/Yachi/chatPage.h \
+ C:/Programming/cpp/Yachi/agentcore.h \
+ C:/Programming/cpp/Yachi/translationpage.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QGroupBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgroupbox.h \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_modelconfigwidget.cpp \
- C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/modelconfigwidget.h \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_translationpage.cpp \
- C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/translationpage.h
+ C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_modelconfigwidget.cpp \
+ C:/Programming/cpp/Yachi/modelconfigwidget.h \
+ C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_translationpage.cpp \
+ C:/Programming/cpp/Yachi/translationpage.h

@@ -1,6 +1,6 @@
 CMakeFiles/YachiAgent.dir/agentcore.cpp.obj: \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\agentcore.cpp \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\agentcore.h \
+ C:\Programming\cpp\Yachi\agentcore.cpp \
+ C:\Programming\cpp\Yachi\agentcore.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QObject \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qobject.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qobjectdefs.h \

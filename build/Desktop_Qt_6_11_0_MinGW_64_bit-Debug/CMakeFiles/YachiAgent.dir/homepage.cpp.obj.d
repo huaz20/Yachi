@@ -1,6 +1,6 @@
 CMakeFiles/YachiAgent.dir/homepage.cpp.obj: \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\homepage.cpp \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\homepage.h \
+ C:\Programming\cpp\Yachi\homepage.cpp \
+ C:\Programming\cpp\Yachi\homepage.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QWidget \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qwidget.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -394,7 +394,7 @@ CMakeFiles/YachiAgent.dir/homepage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractscrollarea.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qframe.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QList \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\modelconfigwidget.h \
+ C:\Programming\cpp\Yachi\modelconfigwidget.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QComboBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcombobox.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractitemdelegate.h \

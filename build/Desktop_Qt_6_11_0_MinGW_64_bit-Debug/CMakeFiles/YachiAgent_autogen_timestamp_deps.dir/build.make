@@ -52,10 +52,10 @@ RM = C:\Qt\Tools\CMake_64\bin\cmake.exe -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Programming\C_AND_CPP\YachiAgent\YachiAgent
+CMAKE_SOURCE_DIR = C:\Programming\cpp\Yachi
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug
+CMAKE_BINARY_DIR = C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug
 
 # Utility rule file for YachiAgent_autogen_timestamp_deps.
 
@@ -77,6 +77,6 @@ CMakeFiles/YachiAgent_autogen_timestamp_deps.dir/clean:
 .PHONY : CMakeFiles/YachiAgent_autogen_timestamp_deps.dir/clean
 
 CMakeFiles/YachiAgent_autogen_timestamp_deps.dir/depend:
-	$(CMAKE_COMMAND) -E cmake_depends "MinGW Makefiles" C:\Programming\C_AND_CPP\YachiAgent\YachiAgent C:\Programming\C_AND_CPP\YachiAgent\YachiAgent C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\CMakeFiles\YachiAgent_autogen_timestamp_deps.dir\DependInfo.cmake "--color=$(COLOR)"
+	$(CMAKE_COMMAND) -E cmake_depends "MinGW Makefiles" C:\Programming\cpp\Yachi C:\Programming\cpp\Yachi C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\CMakeFiles\YachiAgent_autogen_timestamp_deps.dir\DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/YachiAgent_autogen_timestamp_deps.dir/depend
 

@@ -1,5 +1,5 @@
-C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/EWIEGA46WW/moc_modelconfigwidget.cpp: C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/modelconfigwidget.h \
-  C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/moc_predefs.h \
+C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/EWIEGA46WW/moc_modelconfigwidget.cpp: C:/Programming/cpp/Yachi/modelconfigwidget.h \
+  C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/moc_predefs.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QMap \
   C:/Qt/6.11.0/mingw_64/include/QtCore/q17memory.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/q20bit.h \

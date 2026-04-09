@@ -1,6 +1,6 @@
 CMakeFiles/YachiAgent.dir/translationpage.cpp.obj: \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\translationpage.cpp \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\translationpage.h \
+ C:\Programming\cpp\Yachi\translationpage.cpp \
+ C:\Programming\cpp\Yachi\translationpage.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QWidget \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qwidget.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -420,7 +420,7 @@ CMakeFiles/YachiAgent.dir/translationpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qiodevice.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QGroupBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgroupbox.h \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\agentcore.h \
+ C:\Programming\cpp\Yachi\agentcore.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QObject \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkAccessManager \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/qnetworkaccessmanager.h \

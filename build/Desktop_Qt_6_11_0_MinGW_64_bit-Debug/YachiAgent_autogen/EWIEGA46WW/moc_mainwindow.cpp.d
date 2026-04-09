@@ -1,10 +1,10 @@
-C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/EWIEGA46WW/moc_mainwindow.cpp: C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/mainwindow.h \
-  C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/moc_predefs.h \
-  C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/agentcore.h \
-  C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/chatPage.h \
-  C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/homepage.h \
-  C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/modelconfigwidget.h \
-  C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/translationpage.h \
+C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/EWIEGA46WW/moc_mainwindow.cpp: C:/Programming/cpp/Yachi/mainwindow.h \
+  C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/moc_predefs.h \
+  C:/Programming/cpp/Yachi/agentcore.h \
+  C:/Programming/cpp/Yachi/chatPage.h \
+  C:/Programming/cpp/Yachi/homepage.h \
+  C:/Programming/cpp/Yachi/modelconfigwidget.h \
+  C:/Programming/cpp/Yachi/translationpage.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QFlags \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QIODevice \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QJsonArray \

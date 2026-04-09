@@ -44,7 +44,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "YachiAgent::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-YachiAgent-Debug-73f772256bec40236d10.json",
+					"jsonFile" : "target-YachiAgent-Debug-4585996ad712106e0576.json",
 					"name" : "YachiAgent",
 					"projectIndex" : 0
 				},
@@ -68,8 +68,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug",
-		"source" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent"
+		"build" : "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug",
+		"source" : "C:/Programming/cpp/Yachi"
 	},
 	"version" : 
 	{

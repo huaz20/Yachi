@@ -1,6 +1,6 @@
 CMakeFiles/YachiAgent.dir/chatpage.cpp.obj: \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\chatpage.cpp \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\chatpage.h \
+ C:\Programming\cpp\Yachi\chatpage.cpp \
+ C:\Programming\cpp\Yachi\chatpage.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QWidget \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qwidget.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtwidgetsglobal.h \

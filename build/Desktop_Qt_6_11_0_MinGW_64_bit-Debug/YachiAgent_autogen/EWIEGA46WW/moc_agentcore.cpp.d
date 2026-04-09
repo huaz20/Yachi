@@ -1,5 +1,5 @@
-C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/EWIEGA46WW/moc_agentcore.cpp: C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/agentcore.h \
-  C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/moc_predefs.h \
+C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/EWIEGA46WW/moc_agentcore.cpp: C:/Programming/cpp/Yachi/agentcore.h \
+  C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/moc_predefs.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QFlags \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QIODevice \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QJsonArray \
