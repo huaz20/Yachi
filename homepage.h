@@ -5,6 +5,7 @@
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <QList>
+#include <QSettings>
 #include "modelconfigwidget.h"
 
 class QLabel; // 前向声明
@@ -18,21 +19,26 @@ public:
 signals:
     void settingsApplied();
 
+protected:
+    void showEvent(QShowEvent *event) override;
+
 private slots:
     void addFallbackUI();
 
 private:
     const QMap<QString, ModelInfo>& m_vendorMap;
-    ModelConfigWidget *mainConfig;       // 主模型固定不动
-    QVBoxLayout *fallbackListLayout;    // 副模型容器布局
+    ModelConfigWidget *mainConfig;      //主模型
 
-    // 内部结构：用于同时管理 Widget、包装容器，以及标题标签（方便动态重命名）
+    QVBoxLayout *fallbackListLayout;    //副模型容器布局
     struct FallbackItem {
         ModelConfigWidget *configWidget;
         QWidget *container;
-        QLabel *titleLabel; // 新增：保存标题的引用
+        QLabel *titleLabel;
     };
     QList<FallbackItem> m_fallbackItems;
+
+    void saveToSettings();  //UI内容 写入-> 磁盘
+    void loadFromSettings();  //磁盘内容 读取-> UI
 };
 
 #endif
