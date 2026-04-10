@@ -14,6 +14,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtCore/QMetaType \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QObject \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QRect \
+  C:/Qt/6.11.0/mingw_64/include/QtCore/QSettings \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QSharedDataPointer \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QSize \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QSizeF \
@@ -125,6 +126,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtCore/qscopedpointer.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qscopeguard.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qset.h \
+  C:/Qt/6.11.0/mingw_64/include/QtCore/qsettings.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qshareddata.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qshareddata_impl.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qsharedpointer.h \

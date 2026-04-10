@@ -417,6 +417,8 @@ CMakeFiles/YachiAgent.dir/main.cpp.obj: C:\Programming\cpp\Yachi\main.cpp \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QScrollArea \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qscrollarea.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QList \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QSettings \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qsettings.h \
  C:\Programming\cpp\Yachi\modelconfigwidget.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QComboBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcombobox.h \

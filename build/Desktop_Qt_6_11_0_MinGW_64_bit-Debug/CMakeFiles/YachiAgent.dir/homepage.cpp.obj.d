@@ -394,6 +394,8 @@ CMakeFiles/YachiAgent.dir/homepage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractscrollarea.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qframe.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QList \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QSettings \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qsettings.h \
  C:\Programming\cpp\Yachi\modelconfigwidget.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QComboBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcombobox.h \
@@ -430,4 +432,8 @@ CMakeFiles/YachiAgent.dir/homepage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qpicture.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qiodevice.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QFrame \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/QHBoxLayout
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QHBoxLayout \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QMessageBox \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qmessagebox.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialogbuttonbox.h

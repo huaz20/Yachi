@@ -3,6 +3,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Programming/cpp/Yachi/modelconfigwidget.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QList \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QMap \
+  C:/Qt/6.11.0/mingw_64/include/QtCore/QSettings \
   C:/Qt/6.11.0/mingw_64/include/QtCore/q17memory.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/q20bit.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/q20functional.h \
@@ -86,6 +87,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtCore/qscopedpointer.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qscopeguard.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qset.h \
+  C:/Qt/6.11.0/mingw_64/include/QtCore/qsettings.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qshareddata.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qshareddata_impl.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qsharedpointer.h \

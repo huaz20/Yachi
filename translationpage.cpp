@@ -164,14 +164,14 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
 }
 
 void TranslationPage::initTutorialPresets() {
-    QSettings settings("YachiAgent", "PersistentData");
-    if (!settings.contains("PromptPresets/预设1：基础翻译")) {
-        settings.setValue("PromptPresets/预设1：基础翻译", "翻译用户提供的内容，不要有任何多余的解释。");
+    QSettings settings("Yachi", "PersistentData");
+    if (!settings.contains("Trans_PromptPresets/预设1：基础翻译")) {
+        settings.setValue("Trans_PromptPresets/预设1：基础翻译", "翻译用户提供的内容，不要有任何多余的解释。");
     }
 }
 
 void TranslationPage::saveToHistory(const QString &source, const QString &lang, const QString &result) {
-    QSettings settings("YachiAgent", "PersistentData");
+    QSettings settings("Yachi", "PersistentData");
     int size = settings.beginReadArray("TranslationHistory");
     struct HistEntry { QString time, source, lang, result; };
     QList<HistEntry> list;
@@ -207,7 +207,7 @@ void TranslationPage::showHistory() {
     QVBoxLayout *layout = new QVBoxLayout(dlg);
 
     QListWidget *listWidget = new QListWidget();
-    QSettings settings("YachiAgent", "PersistentData");
+    QSettings settings("Yachi", "PersistentData");
     int size = settings.beginReadArray("TranslationHistory");
     for (int i = 0; i < size; ++i) {
         settings.setArrayIndex(i);
@@ -233,7 +233,7 @@ void TranslationPage::showHistory() {
 
     connect(clearBtn, &QPushButton::clicked, this, [=](){
         if(QMessageBox::warning(dlg, "确认", "确定清空所有历史吗？", QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes) {
-            QSettings s("YachiAgent", "PersistentData");
+            QSettings s("Yachi", "PersistentData");
             s.remove("TranslationHistory");
             listWidget->clear();
         }
@@ -243,7 +243,7 @@ void TranslationPage::showHistory() {
     // 详情弹窗逻辑
     connect(listWidget, &QListWidget::itemDoubleClicked, this, [=](QListWidgetItem *item){
         int idx = listWidget->row(item);
-        QSettings s("YachiAgent", "PersistentData");
+        QSettings s("Yachi", "PersistentData");
         s.beginReadArray("TranslationHistory");
         s.setArrayIndex(idx);
         QString timeStr = s.value("time").toString();
@@ -356,9 +356,9 @@ void TranslationPage::exportToTxt() {
 
 // 预设管理逻辑
 void TranslationPage::refreshPresetList() {
-    QSettings settings("YachiAgent", "PersistentData");
+    QSettings settings("Yachi", "PersistentData");
     QString current = presetCombo->currentText();
-    settings.beginGroup("PromptPresets");
+    settings.beginGroup("Trans_PromptPresets");
     QStringList keys = settings.allKeys();
     settings.endGroup();
     presetCombo->blockSignals(true);
@@ -373,13 +373,13 @@ void TranslationPage::refreshPresetList() {
 void TranslationPage::loadSelectedPrompt() {
     QString name = presetCombo->currentText();
     if (name.isEmpty()) { promptEdit->clear(); return; }
-    QSettings settings("YachiAgent", "PersistentData");
-    promptEdit->setPlainText(settings.value("PromptPresets/" + name).toString());
+    QSettings settings("Yachi", "PersistentData");
+    promptEdit->setPlainText(settings.value("Trans_PromptPresets/" + name).toString());
 }
 
 void TranslationPage::addNewPreset() {
-    QSettings settings("YachiAgent", "PersistentData");
-    settings.beginGroup("PromptPresets");
+    QSettings settings("Yachi", "PersistentData");
+    settings.beginGroup("Trans_PromptPresets");
     QStringList keys = settings.allKeys();
     settings.endGroup();
     int count = 1;
@@ -388,7 +388,7 @@ void TranslationPage::addNewPreset() {
         newName = QString("自定义预设 %1").arg(count++);
         if (!keys.contains(newName)) break;
     }
-    settings.setValue("PromptPresets/" + newName, "");  // 新预设的默认内容可以在这添加
+    settings.setValue("Trans_PromptPresets/" + newName, "");  // 新预设的默认内容可以在这添加
     refreshPresetList();
     presetCombo->setCurrentText(newName);
 }
@@ -399,10 +399,10 @@ void TranslationPage::renamePreset() {
     bool ok;
     QString newName = QInputDialog::getText(this, "重命名", "输入新名称:", QLineEdit::Normal, oldName, &ok);
     if (ok && !newName.isEmpty()) {
-        QSettings settings("YachiAgent", "PersistentData");
-        QString val = settings.value("PromptPresets/" + oldName).toString();
-        settings.remove("PromptPresets/" + oldName);
-        settings.setValue("PromptPresets/" + newName, val);
+        QSettings settings("Yachi", "PersistentData");
+        QString val = settings.value("Trans_PromptPresets/" + oldName).toString();
+        settings.remove("Trans_PromptPresets/" + oldName);
+        settings.setValue("Trans_PromptPresets/" + newName, val);
         refreshPresetList();
         presetCombo->setCurrentText(newName);
     }
@@ -412,8 +412,8 @@ void TranslationPage::deletePreset() {
     QString name = presetCombo->currentText();
     if (name.isEmpty()) return;
     if (QMessageBox::question(this, "删除", "确认删除该预设？") == QMessageBox::Yes) {
-        QSettings settings("YachiAgent", "PersistentData");
-        settings.remove("PromptPresets/" + name);
+        QSettings settings("Yachi", "PersistentData");
+        settings.remove("Trans_PromptPresets/" + name);
         refreshPresetList();
     }
 }
@@ -421,7 +421,7 @@ void TranslationPage::deletePreset() {
 void TranslationPage::saveCurrentPrompt() {
     QString name = presetCombo->currentText();
     if (name.isEmpty()) return;
-    QSettings settings("YachiAgent", "PersistentData");
-    settings.setValue("PromptPresets/" + name, promptEdit->toPlainText());
+    QSettings settings("Yachi", "PersistentData");
+    settings.setValue("Trans_PromptPresets/" + name, promptEdit->toPlainText());
     QMessageBox::information(this, "成功", "翻译预设已保存。");
 }
