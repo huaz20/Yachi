@@ -1,4 +1,5 @@
 #include "modelconfigwidget.h"
+#include <QTimer>
 
 ModelConfigWidget::ModelConfigWidget(const QMap<QString, ModelInfo>& vendorMap, QWidget *parent)
     : QWidget(parent), m_vendorMap(vendorMap)
@@ -20,7 +21,18 @@ ModelConfigWidget::ModelConfigWidget(const QMap<QString, ModelInfo>& vendorMap, 
     layout->addRow("API Key:", apiKeyEdit);
     layout->addRow("Base URL:", baseUrlEdit);
 
-    connect(vendorCombo, &QComboBox::currentTextChanged, this, &ModelConfigWidget::onVendorChanged);
+    connect(vendorCombo, &QComboBox::currentTextChanged, this, [this](const QString &vendor)
+            {
+        //当值真正改变时才更新，减少逻辑运算（性能优化）
+        static QString lastVendor;  //记录当前值，防止重复触发
+        if (vendor == lastVendor) return;
+        lastVendor = vendor;
+
+        //将更新逻辑推入事件队列，给QComboBox留出“收起下拉框”的时间（性能优化）
+        QMetaObject::invokeMethod(this, [this, vendor] {
+            this->onVendorChanged(vendor);
+        }, Qt::QueuedConnection);
+    });
 
     // 初始化首行
     if (!m_vendorMap.isEmpty()) {
@@ -30,9 +42,14 @@ ModelConfigWidget::ModelConfigWidget(const QMap<QString, ModelInfo>& vendorMap, 
 
 void ModelConfigWidget::onVendorChanged(const QString &vendor) {
     if (m_vendorMap.contains(vendor)) {
+        //操作前阻塞信号，防止modelCombo频繁触发indexChanged
+        modelCombo->blockSignals(true);
+
         modelCombo->clear();
         modelCombo->addItems(m_vendorMap[vendor].models);
         baseUrlEdit->setText(m_vendorMap[vendor].defaultBaseUrl);
+
+        modelCombo->blockSignals(false);
     }
 }
 
