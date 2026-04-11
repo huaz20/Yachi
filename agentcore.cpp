@@ -108,7 +108,7 @@ void AgentCore::testConnection(const QString &baseUrl, const QString &apiKey, co
     QJsonArray messages;
     QJsonObject msg;
     msg.insert("role","user");  //"role" : "user"
-    msg.insert("content","hi");  //"content" : "hi"
+    msg.insert("content","This is a connection test, please reply 'OK'.");  //"content" : "比较特殊的测试词，以防和用户的内容产生污染"
     messages.append(msg);
     root.insert("messages",messages);
 

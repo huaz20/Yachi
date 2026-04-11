@@ -366,9 +366,9 @@ bool ChatPage::eventFilter(QObject *obj, QEvent *event) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         if ((keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter)) {
             if (keyEvent->modifiers() & Qt::ShiftModifier) {
-                return false;
+                return false; //Shift+Enter换行
             } else {
-                sendBtn->click();
+                sendBtn->animateClick();
                 return true;
             }
         }
