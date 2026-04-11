@@ -59,9 +59,6 @@ HomePage::HomePage(const QMap<QString, ModelInfo>& vendorMap, QWidget *parent)
 
         //当用户点击保存时，触发settingsApplied信号
         emit settingsApplied();
-
-        //弹出一个简单的反馈（可选）
-        QMessageBox::information(this, "配置", "配置已成功保存并应用！");
     });
 
     //加载数据并构建对应UI

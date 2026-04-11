@@ -4,6 +4,7 @@
 #include <QHBoxLayout>
 #include <QFile>
 #include <QJsonDocument>
+#include <QProgressDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -35,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_titleAgent, &AgentCore::responseMsg, this, [this](const QString &titleText){
         chatPageWidget->updateCurrentChatTitle(titleText);
     });
+    // -------
 
     //持久化配置定时器（存储在注册表regedit里）
     QTimer::singleShot(100, this, [this](){
@@ -118,12 +120,39 @@ void MainWindow::setupUI()
         auto configs = homePageWidget->getAllConfigs();
         if(!configs.isEmpty()){
             auto c = configs[0];
-            m_chatAgent->setConfig(c.baseUrl, c.apiKey, c.model);
-            m_translateAgent->setConfig(c.baseUrl, c.apiKey, c.model);
-            m_titleAgent->setConfig(c.baseUrl, c.apiKey, c.model);
+
+            // --- 进行模型配置可用性的检查 ---
+            // 1.UI反馈
+            QProgressDialog *pd = new QProgressDialog("正在验证连接...", "取消", 0, 0, this);
+            pd->setWindowModality(Qt::WindowModal);
+            pd->show();
+            // 2.检查逻辑
+            //断开之前的连接防止干扰
+            disconnect(m_chatAgent, &AgentCore::testFinishedMsg, nullptr, nullptr);
+
+            connect(m_chatAgent, &AgentCore::testFinishedMsg, this, [this, pd, c](bool success, const QString &msg){
+                    pd->close();
+                    pd->deleteLater();
+
+                    if(success) {
+                        //验证通过，正式应用配置
+                        m_chatAgent->setConfig(c.baseUrl, c.apiKey, c.model);
+                        m_translateAgent->setConfig(c.baseUrl, c.apiKey, c.model);
+                        m_titleAgent->setConfig(c.baseUrl, c.apiKey, c.model);
+
+                        QMessageBox::information(this, "配置成功", "连接测试通过，配置已生效！");
+                    } else {
+                        //验证失败，不保存配置，并返回报错
+                        QMessageBox::critical(this, "连接失败", "无法保存配置，原因如下：\n\n" + msg);
+                    }
+            });
+
+            m_chatAgent->testConnection(c.baseUrl,c.apiKey,c.model);
+            // -------
         }
     });
 }
+
 
 void MainWindow::loadVendorMapFromJson()
 {
