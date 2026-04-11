@@ -20,6 +20,7 @@ private slots:
     void onTranslationResult(const QString &result);
     void onTranslationError(const QString &error);
     void exportToTxt();
+    void fetchUrlContent();  //读取网页内容的接口
 
     // 预设管理
     void addNewPreset();
@@ -36,7 +37,7 @@ private slots:
 private:
     void initTutorialPresets();
 
-    // UI 组件
+    //UI组件
     QTextEdit *sourceText;
     QTextEdit *targetText;
     QTextEdit *promptEdit;
@@ -50,6 +51,13 @@ private:
     QPushButton *renamePresetBtn;
     QPushButton *deletePresetBtn;
     QPushButton *savePromptBtn;
+
+    // --- 读取网页相关 ---
+    QGroupBox *urlGroup;
+    QLineEdit *urlEdit;
+    QPushButton *fetchBtn;
+    QLabel *urlTipLabel;
+    QNetworkAccessManager *m_urlManager; //专门用于网页抓取的网络管理
 
     AgentCore *m_agent;
     QString m_lastSourceText;

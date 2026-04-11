@@ -14,11 +14,13 @@
 TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
     : QWidget(parent), m_agent(agent)
 {
+    m_urlManager = new QNetworkAccessManager(this);
+
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(10);
     mainLayout->setContentsMargins(10, 10, 10, 10);
 
-    // 第一部分：翻译预设管理 (1:2 比例中的 1)
+    // --- 翻译预设管理UI (比例 1) ---
     QGroupBox *configGroup = new QGroupBox("翻译预设管理");
     QVBoxLayout *configLayout = new QVBoxLayout(configGroup);
     configLayout->setContentsMargins(10, 15, 10, 10);
@@ -50,7 +52,34 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
     promptEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     configLayout->addWidget(promptEdit);
 
-    // 第二部分：中间工具栏
+    mainLayout->addWidget(configGroup, 1);
+    // ------
+
+    // --- 网页读取UI ---
+    urlGroup = new QGroupBox("网页读取 (可选)");
+    QVBoxLayout *urlLayout = new QVBoxLayout(urlGroup);
+
+    QHBoxLayout *urlInputLayout = new QHBoxLayout();
+    urlEdit = new QLineEdit();
+    urlEdit = new QLineEdit();
+    urlEdit->setPlaceholderText("请输入以 http:// 或 https:// 开头的网址...");
+    fetchBtn = new QPushButton("抓取并导入");
+    fetchBtn->setFixedWidth(100);
+    fetchBtn->setStyleSheet("background-color: #4caf50; color: white; font-weight: bold; height: 28px;");
+
+    urlInputLayout->addWidget(urlEdit, 1);
+    urlInputLayout->addWidget(fetchBtn);
+
+    urlTipLabel = new QLabel("<font color='#888'>💡提示：部分动态渲染或反爬严格的网页（如推特/FB）可能无法读取。抓取由Jina Reader提供。</font>");
+    urlTipLabel->setStyleSheet("font-size: 11px;");
+
+    urlLayout->addLayout(urlInputLayout);
+    urlLayout->addWidget(urlTipLabel);
+
+    mainLayout->addWidget(urlGroup, 0);
+    // ------
+
+    // --- 中间工具栏 ---
     QHBoxLayout *toolBar = new QHBoxLayout();
     langCombo = new QComboBox();
     langCombo->addItems({
@@ -109,7 +138,10 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
     toolBar->addWidget(historyBtn);
     toolBar->addWidget(exportBtn);
 
-    // 第三部分：翻译文本区 (1:2 比例中的 2)
+    mainLayout->addLayout(toolBar, 0);
+    // ------
+
+    // --- 翻译文本区 (比例2) ---
     QHBoxLayout *textAreaLayout = new QHBoxLayout();
     sourceText = new QTextEdit();
     sourceText->setAcceptRichText(false);  // 禁止富文本，来修复拷贝内容到框里时出现带白框的问题
@@ -128,8 +160,6 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
     textAreaLayout->addWidget(translateBtn);
     textAreaLayout->addWidget(targetText, 1);
 
-    mainLayout->addWidget(configGroup, 1);
-    mainLayout->addLayout(toolBar, 0);
     mainLayout->addLayout(textAreaLayout, 2);
 
     // 样式美化与字体兼容
@@ -145,8 +175,11 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
         QPushButton#translateBtn:hover { background-color: #005a9e; }
         QTextEdit { border: 1px solid #ccc; border-radius: 4px; padding: 5px; font-size: 14px; }
     )");
+    // ------
 
-    // 信号绑定
+    // --- 信号绑定 ---
+    //网页读取的信号
+    connect(fetchBtn, &QPushButton::clicked, this, &TranslationPage::fetchUrlContent);
     connect(addPresetBtn, &QPushButton::clicked, this, &TranslationPage::addNewPreset);
     connect(renamePresetBtn, &QPushButton::clicked, this, &TranslationPage::renamePreset);
     connect(deletePresetBtn, &QPushButton::clicked, this, &TranslationPage::deletePreset);
@@ -158,6 +191,7 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
 
     connect(m_agent, &AgentCore::responseMsg, this, &TranslationPage::onTranslationResult);
     connect(m_agent, &AgentCore::errorMsg, this, &TranslationPage::onTranslationError);
+    // -------
 
     initTutorialPresets();
     refreshPresetList();
@@ -424,4 +458,59 @@ void TranslationPage::saveCurrentPrompt() {
     QSettings settings("Yachi", "PersistentData");
     settings.setValue("Trans_PromptPresets/" + name, promptEdit->toPlainText());
     QMessageBox::information(this, "成功", "翻译预设已保存。");
+}
+
+void TranslationPage::fetchUrlContent()
+{
+    // 1.处理输入的URL
+    QString rawUrl = urlEdit->text().trimmed();
+    if(rawUrl.isEmpty())return;
+
+    if(!rawUrl.startsWith("http"))
+    {
+        QMessageBox::warning(this, "格式错误", "请输入正确的网址（需包含 http 或 https）");
+        return;
+    }
+
+    //构造Jina Reader链接
+    QString jinaUrl = "https://r.jina.ai/" + rawUrl;  //jinaUrl的几种格式见：https://r.jina.ai/
+
+    // 2.处理过程中的UI效果
+    fetchBtn->setEnabled(false);
+    fetchBtn->setText("抓取中...");
+    sourceText->setPlaceholderText("正在通过Jina Reader提取网页正文，请稍候...");
+
+    // 3.设置网络头
+    QNetworkRequest request((QUrl(jinaUrl)));
+    //设置一些基础Header模拟浏览器，防止被某些简单策略拦截
+    request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) YachiAgent/1.0");
+
+    QNetworkReply *reply = m_urlManager->get(request);
+
+    // 4.信号连接
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+            //UI反馈
+            fetchBtn->setEnabled(true);
+            fetchBtn->setText("抓取并导入");
+            sourceText->setPlaceholderText("请输入源文本...");
+
+            if (reply->error() == QNetworkReply::NoError) {
+                //读取抓取到的纯文本（markdown格式）
+                QString content = reply->readAll();
+
+                if (content.trimmed().isEmpty()) {
+                    QMessageBox::warning(this, "抓取失败", "网页内容为空，可能是该网站禁止了抓取。");
+                } else {
+                    //将结果填充到translationpage中的输入框
+                    sourceText->setPlainText(content);
+                    //自动滚动到顶部
+                    sourceText->moveCursor(QTextCursor::Start);
+                }
+            } else {
+                QMessageBox::critical(this, "抓取异常",
+                                      QString("无法读取网页！\n错误代码：%1\n原因：%2")
+                                          .arg(reply->error()).arg(reply->errorString()));
+            }
+            reply->deleteLater();
+        });
 }
