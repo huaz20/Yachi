@@ -10,6 +10,10 @@
 #include <QDateTime>
 #include <QListWidget>
 #include <QDialog>
+#include <QCheckBox>
+#include <QApplication>
+#include <QTimer>
+#include <QClipboard>
 
 TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
     : QWidget(parent), m_agent(agent)
@@ -60,15 +64,31 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
     QVBoxLayout *urlLayout = new QVBoxLayout(urlGroup);
 
     QHBoxLayout *urlInputLayout = new QHBoxLayout();
+
     urlEdit = new QLineEdit();
     urlEdit = new QLineEdit();
     urlEdit->setPlaceholderText("请输入以 http:// 或 https:// 开头的网址...");
     fetchBtn = new QPushButton("抓取并导入");
     fetchBtn->setFixedWidth(100);
     fetchBtn->setStyleSheet("background-color: #4caf50; color: white; font-weight: bold; height: 28px;");
+    filterStatusBtn = new QPushButton("✨智能过滤已开启");
+    filterStatusBtn->setCursor(Qt::PointingHandCursor);
+    filterStatusBtn->setStyleSheet(R"(
+        QPushButton {
+                color: #2e7d32;
+                background: transparent;
+                border: 1px solid #a5d6a7;
+                border-radius: 4px;
+                padding: 2px 8px;
+                font-size: 12px;
+                font-weight: bold;
+            }
+            QPushButton:hover { background-color: #e8f5e9; }
+        )");
 
     urlInputLayout->addWidget(urlEdit, 1);
     urlInputLayout->addWidget(fetchBtn);
+    urlInputLayout->addWidget(filterStatusBtn);
 
     urlTipLabel = new QLabel("<font color='#888'>💡提示：部分动态渲染或反爬严格的网页（如推特/FB）可能无法读取。抓取由Jina Reader提供。</font>");
     urlTipLabel->setStyleSheet("font-size: 11px;");
@@ -178,8 +198,10 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
     // ------
 
     // --- 信号绑定 ---
-    //网页读取的信号
+    //网页读取
     connect(fetchBtn, &QPushButton::clicked, this, &TranslationPage::fetchUrlContent);
+    connect(filterStatusBtn, &QPushButton::clicked, this, &TranslationPage::showFilterDetails);
+
     connect(addPresetBtn, &QPushButton::clicked, this, &TranslationPage::addNewPreset);
     connect(renamePresetBtn, &QPushButton::clicked, this, &TranslationPage::renamePreset);
     connect(deletePresetBtn, &QPushButton::clicked, this, &TranslationPage::deletePreset);
@@ -460,6 +482,8 @@ void TranslationPage::saveCurrentPrompt() {
     QMessageBox::information(this, "成功", "翻译预设已保存。");
 }
 
+
+// --------- 网页读取接口 ---------
 void TranslationPage::fetchUrlContent()
 {
     // 1.处理输入的URL
@@ -500,7 +524,13 @@ void TranslationPage::fetchUrlContent()
 
                 if (content.trimmed().isEmpty()) {
                     QMessageBox::warning(this, "抓取失败", "网页内容为空，可能是该网站禁止了抓取。");
-                } else {
+                }
+                else
+                {
+                    if(m_hardFilterEnabled)
+                    {
+                        content = applyHardFilter(content);
+                    }
                     //将结果填充到translationpage中的输入框
                     sourceText->setPlainText(content);
                     //自动滚动到顶部
@@ -514,3 +544,202 @@ void TranslationPage::fetchUrlContent()
             reply->deleteLater();
         });
 }
+
+///
+/// \brief TranslationPage::applyHardFilter
+/// \brief （网页读取）智能过滤的硬代码过滤逻辑
+/// \details 基于正则表达式
+/// \param input
+/// \return
+///
+QString TranslationPage::applyHardFilter(const QString &input)
+{
+    QString output = input;
+
+    // 1.移除常见标签： ![...]、(...)、只有链接没有文字的空括号[]()
+    output.remove(QRegularExpression("!?\\[\\]\\(.*?\\)"));
+    output.remove(QRegularExpression("!\\[.*?\\]\\(.*?\\)"));
+
+    // 2.移除常见的社交分析链接：针对Twitter/Ads等
+    output.remove(QRegularExpression("\\[Image \\d+\\]\\(https://(analytics|t\\.co).*?\\)"));
+
+    // 3.基于行内容的深度清理
+    QStringList lines = output.split("\n");
+    QStringList filteredLines;
+
+    //定义关键字黑名单  //TODO:（这部分后续根据经验持续更新）
+    QStringList blacklist = {
+        "Log in", "Sign Up", "Rankings", "Post", "Help",
+        "Terms of Use", "Privacy Policy", "Feedback", "Recommendation",
+        "Create an account", "Related services", "Search novels",
+        "Home", "Newest by all", "Requests", "Collections",
+        "Contests", "Search illustrations", "Sign up to be able to Like",
+        "Twitterやってるよ", "forms.gle", "View profile", "Following",
+        "© pixiv",
+    };
+
+    for (const QString &line : lines) {
+        QString trimmed = line.trimmed();
+        bool isNoise = false;
+
+        //如果行太短且包含黑名单关键字，或者是纯链接行
+        for (const QString &word : blacklist) {
+            if (trimmed.contains(word, Qt::CaseInsensitive) && trimmed.length() < 50) {
+                isNoise = true;
+                break;
+            }
+        }
+
+        //过滤包含大量垃圾链接的行
+        if (trimmed.startsWith("* [") && (trimmed.contains("login") || trimmed.contains("help"))) {
+            isNoise = true;
+        }
+
+        if (!isNoise) filteredLines << line;
+    }
+
+    return filteredLines.join("\n").trimmed();
+}
+
+///
+/// \brief TranslationPage::showFilterDetails
+/// \brief （网页读取）智能过滤功能的UI
+///
+void TranslationPage::showFilterDetails()
+{
+    QDialog *dialog = new QDialog(this);
+    dialog->setWindowTitle("智能过滤详情");
+    dialog->setFixedWidth(500);
+
+    //全局布局
+    QVBoxLayout *layout = new QVBoxLayout(dialog);
+    layout->setContentsMargins(20,20,20,20);
+    layout->setSpacing(15);
+
+    //硬代码过滤UI
+    QGroupBox *hardGroup = new QGroupBox("1.硬代码过滤 / 一级过滤");
+    hardGroup->setStyleSheet("QGroupBox { font-weight: bold; color: #333; border: 1px solid #ddd; border-radius: 8px; margin-top: 12px; padding-top: 15px; } "
+                             "QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 5px; }");
+
+    QVBoxLayout *hLayout = new QVBoxLayout(hardGroup);
+    hLayout->setSpacing(10);
+
+    QLabel *hTip = new QLabel(R"(
+        <p style='line-height: 140%;'>使用正则表达式自动剔除以下内容：</p>
+        <ul style='color: #555; margin-left: -15px;'>
+            <li>所有的Markdown图片标签</li>
+            <li>侧边栏导航链接 (Home, Login等)</li>
+            <li>Twitter广告统计代码</li>
+            <li>只有超链接而没有正文的冗余行</li>
+        </ul>
+    )");
+    hTip->setWordWrap(true);
+    hTip->setStyleSheet("font-size: 13px;");
+
+    QCheckBox *toggleBox = new QCheckBox("启用硬代码过滤");
+    toggleBox->setChecked(m_hardFilterEnabled);
+    toggleBox->setStyleSheet("QCheckBox { font-weight: bold; color: ##66aee5; } QCheckBox::indicator { width: 18px; height: 18px; color: #FFFFFF }");
+
+    hLayout->addWidget(hTip);
+    hLayout->addWidget(toggleBox);
+    layout->addWidget(hardGroup);
+
+    //AI过滤UI
+    QGroupBox *aiGroup = new QGroupBox("2. AI过滤 / 二级过滤");
+    aiGroup->setStyleSheet("QGroupBox { font-weight: bold; color: #333; border: 1px solid #ddd; border-radius: 8px; margin-top: 12px; padding-top: 15px; } "
+                           "QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 5px; }");
+
+    QVBoxLayout *aLayout = new QVBoxLayout(aiGroup);
+    aLayout->setSpacing(10);
+
+    QLabel *aTip = new QLabel(R"(<p>如果抓取内容仍有杂质，可以使用AI过滤。</p>
+                              <p>
+                                <b>使用方法</b>：请复制以下提示词在“翻译预设”中直接使用，或者合并到您的提示词中
+                                <span style="color:grey;">（您可以调整下面的提示词以更贴合您的使用）</span>
+                              </p>)");
+    aTip->setWordWrap(true);
+
+    QTextEdit *promptCopy = new QTextEdit();
+    promptCopy->setPlainText("你是一个专业的网页内容提取官。接下来的输入是从网页抓取的原始文本，"
+                             "请你**只识别并翻译其中的‘小说正文内容’**，忽略所有的导航菜单、"
+                             "广告和社交统计链接。如果某行内容看起来像按钮或菜单，请直接丢弃。");
+    promptCopy->setReadOnly(true);
+    promptCopy->setFixedHeight(90);
+    promptCopy->setStyleSheet(R"(
+        QTextEdit {
+            background-color: #f8f9fa;
+            border: 1px dashed #bbb;
+            border-radius: 4px;
+            color: #444;
+            padding: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+        }
+    )");
+
+    //添加一个快捷复制按钮
+    QPushButton *quickCopyBtn = new QPushButton("复制内容");
+    quickCopyBtn->setCursor(Qt::PointingHandCursor);
+    quickCopyBtn->setStyleSheet("QPushButton { color: #0078d4; border: none; text-decoration: underline; background: transparent; text-align: left; }");
+
+    //quickCopyBtn的信号
+    connect(quickCopyBtn, &QPushButton::clicked, this, [promptCopy, quickCopyBtn](){
+        // 1.获取文本并写入剪贴板
+        QApplication::clipboard()->setText(promptCopy->toPlainText());
+
+        // 2.视觉反馈
+        QString originalText = quickCopyBtn->text();
+        //改变文本
+        quickCopyBtn->setText("已复制到剪贴板 √");
+        //改变样式
+        quickCopyBtn->setStyleSheet("QPushButton { color: #2e7d32; border: none; font-weight: bold; background: transparent; text-align: left; }");
+
+        // 3.使用定时器，2秒后恢复原样
+        QTimer::singleShot(2000, [quickCopyBtn, originalText](){
+            //增加安全检查，防止窗口在定时器触发前已关闭
+            if (quickCopyBtn) {
+                quickCopyBtn->setText(originalText);
+                quickCopyBtn->setStyleSheet("QPushButton { color: #0078d4; border: none; text-decoration: underline; background: transparent; text-align: left; }");
+            }
+        });
+    });
+
+    aLayout->addWidget(aTip);
+    aLayout->addWidget(promptCopy);
+    aLayout->addWidget(quickCopyBtn);
+    layout->addWidget(aiGroup);
+
+    QPushButton *okBtn = new QPushButton("确定");  //确认按钮UI
+    okBtn->setFixedHeight(38);
+    okBtn->setCursor(Qt::PointingHandCursor);
+    okBtn->setStyleSheet(R"(
+        QPushButton {
+            background-color: #0078d4;
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        QPushButton:hover { background-color: #005a9e; }
+    )");
+
+    layout->addWidget(okBtn);
+
+    //确认按钮的信号
+    connect(okBtn, &QPushButton::clicked, dialog, [=](){
+        m_hardFilterEnabled = toggleBox->isChecked();
+        //更新UI按钮显示
+        if(m_hardFilterEnabled) {
+            filterStatusBtn->setText("✨智能过滤已开启");
+            filterStatusBtn->setStyleSheet("color: #2e7d32; border: 1px solid #a5d6a7; font-weight: bold; background: #e8f5e9; padding: 2px 8px; border-radius: 4px;");
+        } else {
+            filterStatusBtn->setText("⚪过滤已关闭");
+            filterStatusBtn->setStyleSheet("color: #757575; border: 1px solid #bdbdbd; font-weight: normal; background: #f5f5f5; padding: 2px 8px; border-radius: 4px;");
+        }
+        dialog->accept();
+    });
+
+    dialog->exec();
+}
+
+// ------------

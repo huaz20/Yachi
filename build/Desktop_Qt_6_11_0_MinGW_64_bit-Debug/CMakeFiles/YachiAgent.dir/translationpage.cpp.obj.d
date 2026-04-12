@@ -527,4 +527,23 @@ CMakeFiles/YachiAgent.dir/translationpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlistview.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractitemview.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qitemselectionmodel.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDialog
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDialog \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QCheckBox \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcheckbox.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QApplication \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qapplication.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qcoreapplication.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qcoreevent.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qbasictimer.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qabstracteventdispatcher.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qeventloop.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qdeadlinetimer.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qnativeinterface.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qcoreapplication_platform.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qguiapplication.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qinputmethod.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qguiapplication_platform.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QTimer \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qtimer.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/QClipboard \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qclipboard.h

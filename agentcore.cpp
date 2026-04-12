@@ -46,6 +46,8 @@ void AgentCore::sendMsg(const QString &userPrompt) {
     }
     root.insert("messages", messagesToSend);
 
+    root.insert("max_tokens",4096); //显式要求模型输出更多内容
+
     QString endpoint = m_baseUrl;
     if(!endpoint.endsWith("/")) endpoint += "/";
     endpoint += "chat/completions";
