@@ -14,6 +14,7 @@
 #include <QApplication>
 #include <QTimer>
 #include <QClipboard>
+#include <QStackedWidget>
 
 TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
     : QWidget(parent), m_agent(agent)
@@ -176,8 +177,35 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
     translateBtn->setFixedSize(75, 75);
     translateBtn->setObjectName("translateBtn");
 
+    //中止翻译按钮
+    stopBtn = new QPushButton("中止");
+    stopBtn->setFixedSize(75, 75);
+    stopBtn->setObjectName("stopBtn");
+    stopBtn->setVisible(false); //初始状态隐藏，只有翻译时才显示
+    stopBtn->setStyleSheet(R"(
+    QPushButton#stopBtn {
+        background-color: #d32f2f;
+        color: white;
+        border-radius: 37px;
+        font-weight: bold;
+        font-size: 14px;
+        border: 2px solid #ffcdd2;
+    }
+    QPushButton#stopBtn:hover { background-color: #b71c1c; }
+    QPushButton#stopBtn:pressed { background-color: #7f0000; }
+)");
+
+    btnStack = new QStackedWidget();
+    btnStack->setFixedSize(85, 85); //给容器固定大小，防止布局跳动
+    btnStack->addWidget(translateBtn); //Index 0：空闲状态
+    btnStack->addWidget(stopBtn);      //Index 1：翻译状态
+    btnStack->setCurrentIndex(0);
+    QVBoxLayout *btnCtrlLayout = new QVBoxLayout();
+    btnCtrlLayout->addWidget(btnStack);
+    btnCtrlLayout->setAlignment(Qt::AlignCenter);
+
     textAreaLayout->addWidget(sourceText, 1);
-    textAreaLayout->addWidget(translateBtn);
+    textAreaLayout->addLayout(btnCtrlLayout);
     textAreaLayout->addWidget(targetText, 1);
 
     mainLayout->addLayout(textAreaLayout, 2);
@@ -206,10 +234,12 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
     connect(renamePresetBtn, &QPushButton::clicked, this, &TranslationPage::renamePreset);
     connect(deletePresetBtn, &QPushButton::clicked, this, &TranslationPage::deletePreset);
     connect(savePromptBtn, &QPushButton::clicked, this, &TranslationPage::saveCurrentPrompt);
+        connect(presetCombo, &QComboBox::currentTextChanged, this, &TranslationPage::loadSelectedPrompt);
+
     connect(translateBtn, &QPushButton::clicked, this, &TranslationPage::doTranslate);
     connect(exportBtn, &QPushButton::clicked, this, &TranslationPage::exportToTxt);
     connect(historyBtn, &QPushButton::clicked, this, &TranslationPage::showHistory);
-    connect(presetCombo, &QComboBox::currentTextChanged, this, &TranslationPage::loadSelectedPrompt);
+    connect(stopBtn, &QPushButton::clicked, this, &TranslationPage::abortTranslation);
 
     connect(m_agent, &AgentCore::responseMsg, this, &TranslationPage::onTranslationResult);
     connect(m_agent, &AgentCore::errorMsg, this, &TranslationPage::onTranslationError);
@@ -391,6 +421,7 @@ void TranslationPage::doTranslate() {
 
     // 2.UI反馈
     translateBtn->setEnabled(false);
+    btnStack->setCurrentIndex(1); //切换到“中止”按钮
     targetText->setPlainText(QString("翻译中（共 %1 块）...").arg(m_totalChunks));
 
     // 3.启动第一个块（递归按块翻译）
@@ -407,6 +438,8 @@ void TranslationPage::processNextChunk()
     if (m_chunkList.isEmpty()) {
         m_isProcessing = false;
         translateBtn->setEnabled(true);
+        btnStack->setCurrentIndex(0);  //恢复“开始翻译”按钮  //翻译过程结束有三个情况：1、翻译完成；2、错误执行回调；3、手动中止
+
         //保存到历史记录中
         saveToHistory(sourceText->toPlainText(), langCombo->currentText(), m_accumulatedResult);
         return;
@@ -449,10 +482,12 @@ void TranslationPage::onTranslationResult(const QString &result) {
 }
 
 void TranslationPage::onTranslationError(const QString &error) {
+    m_isProcessing = false;
+    btnStack->setCurrentIndex(0); //恢复“开始翻译”按钮
+
     targetText->setPlainText("错误: " + error);
     translateBtn->setEnabled(true);
 }
-
 // ********************************
 
 void TranslationPage::exportToTxt() {
@@ -540,7 +575,6 @@ void TranslationPage::saveCurrentPrompt() {
     settings.setValue("Trans_PromptPresets/" + name, promptEdit->toPlainText());
     QMessageBox::information(this, "成功", "翻译预设已保存。");
 }
-
 
 // **************** 网页读取接口 ****************
 void TranslationPage::fetchUrlContent()
@@ -800,11 +834,9 @@ void TranslationPage::showFilterDetails()
 
     dialog->exec();
 }
-
 // ********************************
 
 // **************** 分块翻译接口 ****************
-
 ///
 /// \brief TranslationPage::splitText
 /// \brief 文本分块算法
@@ -834,3 +866,26 @@ QStringList TranslationPage::splitText(const QString &text, int maxLength)
     return chunks;
 }
 // ****************
+
+///
+/// \brief TranslationPage::abortTranslation
+/// \brief 中止翻译接口
+///
+void TranslationPage::abortTranslation()
+{
+    if (!m_isProcessing) return;
+
+    // 1.核心修改：直接让Agent中断正在进行的网络传输
+    m_agent->abort();
+
+    // 2.停止分块递归
+    m_isProcessing = false;
+    m_chunkList.clear();
+
+    // 3.UI反馈
+    targetText->append("\n[翻译已中断]");
+    targetText->moveCursor(QTextCursor::End);
+
+    btnStack->setCurrentIndex(0); //恢复“开始翻译”按钮
+    translateBtn->setEnabled(true);
+}

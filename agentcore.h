@@ -10,7 +10,7 @@
 class AgentCore : public QObject
 {
     Q_OBJECT
-public:
+public: 
     explicit AgentCore(QObject* parent = nullptr);
 
     //动态更新配置的接口
@@ -24,6 +24,9 @@ public:
 
     //模型可用性检查
     void testConnection(const QString &baseUrl, const QString &apiKey, const QString &model);
+
+    //中止当前网络请求
+    void abort();
 
 signals:
     void responseMsg(const QString &reply); //AI的回答
@@ -40,6 +43,8 @@ private:
     QString m_model;
     QString m_systemPrompt;
     QJsonArray m_history;
+
+    QNetworkReply *m_currentReply = nullptr; //记录当前网络请求
 };
 
 #endif // AGENTCORE_H

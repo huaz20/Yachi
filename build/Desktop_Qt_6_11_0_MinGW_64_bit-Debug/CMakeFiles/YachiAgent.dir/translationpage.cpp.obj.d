@@ -420,6 +420,8 @@ CMakeFiles/YachiAgent.dir/translationpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qiodevice.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QGroupBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgroupbox.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QStackedWidget \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qstackedwidget.h \
  C:\Programming\cpp\Yachi\agentcore.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QObject \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkAccessManager \

@@ -8,6 +8,7 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QGroupBox>
+#include <QStackedWidget>
 #include "agentcore.h"
 
 class TranslationPage : public QWidget {
@@ -21,8 +22,10 @@ private slots:
     void onTranslationError(const QString &error);
     void exportToTxt();
 
+    void abortTranslation();   //中止翻译
+
     //网页读取
-    void fetchUrlContent();  //读取网页内容的接口
+    void fetchUrlContent();    //读取网页内容的接口
     void showFilterDetails();  //显示详细过滤设置的UI
 
     //预设管理
@@ -46,7 +49,10 @@ private:
     QComboBox *langCombo;
     QComboBox *presetCombo;
 
+    QStackedWidget *btnStack;
     QPushButton *translateBtn;
+    QPushButton *stopBtn;
+
     QPushButton *exportBtn;
     QPushButton *historyBtn;
     QPushButton *addPresetBtn;

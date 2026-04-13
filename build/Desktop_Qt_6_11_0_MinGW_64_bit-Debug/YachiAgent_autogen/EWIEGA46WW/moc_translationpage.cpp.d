@@ -217,6 +217,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLabel \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLineEdit \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPushButton \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QStackedWidget \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextEdit \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QWidget \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractbutton.h \
@@ -233,6 +234,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qrubberband.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qsizepolicy.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qslider.h \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qstackedwidget.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qstyle.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qstyleoption.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtabbar.h \

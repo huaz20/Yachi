@@ -58,14 +58,17 @@ void AgentCore::sendMsg(const QString &userPrompt) {
         request.setRawHeader("Authorization", QString("Bearer %1").arg(m_apiKey).toUtf8());
     }
 
-    QNetworkReply *reply = m_networkManager->post(request, QJsonDocument(root).toJson());
-    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
-        onFinished(reply);
+    m_currentReply = m_networkManager->post(request, QJsonDocument(root).toJson());
+    connect(m_currentReply, &QNetworkReply::finished, this, [this]() {
+        onFinished(m_currentReply);
+        m_currentReply = nullptr;  //信号处理完后置空
     });
 }
 
 void AgentCore::onFinished(QNetworkReply *reply) {
+    if(!reply) return;
     reply->deleteLater();
+
     if(reply->error() == QNetworkReply::NoError) {
         QByteArray responseData = reply->readAll();
         QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
@@ -80,14 +83,17 @@ void AgentCore::onFinished(QNetworkReply *reply) {
             m_history.append(asstMsg);
 
             emit responseMsg(assistantText);
-        } else {
-            emit errorMsg("[Error] API 返回格式异常");
         }
-    } else {
-        emit errorMsg(QString("[Network Error] %1").arg(reply->errorString()));
+        else if(reply->error() ==  QNetworkReply::OperationCanceledError)  //玩家手动中断网络请求
+        {
+            qDebug()<<"Network request was aborted by user.";
+        }
+        else
+        {
+            emit errorMsg(QString("[网络错误] %1").arg(reply->errorString()));
+        }
     }
 }
-
 
 ///
 /// \brief AgentCore::testConnection
@@ -147,4 +153,17 @@ void AgentCore::testConnection(const QString &baseUrl, const QString &apiKey, co
             emit testFinishedMsg(false, userError);
         }
     });
+}
+
+///
+/// \brief AgentCore::abort
+/// \brief 中断当前的网络请求
+///
+void AgentCore::abort()
+{
+    if(m_currentReply && m_currentReply->isRunning())
+    {
+        m_currentReply->abort();   //调用Qt原生的中断接口
+        m_currentReply = nullptr;  //请求置空
+    }
 }
