@@ -309,19 +309,19 @@ void TranslationPage::showHistory() {
         s.endArray();
 
         QDialog *det = new QDialog(dlg);
-        det->setWindowTitle("翻译详情 (支持复制)");
+        det->setWindowTitle("翻译详情");
         det->resize(550, 600);
         QVBoxLayout *v = new QVBoxLayout(det);
 
         v->addWidget(new QLabel(QString("<b>记录时间:</b> %1  |  <b>语种:</b> %2").arg(timeStr, langStr)));
 
-        v->addWidget(new QLabel("<b>原文内容 (可复制):</b>"));
+        v->addWidget(new QLabel("<b>原文内容:</b>"));
         QTextEdit *srcE = new QTextEdit();
         srcE->setPlainText(srcStr);
         srcE->setReadOnly(true);
         v->addWidget(srcE, 1);
 
-        v->addWidget(new QLabel("<b>翻译结果 (可复制):</b>"));
+        v->addWidget(new QLabel("<b>翻译结果:</b>"));
         QTextEdit *resE = new QTextEdit();
         resE->setPlainText(resStr);
         resE->setReadOnly(true);
@@ -370,31 +370,90 @@ void TranslationPage::showHistory() {
     dlg->exec();
 }
 
+// **************** 翻译核心逻辑 ****************
+
+///
+/// \brief TranslationPage::doTranslate
+/// \brief 启动翻译
+///
 void TranslationPage::doTranslate() {
     QString text = sourceText->toPlainText();
     if(text.isEmpty()) return;
 
-    m_lastSourceText = text;
-    QString prompt = QString("%1\n\n将以下文本翻译为：【%2】").arg(promptEdit->toPlainText(), langCombo->currentText());
+    // 1.先分块
+    //初始化状态
+    m_accumulatedResult.clear();
+    //建议每块 1500-2000 字，留出足够的 Token 给 AI 输出
+    m_chunkList = splitText(text, 2000);
+    //记录待翻译块数
+    m_totalChunks = m_chunkList.size();
+    m_isProcessing = true;
 
+    // 2.UI反馈
     translateBtn->setEnabled(false);
-    targetText->setPlainText("正在请求 AI...");
+    targetText->setPlainText(QString("翻译中（共 %1 块）...").arg(m_totalChunks));
 
-    m_agent->setSystemPrompt(prompt);
-    m_agent->clearHistory();
-    m_agent->sendMsg(text);
+    // 3.启动第一个块（递归按块翻译）
+    processNextChunk();
 }
 
+///
+/// \brief TranslationPage::processNextChunck
+/// \brief 块内翻译逻辑
+///
+void TranslationPage::processNextChunk()
+{
+    //如果全部翻译完成
+    if (m_chunkList.isEmpty()) {
+        m_isProcessing = false;
+        translateBtn->setEnabled(true);
+        //保存到历史记录中
+        saveToHistory(sourceText->toPlainText(), langCombo->currentText(), m_accumulatedResult);
+        return;
+    }
+
+    //弹出当前要翻译的块
+    QString currentText = m_chunkList.takeFirst();
+    int currentId = m_totalChunks - m_chunkList.size();
+
+    //更新UI反馈
+    targetText->setPlainText(m_accumulatedResult + QString("\n\n[正在翻译第 %1/%2 块...]\n").arg(currentId).arg(m_totalChunks));
+    //自动滚动到底部，方便查看翻译进度
+    targetText->moveCursor(QTextCursor::End);
+
+    //配置Agent
+    //(注意：这里的配置，可以clearHistory防止旧块干扰新块，也可以在提示词里告诉AI这是一个连续的文本，也可以同时使用）
+    m_agent->setSystemPrompt(promptEdit->toPlainText() + "\n备注：这是长文的一部分，请保持前后术语一致。严禁因为看到分隔符而停止翻译！");
+    m_agent->clearHistory();
+    m_agent->sendMsg(currentText);
+}
+
+///
+/// \brief TranslationPage::onTranslationResult
+/// \brief 翻译结束回调
+/// \param result
+///
 void TranslationPage::onTranslationResult(const QString &result) {
-    targetText->setPlainText(result);
-    translateBtn->setEnabled(true);
-    saveToHistory(m_lastSourceText, langCombo->currentText(), result);
+    if (m_isProcessing) {
+        //累加结果
+        m_accumulatedResult += result + "\n";
+        targetText->setPlainText(m_accumulatedResult);
+
+        //递归处理下一块
+        processNextChunk();
+    }else
+    {
+        targetText->setPlainText(result);
+        translateBtn->setEnabled(true);
+    }
 }
 
 void TranslationPage::onTranslationError(const QString &error) {
     targetText->setPlainText("错误: " + error);
     translateBtn->setEnabled(true);
 }
+
+// ********************************
 
 void TranslationPage::exportToTxt() {
     QString content = targetText->toPlainText();
@@ -483,7 +542,7 @@ void TranslationPage::saveCurrentPrompt() {
 }
 
 
-// --------- 网页读取接口 ---------
+// **************** 网页读取接口 ****************
 void TranslationPage::fetchUrlContent()
 {
     // 1.处理输入的URL
@@ -742,4 +801,36 @@ void TranslationPage::showFilterDetails()
     dialog->exec();
 }
 
-// ------------
+// ********************************
+
+// **************** 分块翻译接口 ****************
+
+///
+/// \brief TranslationPage::splitText
+/// \brief 文本分块算法
+/// \param text
+/// \param maxLength
+/// \return
+///
+QStringList TranslationPage::splitText(const QString &text, int maxLength)
+{
+    QStringList chunks;
+    QStringList paragraphs = text.split("\n"); //按行拆分
+    QString currentChunk;
+
+    for (const QString &para : paragraphs) {
+        //如果当前块加上新段落超过限制，则保存当前块
+        if (currentChunk.length() + para.length() > maxLength && !currentChunk.isEmpty()) {
+            chunks.append(currentChunk.trimmed());
+            currentChunk = para;
+        } else {
+            currentChunk += "\n" + para;
+        }
+    }
+
+    if (!currentChunk.trimmed().isEmpty()) {
+        chunks.append(currentChunk.trimmed());
+    }
+    return chunks;
+}
+// ****************

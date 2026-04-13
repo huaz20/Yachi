@@ -68,6 +68,18 @@ private:
     QString applyHardFilter(const QString &input);  //硬代码过滤接口
     // ------
 
+    // --- 分块翻译相关 ---
+    QStringList m_chunkList;      //待翻译的文本块队列
+    QString m_accumulatedResult;  //累加的结果
+    int m_totalChunks = 0;        //总块数，用于进度控制
+    bool m_isProcessing = false;  //是否正在进行分块翻译
+
+    //处理队列中的下一个块
+    void processNextChunk();
+    //文本分块算法
+    QStringList splitText(const QString &text, int maxLength);
+    // ------
+
     AgentCore *m_agent;
     QString m_lastSourceText;
 };
