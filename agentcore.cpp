@@ -25,29 +25,36 @@ void AgentCore::sendMsg(const QString &userPrompt) {
         emit errorMsg("[Error] 尚未配置 Base URL！(本地模型通常为 http://localhost:11434/v1)");
         return;
     }
+    if(userPrompt.trimmed().isEmpty())return;
 
+    // 1.检查是否需要压缩历史记录
+    TriggerHistoryCompact();
+
+    // 2.记录当前用户消息
     QJsonObject userMsg;
     userMsg.insert("role", "user");
     userMsg.insert("content", userPrompt);
     m_history.append(userMsg);
 
+    // 3.构建完整的请求（模型信息 + System Prompt + History）
+    //模型信息
     QJsonObject root;
     root.insert("model", m_model.isEmpty() ? "llama3" : m_model);
 
     QJsonArray messagesToSend;
     if (!m_systemPrompt.isEmpty()) {
-        QJsonObject sysMsg;
+        QJsonObject sysMsg;                 //System Prompt
         sysMsg.insert("role", "system");
         sysMsg.insert("content", m_systemPrompt);
         messagesToSend.append(sysMsg);
     }
     for(auto val : m_history) {
-        messagesToSend.append(val);
+        messagesToSend.append(val);         //History
     }
     root.insert("messages", messagesToSend);
+    root.insert("max_tokens",4096);  //显式要求模型输出更多内容
 
-    root.insert("max_tokens",4096); //显式要求模型输出更多内容
-
+    // 4.发送POST请求
     QString endpoint = m_baseUrl;
     if(!endpoint.endsWith("/")) endpoint += "/";
     endpoint += "chat/completions";
@@ -167,3 +174,79 @@ void AgentCore::abort()
         m_currentReply = nullptr;  //请求置空
     }
 }
+
+// **************** AGENT优化逻辑 ****************
+///
+/// \brief AgentCore::TriggerHistoryCompact
+/// \brief 判断并触发历史记录压缩
+///
+void AgentCore::TriggerHistoryCompact()
+{
+    //如果正在总结 或者 还没达到触发压缩的阈值，跳过
+    if(m_isSummarizing || m_history.size() < m_historyThreshold)return;
+
+    qDebug() << "History too long. Starting History Compaction...";
+
+    // 1.处理需要压缩的部分
+    //提取出来放进一个Json
+    int numToCompact = m_history.size() - m_historyKept;
+    QJsonArray toSummarize;
+    for(int i = 0; i < numToCompact; ++i) {
+        toSummarize.append(m_history.at(i));
+    }
+
+    //从主历史中移除这些旧消息
+    for(int i = 0; i < numToCompact; ++i) {
+        m_history.removeFirst();
+    }
+
+    // 2.启动异步总结
+    requestSummary(toSummarize);
+}
+
+void AgentCore::requestSummary(const QJsonArray &toSummarize)
+{
+    m_isSummarizing = true;
+
+    //构建用户信息
+    QJsonObject summaryPrompt;
+    summaryPrompt.insert("role", "system");
+    summaryPrompt.insert("content", "你是一个对话压缩助手。请简要总结以下对话的历史要点、已达成的共识和待处理的任务。请保持客观，字数控制在200字以内。");
+
+    QJsonArray messages;
+    messages.append(summaryPrompt);
+    for(auto m : toSummarize) messages.append(m);
+
+    //构建完整请求
+    QJsonObject root;
+    root.insert("model", m_model);
+    root.insert("messages", messages);
+    root.insert("stream", false); //总结请求不需要流式
+
+    //发送POST请求
+    QNetworkRequest request(m_baseUrl + "/chat/completions");
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    if(!m_apiKey.isEmpty()) request.setRawHeader("Authorization", "Bearer " + m_apiKey.toUtf8());
+
+    QNetworkReply *reply = m_networkManager->post(request, QJsonDocument(root).toJson());
+
+    //处理总结结果，并插入历史记录顶端（prepend）
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+        if(reply->error() == QNetworkReply::NoError) {
+            QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
+            QString summary = doc.object()["choices"].toArray()[0].toObject()["message"].toObject()["content"].toString();
+
+            //将总结作为“历史背景”插入历史记录的最前面
+            QJsonObject historyContext;
+            historyContext.insert("role", "system");
+            historyContext.insert("content", "[之前的对话总结]: " + summary);
+
+            m_history.prepend(historyContext);
+
+            qDebug() << "Compaction successful. New History size:" << m_history.size();
+        }
+        m_isSummarizing = false;
+        reply->deleteLater();
+    });
+}
+// ********************************
