@@ -254,17 +254,17 @@ void ChatPage::setupNormalChatUI() {
     normalWidget = new QWidget();
     QVBoxLayout *layout = new QVBoxLayout(normalWidget);
 
-    // 替换为 QTextBrowser，支持外链跳转
+    //替换为QTextBrowser，支持外链跳转
     chatHistory = new QTextBrowser();
     chatHistory->setReadOnly(true);
     chatHistory->setOpenExternalLinks(true);
 
-    // 强制重置底层组件字号
+    //强制重置底层组件字号
     QFont baseFont = chatHistory->font();
     baseFont.setPixelSize(16);
     chatHistory->setFont(baseFont);
 
-    // 设置基础样式表：控制 Markdown 的标题、代码块和引用样式
+    //调整Markdown渲染的样式
     chatHistory->setStyleSheet(
         "h1 { font-size: 16.5px; font-weight: bold; color: #222; margin-top: 10px; margin-bottom: 8px; }"
         "h2 { font-size: 15.5px; font-weight: bold; color: #333; margin-top: 8px; margin-bottom: 6px; }"
@@ -377,26 +377,140 @@ bool ChatPage::eventFilter(QObject *obj, QEvent *event) {
 }
 
 void ChatPage::appendMessage(const QString &sender, const QString &msg, const QString &color) {
-    QTextDocument doc;
+    Q_UNUSED(color);
+    bool isUser = (sender == "Me" || sender == "用户" || sender == "我" || sender == "user");
 
-    // 强制重置解析器的默认字号，防止它覆盖我们的内联样式
-    QFont font = chatHistory->font();
-    font.setPixelSize(16);
-    doc.setDefaultFont(font);
+    //如果是非流式的普通追加（如用户发送的消息）
+    QString finalHtml = wrapInBubble(msg, isUser);
+    chatHistory->append(finalHtml);
 
-    doc.setMarkdown(msg);
-    QString markdownHtml = doc.toHtml();
-
-    // 拼装最终显示的 HTML
-    QString htmlStr = QString("<div style='margin-bottom: 12px;'>"
-                              "<b style='color:%1; font-size:16px;'>%2:</b>"
-                              "<div style='margin-top: 4px; font-size:16px;'>%3</div>"
-                              "</div>")
-                          .arg(color, sender, markdownHtml);
-
-    chatHistory->append(htmlStr);
+    //自动滚动到底部
+    chatHistory->moveCursor(QTextCursor::End);
 }
 
 void ChatPage::appendSystemMsg(const QString &msg) {
     chatHistory->append(QString("<i style='color:gray; font-size:14px;'>系统: %1</i>").arg(msg));
+}
+
+// **************** 流式输出 ****************
+///
+/// \brief ChatPage::handleStreamingResponse
+/// \brief 流式输出渲染接口
+///
+void ChatPage::handleStreamingResponse(const QString &text)
+{
+    if(!m_isStreamingTyping)
+    {
+        m_isStreamingTyping = true;
+        m_currentResponse = "";
+
+        //记录流式输出开始时光标的确切位置
+        QTextCursor cursor = chatHistory->textCursor();
+        cursor.movePosition(QTextCursor::End);
+        m_startPos = cursor.position();
+    }
+
+    m_currentResponse += text;
+
+    //给文本包裹样式
+    QString html = wrapInBubble(m_currentResponse + " ▌", false);  //加上Markdown渲染和打字机光标
+
+    //设置键鼠光标
+    QTextCursor cursor = chatHistory->textCursor();
+
+    //精准选中上一次渲染的整个气泡并替换
+    cursor.setPosition(m_startPos);  //回到起笔位置
+    cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);  //类同按住Shift来选中块，选中整个气泡
+    cursor.removeSelectedText();  //删掉旧内容
+    cursor.insertHtml(html);      //插入新内容
+
+    chatHistory->ensureCursorVisible();
+}
+
+///
+/// \brief ChatPage::finishStreamingResponse
+/// \brief 流式输出结束时渲染接口，对最终文本进行处理
+/// \param fullMsg
+///
+void ChatPage::finishStreamingResponse(const QString &fullMsg)
+{
+    m_isStreamingTyping = false;
+
+    //移除打字机光标，进行最终渲染
+    QString html = wrapInBubble(fullMsg, false);
+
+    //设置键鼠光标
+    QTextCursor cursor = chatHistory->textCursor();
+
+    cursor.setPosition(m_startPos);
+    cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
+    cursor.removeSelectedText();
+    cursor.insertHtml(html);
+
+    chatHistory->ensureCursorVisible();
+}
+// ********************************
+
+///
+/// \brief ChatPage::wrapInBubble
+/// \brief 将内容包装在气泡形状的HTML中
+/// \param content
+/// \param isUser
+/// \return
+///
+QString ChatPage::wrapInBubble(const QString &rawContent, bool isUser) {
+    //将传入的Markdown转为HTML
+    QTextDocument doc;
+    doc.setMarkdown(rawContent);
+    QString htmlContent = doc.toHtml();
+
+    //剥离<html>和<body>标签，提取内部的实际元素，防止Qt底层渲染引擎因为标签嵌套不合法而出现渲染问题
+    int bodyStart = htmlContent.indexOf("<body");
+    if(bodyStart != -1)
+    {
+        bodyStart = htmlContent.indexOf(">", bodyStart) + 1;
+        int bodyEnd = htmlContent.lastIndexOf("</body>");
+        if (bodyEnd != -1) {
+            htmlContent = htmlContent.mid(bodyStart, bodyEnd - bodyStart);
+        }
+    }
+
+
+    htmlContent.replace("color:#000000;", "");
+
+    //配置样式
+    QString bgColor = isUser ? "#0078d4" : "#f1f1f1";
+    QString textColor = isUser ? "#ffffff" : "#202124";
+
+    //返回“气泡”样式表
+    if (isUser) {
+        return QString(
+                   "<table width='100%' border='0' cellpadding='0' cellspacing='0' style='margin-top: 8px;'>"
+                   "  <tr>"
+                   "    <td width='20%'></td>" // 左侧占位 20%，保证气泡最宽 80%
+                   "    <td align='right'>"
+                   "      <div style='background-color: %1; color: %2; padding: 10px 14px; "
+                   "                  font-family: \"Microsoft YaHei\", sans-serif; font-size: 16px; "
+                   "                  text-align: left;'>" // 气泡内部文字左对齐，方便阅读
+                   "        %3"
+                   "      </div>"
+                   "    </td>"
+                   "  </tr>"
+                   "</table>"
+                   ).arg(bgColor, textColor, htmlContent);
+    } else {
+        return QString(
+                   "<table width='100%' border='0' cellpadding='0' cellspacing='0' style='margin-top: 8px;'>"
+                   "  <tr>"
+                   "    <td align='left'>"
+                   "      <div style='background-color: %1; color: %2; padding: 10px 14px; "
+                   "                  font-family: \"Microsoft YaHei\", sans-serif; font-size: 16px;'>"
+                   "        %3"
+                   "      </div>"
+                   "    </td>"
+                   "    <td width='20%'></td>" // 右侧占位 20%
+                   "  </tr>"
+                   "</table>"
+                   ).arg(bgColor, textColor, htmlContent);
+    }
 }

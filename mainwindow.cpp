@@ -26,8 +26,9 @@ MainWindow::MainWindow(QWidget *parent)
     setupUI();
 
     // --- Agent连接 ---
+    connect(m_chatAgent, &AgentCore::partialResponseMsg, chatPageWidget, &ChatPage::handleStreamingResponse);
     connect(m_chatAgent, &AgentCore::responseMsg, this, [this](const QString &msg){
-        chatPageWidget->appendMessage("AI", msg, "#0078d4");
+        chatPageWidget->finishStreamingResponse(msg);
     });
     connect(m_chatAgent, &AgentCore::errorMsg, this, [this](const QString &err){
         chatPageWidget->appendSystemMsg(err);

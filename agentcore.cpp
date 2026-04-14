@@ -40,6 +40,7 @@ void AgentCore::sendMsg(const QString &userPrompt) {
     //模型信息
     QJsonObject root;
     root.insert("model", m_model.isEmpty() ? "llama3" : m_model);
+    root.insert("stream", true);  //开启流式
 
     QJsonArray messagesToSend;
     if (!m_systemPrompt.isEmpty()) {
@@ -65,42 +66,101 @@ void AgentCore::sendMsg(const QString &userPrompt) {
         request.setRawHeader("Authorization", QString("Bearer %1").arg(m_apiKey).toUtf8());
     }
 
+    //清空缓冲区
+    m_streamingBuffer.clear();
+
+    //发送
     m_currentReply = m_networkManager->post(request, QJsonDocument(root).toJson());
-    connect(m_currentReply, &QNetworkReply::finished, this, [this]() {
-        onFinished(m_currentReply);
-        m_currentReply = nullptr;  //信号处理完后置空
-    });
+
+    //流式输出的信号
+    connect(m_currentReply, &QNetworkReply::readyRead, this, &AgentCore::onReadyRead);
+    connect(m_currentReply, &QNetworkReply::finished, this, &AgentCore::onFinished);
 }
 
-void AgentCore::onFinished(QNetworkReply *reply) {
-    if(!reply) return;
-    reply->deleteLater();
 
-    if(reply->error() == QNetworkReply::NoError) {
-        QByteArray responseData = reply->readAll();
-        QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
+// **************** 槽 ****************
+void AgentCore::onReadyRead()
+{
+    if(!m_currentReply)return;
 
-        QJsonArray choices = jsonResponse.object()["choices"].toArray();
-        if(!choices.isEmpty()) {
-            QString assistantText = choices[0].toObject()["message"].toObject()["content"].toString();
+    //只要有数据可读，就按行循环读取
+    while(m_currentReply->canReadLine())
+    {
+        //去掉空格
+        QByteArray line = m_currentReply->readLine().trimmed();
 
-            QJsonObject asstMsg;
-            asstMsg.insert("role", "assistant");
-            asstMsg.insert("content", assistantText);
-            m_history.append(asstMsg);
-
-            emit responseMsg(assistantText);
-        }
-        else if(reply->error() ==  QNetworkReply::OperationCanceledError)  //玩家手动中断网络请求
+        //去掉典型SSE格式的 "data: " 开头
+        if(line.startsWith("data"))
         {
-            qDebug()<<"Network request was aborted by user.";
-        }
-        else
-        {
-            emit errorMsg(QString("[网络错误] %1").arg(reply->errorString()));
+            QString dataStr = line.mid(6);
+
+            if(dataStr == "[DONE]")
+            {
+                return;  //传输正常结束
+            }
+
+            //行内容转为Json
+            QJsonDocument doc = QJsonDocument::fromJson(dataStr.toUtf8());
+            if (doc.isNull()) continue;
+
+            //流式Json结构通常是：choices[0].delta.content
+            QJsonObject delta = doc.object()["choices"].toArray()[0].toObject()["delta"].toObject();
+            if (delta.contains("content")) {
+                QString content = delta["content"].toString();
+                m_streamingBuffer += content;      //累加到缓冲区
+                emit partialResponseMsg(content);  //发送增量给UI
+            }
         }
     }
 }
+
+void AgentCore::onFinished() {
+    // 非流式输出
+    // if(!reply) return;
+    // reply->deleteLater();
+
+    // if(reply->error() == QNetworkReply::NoError) {
+    //     QByteArray responseData = reply->readAll();
+    //     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
+
+    //     QJsonArray choices = jsonResponse.object()["choices"].toArray();
+    //     if(!choices.isEmpty()) {
+    //         QString assistantText = choices[0].toObject()["message"].toObject()["content"].toString();
+
+    //         QJsonObject asstMsg;
+    //         asstMsg.insert("role", "assistant");
+    //         asstMsg.insert("content", assistantText);
+    //         m_history.append(asstMsg);
+
+    //         emit responseMsg(assistantText);
+    //     }
+    //     else if(reply->error() ==  QNetworkReply::OperationCanceledError)  //玩家手动中断网络请求
+    //     {
+    //         qDebug()<<"Network request was aborted by user.";
+    //     }
+    //     else
+    //     {
+    //         emit errorMsg(QString("[网络错误] %1").arg(reply->errorString()));
+    //     }
+    // }
+
+    if (m_currentReply->error() == QNetworkReply::NoError) {
+        //将AI完整的回答存入历史记录中
+        QJsonObject assistantMsg;
+        assistantMsg.insert("role", "assistant");
+        assistantMsg.insert("content", m_streamingBuffer);
+        m_history.append(assistantMsg);
+
+        //发送完整回答信号（可选，有些UI只需要partialResponseMsg）
+        emit responseMsg(m_streamingBuffer);
+    } else {
+        emit errorMsg("网络异常：" + m_currentReply->errorString());
+    }
+
+    m_currentReply->deleteLater();
+    m_currentReply = nullptr;
+}
+// ********************************
 
 ///
 /// \brief AgentCore::testConnection
@@ -175,7 +235,7 @@ void AgentCore::abort()
     }
 }
 
-// **************** AGENT优化逻辑 ****************
+// **************** AGENT优化 ****************
 ///
 /// \brief AgentCore::TriggerHistoryCompact
 /// \brief 判断并触发历史记录压缩
@@ -204,6 +264,11 @@ void AgentCore::TriggerHistoryCompact()
     requestSummary(toSummarize);
 }
 
+///
+/// \brief AgentCore::requestSummary
+/// \brief 历史记录压缩逻辑
+/// \param toSummarize
+///
 void AgentCore::requestSummary(const QJsonArray &toSummarize)
 {
     m_isSummarizing = true;

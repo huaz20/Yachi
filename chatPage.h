@@ -16,6 +16,11 @@
 class ChatPage : public QWidget {
     Q_OBJECT
 public:
+    //处理流式输出的增量文本
+    void handleStreamingResponse(const QString &text);
+    //结束流式输出并进行最终渲染
+    void finishStreamingResponse(const QString &fullMsg);
+
     explicit ChatPage(QWidget *parent = nullptr);
     void appendMessage(const QString &sender, const QString &msg, const QString &color);
     void appendSystemMsg(const QString &msg);
@@ -37,28 +42,34 @@ private:
     void setupBarModeUI();
 
     void toggleSidebar(bool expand);
-    void showContextMenu(const QPoint &pos); // 处理右键菜单
-    bool confirmDeletion(const QString &targetName); // 自定义无声确认弹窗
+    void showContextMenu(const QPoint &pos); //处理右键菜单
+    bool confirmDeletion(const QString &targetName); //删除确认
 
-    bool m_isFirstMessage = true; // 判断是否是当前对话的第一句话
+    //将内容包装在气泡形状的HTML中
+    QString wrapInBubble(const QString &content, bool isUser);
+
+    bool m_isFirstMessage = true; //判断是否是当前对话的第一句话
 
     // --- 核心布局控件 ---
     QStackedWidget *stackedWidget;
+    QString m_currentResponse;  //暂存当前AI正在输出的文本
+    bool m_isStreamingTyping = false;   //标记是否处于流式状态
+    int m_startPos = 0;  //用来记录流式输出起点的光标位置
 
     // --- 侧边栏控件 ---
     QWidget *sidebarContainer;
     QWidget *collapsedSidebar;
     QWidget *expandedSidebar;
-    QTreeWidget *chatSessionsTree; // 支持拖拽和层级的树状列表
+    QTreeWidget *chatSessionsTree; //支持拖拽和层级的树状列表
 
-    // --- 普通模式 UI 控件 ---
+    // --- 普通模式UI ---
     QWidget *normalWidget;
-    QTextBrowser *chatHistory; // 已修改为 QTextBrowser
+    QTextBrowser *chatHistory;
     QTextEdit *chatInput;
     QPushButton *sendBtn;
     QPushButton *barModeBtn;
 
-    // --- 酒吧模式 UI 控件 ---
+    // --- 酒吧模式UI ---
     QWidget *barWidget;
     QPushButton *exitBarModeBtn;
 };

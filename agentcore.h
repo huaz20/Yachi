@@ -30,13 +30,17 @@ public:
 
 signals:
     void responseMsg(const QString &reply);  //最终完整回复
+    void partialResponseMsg(const QString &text);  //流式的回复
     void errorMsg(const QString &error);
     void testFinishedMsg(bool success, const QString &msg);  //模型配置可用性检查结束的返回
 
 private slots:
-    void onFinished(QNetworkReply *reply);
+    void onReadyRead();  //处理流式增量数据
+    void onFinished();   //当流传输结束时
 
 private:
+    QString m_streamingBuffer;  //流式内容暂存区
+
     void TriggerHistoryCompact();  //压缩历史记录的逻辑
     void requestSummary(const QJsonArray &toSummarize);  //总结Json内容的接口
 
