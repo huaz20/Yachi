@@ -103,6 +103,7 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
     // --- 中间工具栏 ---
     QHBoxLayout *toolBar = new QHBoxLayout();
     langCombo = new QComboBox();
+    //选项
     langCombo->addItems({
         "简体中文",      // 中文
         "繁体中文",      // 下面按照Key A-Z的顺序排列
@@ -148,6 +149,7 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
         "Українська",   // 乌克兰语
         "Tiếng Việt",   // 越南语
     });
+    //固定大小
     langCombo->setFixedWidth(110);
 
     exportBtn = new QPushButton("导出当前结果 (.txt)");
@@ -241,7 +243,9 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
     connect(historyBtn, &QPushButton::clicked, this, &TranslationPage::showHistory);
     connect(stopBtn, &QPushButton::clicked, this, &TranslationPage::abortTranslation);
 
-    connect(m_agent, &AgentCore::responseMsg, this, &TranslationPage::onTranslationResult);
+    //流式输出的信号
+    connect(m_agent, &AgentCore::partialResponseMsg, this, &TranslationPage::onPartialTranslationResult);
+    connect(m_agent, &AgentCore::responseMsg, this, &TranslationPage::onChunkTranslationResult);
     connect(m_agent, &AgentCore::errorMsg, this, &TranslationPage::onTranslationError);
     // -------
 
@@ -413,7 +417,8 @@ void TranslationPage::doTranslate() {
     // 1.先分块
     //初始化状态
     m_accumulatedResult.clear();
-    //建议每块 1500-2000 字，留出足够的 Token 给 AI 输出
+    m_currentChunkResult.clear();
+    //建议每块1500-2000字，留出足够的Token给AI输出
     m_chunkList = splitText(text, 2000);
     //记录待翻译块数
     m_totalChunks = m_chunkList.size();
@@ -440,19 +445,28 @@ void TranslationPage::processNextChunk()
         translateBtn->setEnabled(true);
         btnStack->setCurrentIndex(0);  //恢复“开始翻译”按钮  //翻译过程结束有三个情况：1、翻译完成；2、错误执行回调；3、手动中止
 
+        //将最终文本再渲染一次，展示纯净结果，抹除残留的 "[正在翻译...]" 提示
+        targetText->setPlainText(m_accumulatedResult.trimmed());
+
         //保存到历史记录中
         saveToHistory(sourceText->toPlainText(), langCombo->currentText(), m_accumulatedResult);
         return;
     }
 
     //弹出当前要翻译的块
+    //获取当前块内容
     QString currentText = m_chunkList.takeFirst();
+    //计算当前块ID
     int currentId = m_totalChunks - m_chunkList.size();
 
+    //每次开始新块时，清空当前块的流式缓存
+    m_currentChunkResult.clear();
+
     //更新UI反馈
-    targetText->setPlainText(m_accumulatedResult + QString("\n\n[正在翻译第 %1/%2 块...]\n").arg(currentId).arg(m_totalChunks));
-    //自动滚动到底部，方便查看翻译进度
-    targetText->moveCursor(QTextCursor::End);
+    // //UI初始占位符（后面流式输出还会更新UI反馈）
+    // targetText->setPlainText(m_accumulatedResult + QString("\n\n[正在翻译第 %1/%2 块...]\n").arg(currentId).arg(m_totalChunks));
+    // //自动滚动到底部，方便查看翻译进度
+    // targetText->moveCursor(QTextCursor::End);
 
     //配置Agent
     //(注意：这里的配置，可以clearHistory防止旧块干扰新块，也可以在提示词里告诉AI这是一个连续的文本，也可以同时使用）
@@ -462,23 +476,41 @@ void TranslationPage::processNextChunk()
 }
 
 ///
-/// \brief TranslationPage::onTranslationResult
-/// \brief 翻译结束回调
+/// \brief TranslationPage::onPartialTranslationResult
+/// \brief 流式增量文本渲染
+/// \param text
+///
+void TranslationPage::onPartialTranslationResult(const QString &text)
+{
+    if(!m_isProcessing) return;
+
+    //累积当前块的流式增量
+    m_currentChunkResult += text;
+
+    //计算当前是第几块
+    int currentId = m_totalChunks - m_chunkList.size();
+
+    //拼接输出文本：以前完成的所有块 + 当前块的进度提示 + 当前块正在生成的文本
+    QString displayText = m_accumulatedResult +
+                          QString("\n\n[正在翻译第 %1/%2 块...]\n").arg(currentId).arg(m_totalChunks) +
+                          m_currentChunkResult;
+    //更新UI反馈
+    targetText->setPlainText(displayText);
+    targetText->moveCursor(QTextCursor::End);  //自动滚动到底部
+}
+
+///
+/// \brief TranslationPage::onChunkTranslationResult
+/// \brief 块文本结束回调
 /// \param result
 ///
-void TranslationPage::onTranslationResult(const QString &result) {
-    if (m_isProcessing) {
-        //累加结果
-        m_accumulatedResult += result + "\n";
-        targetText->setPlainText(m_accumulatedResult);
+void TranslationPage::onChunkTranslationResult(const QString &result) {
+    if(!m_isProcessing) return;
 
-        //递归处理下一块
-        processNextChunk();
-    }else
-    {
-        targetText->setPlainText(result);
-        translateBtn->setEnabled(true);
-    }
+    //累加结果
+    m_accumulatedResult += result + "\n";
+    //递归处理下一块
+    processNextChunk();
 }
 
 void TranslationPage::onTranslationError(const QString &error) {

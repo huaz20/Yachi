@@ -18,7 +18,10 @@ public:
 
 private slots:
     void doTranslate();
-    void onTranslationResult(const QString &result);
+    //流式增量文本渲染
+    void onPartialTranslationResult(const QString &text);
+    //块文本结束回调
+    void onChunkTranslationResult(const QString &result);
     void onTranslationError(const QString &error);
     void exportToTxt();
 
@@ -75,10 +78,11 @@ private:
     // ------
 
     // --- 分块翻译相关 ---
-    QStringList m_chunkList;      //待翻译的文本块队列
-    QString m_accumulatedResult;  //累加的结果
-    int m_totalChunks = 0;        //总块数，用于进度控制
-    bool m_isProcessing = false;  //是否正在进行分块翻译
+    QStringList m_chunkList;       //待翻译的文本块队列
+    QString m_accumulatedResult;   //累加的结果
+    QString m_currentChunkResult;  //暂存当前块的流式结果
+    int m_totalChunks = 0;         //总块数，用于进度控制
+    bool m_isProcessing = false;   //是否正在进行分块翻译
 
     //处理队列中的下一个块
     void processNextChunk();
