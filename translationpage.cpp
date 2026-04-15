@@ -477,7 +477,7 @@ void TranslationPage::processNextChunk()
 
     //配置Agent
     //(注意：这里的配置，可以clearHistory防止旧块干扰新块，也可以在提示词里告诉AI这是一个连续的文本，也可以同时使用）
-    m_agent->setSystemPrompt(promptEdit->toPlainText() + "\n备注：这是长文的一部分，请保持前后术语一致。严禁因为看到分隔符而停止翻译！");
+    m_agent->setSystemPrompt(promptEdit->toPlainText() + "\n\n【必须翻译为】：" + langCombo->currentText() + "\n备注：这是长文的一部分，请保持前后术语一致。严禁因为看到分隔符而停止翻译！");
     m_agent->clearHistory();
     m_agent->sendMsg(currentText);
 }
