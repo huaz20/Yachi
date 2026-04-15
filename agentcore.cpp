@@ -53,7 +53,7 @@ void AgentCore::sendMsg(const QString &userPrompt) {
         messagesToSend.append(val);         //History
     }
     root.insert("messages", messagesToSend);
-    root.insert("max_tokens",4096);  //显式要求模型输出更多内容
+    // root.insert("max_tokens",4096);      //显式要求模型输出更多内容
 
     // 4.发送POST请求
     QString endpoint = m_baseUrl;
@@ -236,6 +236,8 @@ void AgentCore::abort()
 }
 
 // **************** AGENT优化 ****************
+
+// **** 历史记录压缩 ****
 ///
 /// \brief AgentCore::TriggerHistoryCompact
 /// \brief 判断并触发历史记录压缩
@@ -314,4 +316,6 @@ void AgentCore::requestSummary(const QJsonArray &toSummarize)
         reply->deleteLater();
     });
 }
+// ********
+
 // ********************************
