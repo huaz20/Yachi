@@ -72,7 +72,14 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
     fetchBtn = new QPushButton("抓取并导入");
     fetchBtn->setFixedWidth(100);
     fetchBtn->setStyleSheet("background-color: #4caf50; color: white; font-weight: bold; height: 28px;");
-    filterStatusBtn = new QPushButton("✨智能过滤已开启");
+    filterStatusBtn = new QPushButton("✨智能过滤设置"
+                                      ""
+                                      ""
+                                      ""
+                                      ""
+                                      ""
+                                      ""
+                                      "");
     filterStatusBtn->setCursor(Qt::PointingHandCursor);
     filterStatusBtn->setStyleSheet(R"(
         QPushButton {
@@ -777,7 +784,7 @@ void TranslationPage::showFilterDetails()
     QVBoxLayout *aLayout = new QVBoxLayout(aiGroup);
     aLayout->setSpacing(10);
 
-    QLabel *aTip = new QLabel(R"(<p>如果抓取内容仍有杂质，可以使用AI过滤。</p>
+    QLabel *aTip = new QLabel(R"(<p><b>如果抓取内容仍有杂质</b>，可以使用AI过滤。</p>
                               <p>
                                 <b>使用方法</b>：请复制以下提示词在“翻译预设”中直接使用，或者合并到您的提示词中
                                 <span style="color:grey;">（您可以调整下面的提示词以更贴合您的使用）</span>
@@ -855,7 +862,7 @@ void TranslationPage::showFilterDetails()
         m_hardFilterEnabled = toggleBox->isChecked();
         //更新UI按钮显示
         if(m_hardFilterEnabled) {
-            filterStatusBtn->setText("✨智能过滤已开启");
+            filterStatusBtn->setText("✨智能过滤设置");
             filterStatusBtn->setStyleSheet("color: #2e7d32; border: 1px solid #a5d6a7; font-weight: bold; background: #e8f5e9; padding: 2px 8px; border-radius: 4px;");
         } else {
             filterStatusBtn->setText("⚪过滤已关闭");
