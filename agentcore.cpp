@@ -144,7 +144,13 @@ void AgentCore::onFinished() {
     //     }
     // }
 
-    if (m_currentReply->error() == QNetworkReply::NoError) {
+    //局部变量暂存网络句柄
+    QNetworkReply *reply = m_currentReply;
+    m_currentReply = nullptr;
+
+    if(!reply) return;
+
+    if (reply->error() == QNetworkReply::NoError) {
         //将AI完整的回答存入历史记录中
         QJsonObject assistantMsg;
         assistantMsg.insert("role", "assistant");
@@ -154,11 +160,11 @@ void AgentCore::onFinished() {
         //发送完整回答信号（可选，有些UI只需要partialResponseMsg）
         emit responseMsg(m_streamingBuffer);
     } else {
-        emit errorMsg("网络异常：" + m_currentReply->errorString());
+        emit errorMsg("网络异常：" + reply->errorString());
     }
 
-    m_currentReply->deleteLater();
-    m_currentReply = nullptr;
+    //销毁本轮旧的网络请求
+    reply->deleteLater();
 }
 // ********************************
 
