@@ -43,9 +43,14 @@ MainWindow::MainWindow(QWidget *parent)
     QTimer::singleShot(100, this, [this](){
         auto configs = homePageWidget->getAllConfigs();
         if(!configs.isEmpty() && !configs[0].baseUrl.isEmpty()){
-            m_chatAgent->setConfig(configs[0].baseUrl, configs[0].apiKey, configs[0].model);
-            m_translateAgent->setConfig(configs[0].baseUrl, configs[0].apiKey, configs[0].model);
-            m_titleAgent->setConfig(configs[0].baseUrl, configs[0].apiKey, configs[0].model);
+            QList<ModelToUseInfo> modelConfigs;
+            for(const auto& c : configs) {
+                modelConfigs.append({c.baseUrl, c.apiKey, c.model});
+            }
+
+            m_chatAgent->setModelConfig(modelConfigs);
+            m_translateAgent->setModelConfig(modelConfigs);
+            m_titleAgent->setModelConfig(modelConfigs);
         }
     });
 }
@@ -119,38 +124,65 @@ void MainWindow::setupUI()
     //响应首页配置保存并应用到所有Agent
     connect(homePageWidget, &HomePage::settingsApplied, this, [this](){
         auto configs = homePageWidget->getAllConfigs();
-        if(!configs.isEmpty()){
-            auto c = configs[0];
+        if(configs.isEmpty()) return;
 
-            // --- 进行模型配置可用性的检查 ---
-            // 1.UI反馈
-            QProgressDialog *pd = new QProgressDialog("正在验证连接...", "取消", 0, 0, this);
-            pd->setWindowModality(Qt::WindowModal);
-            pd->show();
-            // 2.检查逻辑
-            //断开之前的连接防止干扰
+        //UI层中读取到的模型信息数据结构 -> 逻辑层需要的模型信息数据结构
+        QList<ModelToUseInfo> modelConfigs;
+        for(const auto& c : configs) {
+            modelConfigs.append({c.baseUrl, c.apiKey, c.model});
+        }
+
+        // --- 模型可用性验证 ---
+        //UI反馈
+        QProgressDialog *pd = new QProgressDialog("正在全链路验证模型...", "取消", 0, modelConfigs.size(), this);
+        pd->setWindowModality(Qt::WindowModal);
+        pd->show();
+
+        //定义一个递归验证的 Lambda 闭包
+        //使用 std::function 包装以便在 Lambda 内部引用自身
+        auto validateNext = std::make_shared<std::function<void(int)>>();
+
+        *validateNext = [this, pd, modelConfigs, validateNext](int index) {
+            if (pd->wasCanceled()) return;  //用户取消
+
+            //UI反馈
+            pd->setValue(index);
+            pd->setLabelText(QString("正在验证模型 #%1...").arg(index + 1));
+
+            //断开旧连接，防止干扰
             disconnect(m_chatAgent, &AgentCore::testFinishedMsg, nullptr, nullptr);
 
-            connect(m_chatAgent, &AgentCore::testFinishedMsg, this, [this, pd, c](bool success, const QString &msg){
-                    pd->close();
-                    pd->deleteLater();
-
-                    if(success) {
-                        //验证通过，正式应用配置
-                        m_chatAgent->setConfig(c.baseUrl, c.apiKey, c.model);
-                        m_translateAgent->setConfig(c.baseUrl, c.apiKey, c.model);
-                        m_titleAgent->setConfig(c.baseUrl, c.apiKey, c.model);
-
-                        QMessageBox::information(this, "配置成功", "连接测试通过，配置已生效！");
+            //绑定单次验证结果
+            connect(m_chatAgent, &AgentCore::testFinishedMsg, this, [=](bool success, const QString &msg) {
+                if (success) {
+                    if (index + 1 < modelConfigs.size()) {
+                        //验证下一个
+                        (*validateNext)(index + 1);
                     } else {
-                        //验证失败，不保存配置，并返回报错
-                        QMessageBox::critical(this, "连接失败", "无法保存配置，原因如下：\n\n" + msg);
+                        //全部验证通过！
+                        pd->close();
+                        m_chatAgent->setModelConfig(modelConfigs);
+                        m_translateAgent->setModelConfig(modelConfigs);
+                        m_titleAgent->setModelConfig(modelConfigs);
+                        QMessageBox::information(this, "成功", "全链路验证通过，配置已生效！");
                     }
+                } else {
+                    //其中一个失败
+                    pd->close();
+                    QMessageBox::critical(this, "验证失败", QString("模型 #%1 (%2) 验证失败：\n\n%3")
+                                                                .arg(index + 1).arg(modelConfigs[index].model).arg(msg));
+                }
             });
 
-            m_chatAgent->testConnection(c.baseUrl,c.apiKey,c.model);
-            // -------
-        }
+            //发起当前索引的测试
+            m_chatAgent->testConnection(modelConfigs[index].baseUrl,
+                                        modelConfigs[index].apiKey,
+                                        modelConfigs[index].model);
+        };
+
+        // 从第 0 个开始启动
+        (*validateNext)(0);
+        // ------
     });
 }
 

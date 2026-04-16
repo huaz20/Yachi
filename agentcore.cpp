@@ -6,10 +6,34 @@ AgentCore::AgentCore(QObject *parent) : QObject(parent) {
     m_networkManager = new QNetworkAccessManager(this);
 }
 
-void AgentCore::setConfig(const QString &baseUrl, const QString &apiKey, const QString &model) {
-    m_baseUrl = baseUrl;
-    m_apiKey = apiKey;
-    m_model = model;
+void AgentCore::setModelConfig(const QList<ModelToUseInfo> &configs) {
+    m_modelConfigList = configs;
+
+    //优先使用主模型
+    m_currentConfigIndex = 0;
+
+    if(!configs.isEmpty())
+    {
+        m_baseUrl = configs[0].baseUrl;
+        m_apiKey = configs[0].apiKey;
+        m_model = configs[0].model;
+    }
+}
+
+///
+/// \brief AgentCore::setModelConfigWithIndex
+/// \brief 根据索引设置模型配置
+/// \param index 要切换的模型的m_modelConfigList索引
+///
+void AgentCore::setModelConfigWithIndex(const int &index)
+{
+    m_currentConfigIndex = index;
+
+    //更新模型配置
+    ModelToUseInfo currentConfig = m_modelConfigList[m_currentConfigIndex];
+    m_baseUrl = currentConfig.baseUrl;
+    m_apiKey = currentConfig.apiKey;
+    m_model = currentConfig.model;
 }
 
 void AgentCore::setSystemPrompt(const QString &prompt) {
@@ -20,9 +44,14 @@ void AgentCore::clearHistory() {
     m_history = QJsonArray(); // 重置为空
 }
 
+///
+/// \brief AgentCore::sendMsg
+/// \brief 发送消息
+/// \param userPrompt
+///
 void AgentCore::sendMsg(const QString &userPrompt) {
-    if(m_baseUrl.isEmpty()) {
-        emit errorMsg("[Error] 尚未配置 Base URL！(本地模型通常为 http://localhost:11434/v1)");
+    if(m_modelConfigList.isEmpty()) {
+        emit errorMsg("[Error] 尚未配置任何模型！");
         return;
     }
     if(userPrompt.trimmed().isEmpty())return;
@@ -36,7 +65,20 @@ void AgentCore::sendMsg(const QString &userPrompt) {
     userMsg.insert("content", userPrompt);
     m_history.append(userMsg);
 
-    // 3.构建完整的请求（模型信息 + System Prompt + History）
+    // 3.每次发送新消息，强制切回主模型
+    setModelConfigWithIndex(0);
+}
+
+///
+/// \brief AgentCore::sendWebRequest
+/// \brief 发送网络请求
+///
+void AgentCore::sendWebRequest()
+{
+    //无可用模型，返回
+    if(m_currentConfigIndex >= m_modelConfigList.size()) return;
+
+    // 1.构建完整的请求（模型信息 + System Prompt + History）
     //模型信息
     QJsonObject root;
     root.insert("model", m_model.isEmpty() ? "llama3" : m_model);
@@ -55,28 +97,29 @@ void AgentCore::sendMsg(const QString &userPrompt) {
     root.insert("messages", messagesToSend);
     // root.insert("max_tokens",4096);      //显式要求模型输出更多内容
 
-    // 4.发送POST请求
+    // 2.处理 URL EndPoint
     QString endpoint = m_baseUrl;
     if(!endpoint.endsWith("/")) endpoint += "/";
     endpoint += "chat/completions";
 
+    // 3.配置网络头
     QNetworkRequest request((QUrl(endpoint)));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     if (!m_apiKey.isEmpty()) {
         request.setRawHeader("Authorization", QString("Bearer %1").arg(m_apiKey).toUtf8());
     }
 
-    //清空缓冲区
+    // 4.清空缓冲区
     m_streamingBuffer.clear();
 
-    //发送
+    // 5.发送POST请求
     m_currentReply = m_networkManager->post(request, QJsonDocument(root).toJson());
 
+    // 6.绑定信号
     //流式输出的信号
     connect(m_currentReply, &QNetworkReply::readyRead, this, &AgentCore::onReadyRead);
     connect(m_currentReply, &QNetworkReply::finished, this, &AgentCore::onFinished);
 }
-
 
 // **************** 槽 ****************
 void AgentCore::onReadyRead()
@@ -159,8 +202,24 @@ void AgentCore::onFinished() {
 
         //发送完整回答信号（可选，有些UI只需要partialResponseMsg）
         emit responseMsg(m_streamingBuffer);
-    } else {
-        emit errorMsg("网络异常：" + reply->errorString());
+    }
+    else
+    {
+        if(m_currentConfigIndex + 1 < m_modelConfigList.size())
+        {
+            //尝试切换下一个模型
+            m_currentConfigIndex++;
+
+            emit errorMsg(QString("模型 [%1] 连接失败，正在自动切换至备用模型 #%2...")
+                              .arg(m_model).arg(m_currentConfigIndex));
+
+            //重新发起网络请求
+            sendWebRequest();
+        }
+        else
+        {
+            emit errorMsg(QString("[网络错误] 所有配置模型均已失效: %1").arg(reply->errorString()));
+        }
     }
 
     //销毁本轮旧的网络请求
