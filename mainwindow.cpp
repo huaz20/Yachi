@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     loadVendorMapFromJson();
 
     // --- 初始化各功能Agent---
-    //（不共用1个是为了让上下文不串联）
+    //实例（不共用1个，以防上下文串联）
     m_chatAgent = new AgentCore(this);
     m_chatAgent->setSystemPrompt("和用户进行有用的、友善的聊天吧。");
 
@@ -21,13 +21,20 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_titleAgent = new AgentCore(this);
     m_titleAgent->setSystemPrompt("你是一个标题生成助手，请根据用户的输入，用10个字以内的短语概括该对话的主题，禁止回复其他任何客套话，禁止加标点符号！");
-    // ------
 
-    //设置工作目录
+    //功能配置
+    //显式设置工作目录
     QString path = QDir(QCoreApplication::applicationDirPath()).filePath("sys");
+
     m_chatAgent->setWorkspacePath(path);
+    m_chatAgent->setYachiMemoryEnabled(true);  //开启持久化记忆
+
     m_translateAgent->setWorkspacePath(path);
+    m_translateAgent->setYachiMemoryEnabled(false);  //关闭持久化记忆
+
     m_titleAgent->setWorkspacePath(path);
+    m_titleAgent->setYachiMemoryEnabled(false);  //关闭持久化记忆
+    // ------
 
     //UI初始化
     setupUI();

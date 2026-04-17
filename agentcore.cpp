@@ -401,6 +401,16 @@ void AgentCore::requestSummary(const QJsonArray &toSummarize)
 // **** 系统提示词、及持久化记忆 ****
 
 ///
+/// \brief setPersistentMemoryEnabled
+/// \brief 开闭持久化记忆开关
+/// \param enabled
+///
+void AgentCore::setYachiMemoryEnabled(bool _status)
+{
+    m_YachiMemoryEnabled = _status;
+}
+
+///
 /// \brief AgentCore::getYachiMemory
 /// \brief 读取持久化记忆文件
 /// \details 持久化记忆文件名字设定为YACHI.md
@@ -441,13 +451,16 @@ QString AgentCore::getSystemPrompt() {
     sysPrompt += QString("- 操作系统: %1\n").arg(QSysInfo::prettyProductName());
 
     // 2.注入持久化记忆(YACHI.md)
-    QString yachiMemory = getYachiMemory();
-    if (!yachiMemory.isEmpty()) {
-        sysPrompt += "\n\n[项目长期记忆 (YACHI.md)]\n";
-        sysPrompt += "以下是当前工作区的核心规范、任务进度和专有术语。在回答时，请务必参考并严格遵守以下规则：\n";
-        sysPrompt += "----------------------------------------\n";
-        sysPrompt += yachiMemory + "\n";
-        sysPrompt += "----------------------------------------\n";
+    if(m_YachiMemoryEnabled)  //开关控制
+    {
+        QString yachiMemory = getYachiMemory();
+        if (!yachiMemory.isEmpty()) {
+            sysPrompt += "\n\n[项目长期记忆 (YACHI.md)]\n";
+            sysPrompt += "在回答时，请务必参考并严格遵守其中内容：\n";
+            sysPrompt += "----------------------------------------\n";
+            sysPrompt += yachiMemory + "\n";
+            sysPrompt += "----------------------------------------\n";
+        }
     }
 
     return sysPrompt;

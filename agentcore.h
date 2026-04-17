@@ -45,6 +45,9 @@ public:
     //设置当前工作目录
     void setWorkspacePath(const QString &path);
 
+    //开闭持久化记忆开关
+    void setYachiMemoryEnabled(bool _status);
+
 signals:
     void responseMsg(const QString &reply);        //最终完整回复
     void partialResponseMsg(const QString &text);  //流式的回复
@@ -102,6 +105,9 @@ private:
 
     //当前工作目录
     QString m_workspacePath;
+
+    //是否在系统提示词里注入持久化记忆（是否开启持久化记忆）
+    bool m_YachiMemoryEnabled = true;  //默认开启
     // ------
 };
 
