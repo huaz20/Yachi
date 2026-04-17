@@ -45,6 +45,8 @@ public:
     //设置当前工作目录
     void setWorkspacePath(const QString &path);
 
+    //开闭环境感知开关
+    void setEnvSenseEnabled(bool _status);
     //开闭持久化记忆开关
     void setYachiMemoryEnabled(bool _status);
 
@@ -101,11 +103,13 @@ private:
     //读取持久化记忆文件
     QString getYachiMemory();
     //获取系统提示词
-    QString getSystemPrompt();
+    QString buildFinalSystemPrompt();
 
     //当前工作目录
     QString m_workspacePath;
 
+    //是否在系统提示词里注入环境感知信息（是否开启环境感知）
+    bool m_envSenseEnabled = true; //默认开启
     //是否在系统提示词里注入持久化记忆（是否开启持久化记忆）
     bool m_YachiMemoryEnabled = true;  //默认开启
     // ------

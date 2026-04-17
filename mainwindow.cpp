@@ -28,12 +28,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_chatAgent->setWorkspacePath(path);
     m_chatAgent->setYachiMemoryEnabled(true);  //开启持久化记忆
+    m_chatAgent->setEnvSenseEnabled(true);     //开启环境感知
 
     m_translateAgent->setWorkspacePath(path);
     m_translateAgent->setYachiMemoryEnabled(false);  //关闭持久化记忆
+    m_translateAgent->setEnvSenseEnabled(false);     //关闭环境感知
 
     m_titleAgent->setWorkspacePath(path);
     m_titleAgent->setYachiMemoryEnabled(false);  //关闭持久化记忆
+    m_titleAgent->setEnvSenseEnabled(false);     //关闭环境感知
     // ------
 
     //UI初始化

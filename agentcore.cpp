@@ -89,11 +89,11 @@ void AgentCore::sendWebRequest()
 
     QJsonArray messagesToSend;
 
-    m_systemPrompt = getSystemPrompt();
-    if (!m_systemPrompt.isEmpty()) {
+    QString finalSystemPrompt = buildFinalSystemPrompt();
+    if (!finalSystemPrompt.isEmpty()) {
         QJsonObject sysMsg;                 //System Prompt
         sysMsg.insert("role", "system");
-        sysMsg.insert("content", m_systemPrompt);
+        sysMsg.insert("content", finalSystemPrompt);
         messagesToSend.append(sysMsg);
     }
     for(auto val : m_history) {
@@ -410,6 +410,11 @@ void AgentCore::setYachiMemoryEnabled(bool _status)
     m_YachiMemoryEnabled = _status;
 }
 
+void AgentCore::setEnvSenseEnabled(bool _status)
+{
+    m_envSenseEnabled = _status;
+}
+
 ///
 /// \brief AgentCore::getYachiMemory
 /// \brief 读取持久化记忆文件
@@ -437,33 +442,35 @@ QString AgentCore::getYachiMemory() {
 }
 
 ///
-/// \brief AgentCore::getSystemPrompt
-/// \brief 获取系统提示词
-/// \return
+/// \brief AgentCore::buildFinalSystemPrompt
+/// \brief 组装最终的系统提示词
+/// \return Final System Prompt
 ///
-QString AgentCore::getSystemPrompt() {
+QString AgentCore::buildFinalSystemPrompt() {
+    // 1.以外界通过setSystemPrompt设置的提示词作为开头
+    QString finalPrompt = m_systemPrompt;
 
-    QString sysPrompt;
-
-    // 1.注入动态系统环境信息（让AI感知一定时间和空间）
-    sysPrompt += "\n\n[系统环境状态]\n";
-    sysPrompt += QString("- 当前系统时间: %1\n").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
-    sysPrompt += QString("- 操作系统: %1\n").arg(QSysInfo::prettyProductName());
-
-    // 2.注入持久化记忆(YACHI.md)
-    if(m_YachiMemoryEnabled)  //开关控制
+    // 2.注入动态系统环境信息
+    if (m_envSenseEnabled)  //开关控制
     {
+        finalPrompt += "\n\n[系统环境状态]\n";
+        finalPrompt += QString("- 当前系统时间: %1\n").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
+        finalPrompt += QString("- 操作系统: %1\n").arg(QSysInfo::prettyProductName());
+    }
+
+    // 3.注入持久化记忆
+    if (m_YachiMemoryEnabled) {
         QString yachiMemory = getYachiMemory();
         if (!yachiMemory.isEmpty()) {
-            sysPrompt += "\n\n[项目长期记忆 (YACHI.md)]\n";
-            sysPrompt += "在回答时，请务必参考并严格遵守其中内容：\n";
-            sysPrompt += "----------------------------------------\n";
-            sysPrompt += yachiMemory + "\n";
-            sysPrompt += "----------------------------------------\n";
+            finalPrompt += "\n\n[项目长期记忆 (YACHI.md)]\n";
+            finalPrompt += "在回答时，请务必参考并严格遵守其中内容：\n";
+            finalPrompt += "----------------------------------------\n";
+            finalPrompt += yachiMemory + "\n";
+            finalPrompt += "----------------------------------------\n";
         }
     }
 
-    return sysPrompt;
+    return finalPrompt.trimmed();
 }
 
 // ********
