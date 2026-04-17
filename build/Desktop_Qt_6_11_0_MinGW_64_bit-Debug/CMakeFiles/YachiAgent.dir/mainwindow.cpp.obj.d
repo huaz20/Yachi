@@ -524,17 +524,9 @@ CMakeFiles/YachiAgent.dir/mainwindow.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonparseerror.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QJsonObject \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonobject.h \
- C:\Programming\cpp\Yachi\translationpage.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/QGroupBox \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgroupbox.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/QMessageBox \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qmessagebox.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialogbuttonbox.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/QTimer \
- C:/Qt/6.11.0/mingw_64/include/QtCore/qtimer.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/QFile \
- C:/Qt/6.11.0/mingw_64/include/QtCore/qfile.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QDir \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qdir.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qdirlisting.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qfiledevice.h \
  C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/filesystem \
  C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/fs_fwd.h \
@@ -566,6 +558,20 @@ CMakeFiles/YachiAgent.dir/mainwindow.cpp.obj: \
  C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/codecvt \
  C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/fs_dir.h \
  C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/fs_ops.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qfile.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qfileinfo.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qtimezone.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QFile \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QCoreApplication \
+ C:\Programming\cpp\Yachi\translationpage.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QGroupBox \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgroupbox.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QMessageBox \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qmessagebox.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialogbuttonbox.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QTimer \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qtimer.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QJsonDocument \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QProgressDialog \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qprogressdialog.h

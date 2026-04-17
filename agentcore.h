@@ -6,6 +6,9 @@
 #include <QtNetwork/QNetworkReply>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QDir>
+#include <QFile>
+#include <QCoreApplication>
 
 //能被Agent使用的模型所需的信息
 struct ModelToUseInfo
@@ -25,18 +28,22 @@ public:
     void setModelConfig(const QList<ModelToUseInfo> &configs);
     //设置提示词
     void setSystemPrompt(const QString &prompt);
+
     //清空历史记忆
     void clearHistory();
+
     //发送消息接口
     void sendMsg(const QString &userPrompt);
     //发送网络请求逻辑
     void sendWebRequest();
+    //中止当前网络请求
+    void abort();
 
     //模型可用性检查
     void testConnection(const QString &baseUrl, const QString &apiKey, const QString &model);
 
-    //中止当前网络请求
-    void abort();
+    //设置当前工作目录
+    void setWorkspacePath(const QString &path);
 
 signals:
     void responseMsg(const QString &reply);        //最终完整回复
@@ -85,6 +92,16 @@ private:
      * 因为压缩是在sendMsg里自动检测并执行的，所以一般还会加1条sendMsg的返回结果，即AI的回复；
      * 4（保留的上下文）+1（历史总结）+1（当前提问）+1（当前回答） = 7
      */
+    // ------
+
+    // --- 系统提示词、及持久化记忆 ---
+    //读取持久化记忆文件
+    QString getYachiMemory();
+    //获取系统提示词
+    QString getSystemPrompt();
+
+    //当前工作目录
+    QString m_workspacePath;
     // ------
 };
 

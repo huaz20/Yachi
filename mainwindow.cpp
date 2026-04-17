@@ -21,6 +21,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_titleAgent = new AgentCore(this);
     m_titleAgent->setSystemPrompt("你是一个标题生成助手，请根据用户的输入，用10个字以内的短语概括该对话的主题，禁止回复其他任何客套话，禁止加标点符号！");
+    // ------
+
+    //设置工作目录
+    QString path = QDir(QCoreApplication::applicationDirPath()).filePath("sys");
+    m_chatAgent->setWorkspacePath(path);
+    m_translateAgent->setWorkspacePath(path);
+    m_titleAgent->setWorkspacePath(path);
 
     //UI初始化
     setupUI();

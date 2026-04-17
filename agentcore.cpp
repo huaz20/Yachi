@@ -67,6 +67,9 @@ void AgentCore::sendMsg(const QString &userPrompt) {
 
     // 3.每次发送新消息，强制切回主模型
     setModelConfigWithIndex(0);
+
+    // 4.发送网络请求
+    sendWebRequest();
 }
 
 ///
@@ -85,6 +88,8 @@ void AgentCore::sendWebRequest()
     root.insert("stream", true);  //开启流式
 
     QJsonArray messagesToSend;
+
+    m_systemPrompt = getSystemPrompt();
     if (!m_systemPrompt.isEmpty()) {
         QJsonObject sysMsg;                 //System Prompt
         sysMsg.insert("role", "system");
@@ -300,6 +305,16 @@ void AgentCore::abort()
     }
 }
 
+///
+/// \brief AgentCore::setWorkspacePath
+/// \brief 设置当前工作目录
+/// \param path
+///
+void AgentCore::setWorkspacePath(const QString &path) {
+    m_workspacePath = path;
+    qDebug() << "Agent workspace set to:" << m_workspacePath;
+}
+
 // **************** AGENT优化 ****************
 
 // **** 历史记录压缩 ****
@@ -381,6 +396,63 @@ void AgentCore::requestSummary(const QJsonArray &toSummarize)
         reply->deleteLater();
     });
 }
+// ********
+
+// **** 系统提示词、及持久化记忆 ****
+
+///
+/// \brief AgentCore::getYachiMemory
+/// \brief 读取持久化记忆文件
+/// \details 持久化记忆文件名字设定为YACHI.md
+/// \return 持久化记忆文件中的内容
+///
+QString AgentCore::getYachiMemory() {
+    // 1.拼接持久化记忆文档的路径
+    //如果工作目录为空，使用程序所在目录
+    QDir dir(m_workspacePath.isEmpty() ? QCoreApplication::applicationDirPath() : m_workspacePath);
+    QFile memoryFile(dir.filePath("YACHI.md"));
+
+    // 2.尝试读取文件
+    if (memoryFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QString content = QString::fromUtf8(memoryFile.readAll());
+        memoryFile.close();
+
+        qDebug()<<"Have got Yachi's memory.";
+
+        return content;
+    }
+
+    qDebug()<<"[Warning] Can't find Yachi's memory.";
+    return ""; //如果没有找到文件，返回空
+}
+
+///
+/// \brief AgentCore::getSystemPrompt
+/// \brief 获取系统提示词
+/// \return
+///
+QString AgentCore::getSystemPrompt() {
+
+    QString sysPrompt;
+
+    // 1.注入动态系统环境信息（让AI感知一定时间和空间）
+    sysPrompt += "\n\n[系统环境状态]\n";
+    sysPrompt += QString("- 当前系统时间: %1\n").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
+    sysPrompt += QString("- 操作系统: %1\n").arg(QSysInfo::prettyProductName());
+
+    // 2.注入持久化记忆(YACHI.md)
+    QString yachiMemory = getYachiMemory();
+    if (!yachiMemory.isEmpty()) {
+        sysPrompt += "\n\n[项目长期记忆 (YACHI.md)]\n";
+        sysPrompt += "以下是当前工作区的核心规范、任务进度和专有术语。在回答时，请务必参考并严格遵守以下规则：\n";
+        sysPrompt += "----------------------------------------\n";
+        sysPrompt += yachiMemory + "\n";
+        sysPrompt += "----------------------------------------\n";
+    }
+
+    return sysPrompt;
+}
+
 // ********
 
 // ********************************
