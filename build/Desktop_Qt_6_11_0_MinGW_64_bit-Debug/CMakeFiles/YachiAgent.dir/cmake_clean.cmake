@@ -20,6 +20,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/YachiAgent.dir/modelconfigwidget.cpp.obj.d"
   "CMakeFiles/YachiAgent.dir/translationpage.cpp.obj"
   "CMakeFiles/YachiAgent.dir/translationpage.cpp.obj.d"
+  "CMakeFiles/YachiAgent.dir/voicepage.cpp.obj"
+  "CMakeFiles/YachiAgent.dir/voicepage.cpp.obj.d"
   "YachiAgent.exe"
   "YachiAgent.exe.manifest"
   "YachiAgent.pdb"

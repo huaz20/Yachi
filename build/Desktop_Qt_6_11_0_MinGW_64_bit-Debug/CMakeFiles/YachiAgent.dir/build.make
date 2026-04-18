@@ -203,11 +203,26 @@ CMakeFiles/YachiAgent.dir/translationpage.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/YachiAgent.dir/translationpage.cpp.s"
 	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Programming\cpp\Yachi\translationpage.cpp -o CMakeFiles\YachiAgent.dir\translationpage.cpp.s
 
+CMakeFiles/YachiAgent.dir/voicepage.cpp.obj: CMakeFiles/YachiAgent.dir/flags.make
+CMakeFiles/YachiAgent.dir/voicepage.cpp.obj: CMakeFiles/YachiAgent.dir/includes_CXX.rsp
+CMakeFiles/YachiAgent.dir/voicepage.cpp.obj: C:/Programming/cpp/Yachi/voicepage.cpp
+CMakeFiles/YachiAgent.dir/voicepage.cpp.obj: CMakeFiles/YachiAgent.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/YachiAgent.dir/voicepage.cpp.obj"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/YachiAgent.dir/voicepage.cpp.obj -MF CMakeFiles\YachiAgent.dir\voicepage.cpp.obj.d -o CMakeFiles\YachiAgent.dir\voicepage.cpp.obj -c C:\Programming\cpp\Yachi\voicepage.cpp
+
+CMakeFiles/YachiAgent.dir/voicepage.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/YachiAgent.dir/voicepage.cpp.i"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Programming\cpp\Yachi\voicepage.cpp > CMakeFiles\YachiAgent.dir\voicepage.cpp.i
+
+CMakeFiles/YachiAgent.dir/voicepage.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/YachiAgent.dir/voicepage.cpp.s"
+	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Programming\cpp\Yachi\voicepage.cpp -o CMakeFiles\YachiAgent.dir\voicepage.cpp.s
+
 CMakeFiles/YachiAgent.dir/YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp.obj: CMakeFiles/YachiAgent.dir/flags.make
 CMakeFiles/YachiAgent.dir/YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp.obj: CMakeFiles/YachiAgent.dir/includes_CXX.rsp
 CMakeFiles/YachiAgent.dir/YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp.obj: YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp
 CMakeFiles/YachiAgent.dir/YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp.obj: CMakeFiles/YachiAgent.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/YachiAgent.dir/YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/YachiAgent.dir/YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp.obj"
 	C:\Qt\Tools\mingw1310_64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/YachiAgent.dir/YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp.obj -MF CMakeFiles\YachiAgent.dir\YachiAgent_autogen\EWIEGA46WW\qrc_res.cpp.obj.d -o CMakeFiles\YachiAgent.dir\YachiAgent_autogen\EWIEGA46WW\qrc_res.cpp.obj -c C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW\qrc_res.cpp
 
 CMakeFiles/YachiAgent.dir/YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp.i: cmake_force
@@ -228,6 +243,7 @@ YachiAgent_OBJECTS = \
 "CMakeFiles/YachiAgent.dir/modelconfigwidget.cpp.obj" \
 "CMakeFiles/YachiAgent.dir/chatpage.cpp.obj" \
 "CMakeFiles/YachiAgent.dir/translationpage.cpp.obj" \
+"CMakeFiles/YachiAgent.dir/voicepage.cpp.obj" \
 "CMakeFiles/YachiAgent.dir/YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp.obj"
 
 # External object files for target YachiAgent
@@ -241,9 +257,11 @@ YachiAgent.exe: CMakeFiles/YachiAgent.dir/homepage.cpp.obj
 YachiAgent.exe: CMakeFiles/YachiAgent.dir/modelconfigwidget.cpp.obj
 YachiAgent.exe: CMakeFiles/YachiAgent.dir/chatpage.cpp.obj
 YachiAgent.exe: CMakeFiles/YachiAgent.dir/translationpage.cpp.obj
+YachiAgent.exe: CMakeFiles/YachiAgent.dir/voicepage.cpp.obj
 YachiAgent.exe: CMakeFiles/YachiAgent.dir/YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp.obj
 YachiAgent.exe: CMakeFiles/YachiAgent.dir/build.make
 YachiAgent.exe: C:/Qt/6.11.0/mingw_64/lib/libQt6Widgets.a
+YachiAgent.exe: C:/Qt/6.11.0/mingw_64/lib/libQt6Multimedia.a
 YachiAgent.exe: C:/Qt/6.11.0/mingw_64/lib/libQt6Network.a
 YachiAgent.exe: C:/Qt/6.11.0/mingw_64/lib/libQt6Gui.a
 YachiAgent.exe: C:/Qt/6.11.0/mingw_64/lib/libQt6Core.a
@@ -251,7 +269,7 @@ YachiAgent.exe: C:/Qt/6.11.0/mingw_64/lib/libQt6EntryPoint.a
 YachiAgent.exe: CMakeFiles/YachiAgent.dir/linkLibs.rsp
 YachiAgent.exe: CMakeFiles/YachiAgent.dir/objects1.rsp
 YachiAgent.exe: CMakeFiles/YachiAgent.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Linking CXX executable YachiAgent.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX executable YachiAgent.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\YachiAgent.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

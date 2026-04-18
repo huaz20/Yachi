@@ -5,6 +5,8 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Programming/cpp/Yachi/homepage.h \
   C:/Programming/cpp/Yachi/modelconfigwidget.h \
   C:/Programming/cpp/Yachi/translationpage.h \
+  C:/Programming/cpp/Yachi/voicepage.h \
+  C:/Qt/6.11.0/mingw_64/include/QtCore/QBuffer \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QCoreApplication \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QDir \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QFile \
@@ -48,6 +50,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtCore/qbasicatomic.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qbasictimer.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qbindingstorage.h \
+  C:/Qt/6.11.0/mingw_64/include/QtCore/qbuffer.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qbytearray.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qbytearrayalgorithms.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qbytearraylist.h \
@@ -232,6 +235,15 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtGui/qvectornd.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qwindowdefs.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qwindowdefs_win.h \
+  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/QAudioOutput \
+  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/QMediaPlayer \
+  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qaudio.h \
+  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qaudiooutput.h \
+  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qmediaplayer.h \
+  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qtaudio.h \
+  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qtmultimedia-config.h \
+  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qtmultimediaexports.h \
+  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qtmultimediaglobal.h \
   C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkAccessManager \
   C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkReply \
   C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkRequest \
@@ -253,8 +265,11 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtNetwork/qtnetwork-config.h \
   C:/Qt/6.11.0/mingw_64/include/QtNetwork/qtnetworkexports.h \
   C:/Qt/6.11.0/mingw_64/include/QtNetwork/qtnetworkglobal.h \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QCheckBox \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QComboBox \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDoubleSpinBox \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QFormLayout \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QFrame \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QGroupBox \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QHBoxLayout \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLabel \
@@ -263,9 +278,13 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QListWidget \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QMainWindow \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QMenu \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QProgressBar \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPushButton \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QScrollArea \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QSlider \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QSpinBox \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QStackedWidget \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTabWidget \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextBrowser \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextEdit \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTreeWidget \
@@ -278,6 +297,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractslider.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractspinbox.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qboxlayout.h \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcheckbox.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcombobox.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qformlayout.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qframe.h \
@@ -291,11 +311,13 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlistwidget.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qmainwindow.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qmenu.h \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qprogressbar.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qpushbutton.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qrubberband.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qscrollarea.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qsizepolicy.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qslider.h \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qspinbox.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qstackedwidget.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qstyle.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qstyleoption.h \

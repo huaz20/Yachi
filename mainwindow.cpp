@@ -93,7 +93,7 @@ void MainWindow::setupUI()
 
     //侧边导航栏
     navigationBar = new QListWidget(this);
-    navigationBar->addItems({"首页配置", "聊天助手", "翻译助手", "设置"});
+    navigationBar->addItems({"首页配置", "聊天助手", "翻译助手", "语音生成", "设置"});
     navigationBar->setMaximumWidth(160);
     navigationBar->setStyleSheet(R"(
         QListWidget {
@@ -111,10 +111,12 @@ void MainWindow::setupUI()
     chatPageWidget = new ChatPage(this);
     translationPageWidget = new TranslationPage(m_translateAgent, this);
     settingsPage = new QWidget(this);
+    voicePageWidget = new VoicePage(this);
 
     mainStack->addWidget(homePageWidget);
     mainStack->addWidget(chatPageWidget);
     mainStack->addWidget(translationPageWidget);
+    mainStack->addWidget(voicePageWidget);
     mainStack->addWidget(settingsPage);
 
     mainLayout->addWidget(navigationBar);
@@ -122,7 +124,7 @@ void MainWindow::setupUI()
     setCentralWidget(centralWidget);
 
     //设置主窗口大小
-    this->resize(1024, 768);
+    this->resize(1120, 840);
 
     //UI连接
     connect(navigationBar, &QListWidget::currentRowChanged, this, &MainWindow::onNavigationChanged);

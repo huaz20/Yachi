@@ -576,7 +576,33 @@ CMakeFiles/YachiAgent.dir/YachiAgent_autogen/mocs_compilation.cpp.obj: \
  C:/Programming/cpp/Yachi/translationpage.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QGroupBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgroupbox.h \
+ C:/Programming/cpp/Yachi/voicepage.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QSlider \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QProgressBar \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qprogressbar.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QSpinBox \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qspinbox.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDoubleSpinBox \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QCheckBox \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcheckbox.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTabWidget \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QFrame \
+ C:/Qt/6.11.0/mingw_64/include/QtMultimedia/QMediaPlayer \
+ C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qmediaplayer.h \
+ C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qtmultimediaglobal.h \
+ C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qtmultimedia-config.h \
+ C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qtmultimediaexports.h \
+ C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qtaudio.h \
+ C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qaudio.h \
+ C:/Qt/6.11.0/mingw_64/include/QtMultimedia/QAudioOutput \
+ C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qaudiooutput.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QBuffer \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qbuffer.h \
+ C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkAccessManager \
+ C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkReply \
  C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_modelconfigwidget.cpp \
  C:/Programming/cpp/Yachi/modelconfigwidget.h \
  C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_translationpage.cpp \
- C:/Programming/cpp/Yachi/translationpage.h
+ C:/Programming/cpp/Yachi/translationpage.h \
+ C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_voicepage.cpp \
+ C:/Programming/cpp/Yachi/voicepage.h

@@ -10,6 +10,7 @@
 #include "chatPage.h"
 #include "agentcore.h"
 #include "translationpage.h"
+#include "voicepage.h"
 
 class MainWindow : public QMainWindow
 {
@@ -36,6 +37,7 @@ private:
     ChatPage *chatPageWidget;
     TranslationPage *translationPageWidget;
     QWidget *settingsPage;
+    VoicePage *voicePageWidget;
 
     //为不同功能分配独立的AgentCore
     AgentCore *m_chatAgent;
