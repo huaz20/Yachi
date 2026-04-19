@@ -34,6 +34,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         translationpage.h translationpage.cpp
         res.qrc
         voicepage.h voicepage.cpp
+        urlstrategy.h
 
 
 

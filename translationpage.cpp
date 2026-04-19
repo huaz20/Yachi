@@ -1,4 +1,5 @@
 #include "translationpage.h"
+#include "urlstrategy.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QFileDialog>
@@ -628,53 +629,109 @@ void TranslationPage::fetchUrlContent()
         return;
     }
 
-    //构造Jina Reader链接
-    QString jinaUrl = "https://r.jina.ai/" + rawUrl;  //jinaUrl的几种格式见：https://r.jina.ai/
+    // 2.向 网页读取策略的 策略工厂 要一个策略
+    auto strategy = StrategyFactory::getStrategy(rawUrl);
+    QString baseUrl = strategy->extractBaseUrl(rawUrl);
 
-    // 2.处理过程中的UI效果
+    // 3.处理过程中的UI反馈
     fetchBtn->setEnabled(false);
     fetchBtn->setText("抓取中...");
-    sourceText->setPlaceholderText("正在通过Jina Reader提取网页正文，请稍候...");
+    //清空旧文本
+    sourceText->clear();
+    //动态显示专属进度提示
+    sourceText->setPlaceholderText(strategy->getLoadingTip());
 
-    // 3.设置网络头
-    QNetworkRequest request((QUrl(jinaUrl)));
-    //设置一些基础Header模拟浏览器，防止被某些简单策略拦截
-    request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) YachiAgent/1.0");
+    // 4.构建共享状态，用于跨网络请求累加文本和记录总页数
+    struct FetchState
+    {
+        QString fullContent;
+        int maxPage = 1;
+    };
+    auto state = std::make_shared<FetchState>();
 
-    QNetworkReply *reply = m_urlManager->get(request);
+    // 5.定义结束操作
+    auto finishFetching = [this](QString finalContent)
+    {
+        //恢复UI
+        fetchBtn->setEnabled(true);
+        fetchBtn->setText("抓取并导入");
+        sourceText->setPlaceholderText("请输入源文本...");
 
-    // 4.信号连接
-    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
-            //UI反馈
-            fetchBtn->setEnabled(true);
-            fetchBtn->setText("抓取并导入");
-            sourceText->setPlaceholderText("请输入源文本...");
+        if(!finalContent.isEmpty())
+        {
+            //硬过滤 / 一级智能过滤
+            if(m_hardFilterEnabled)
+            {
+                finalContent = applyHardFilter(finalContent);
+            }
 
+            //输出最终内容
+            sourceText->setPlainText(finalContent);
+            //光标自动移动到最上面
+            sourceText->moveCursor(QTextCursor::Start);
+        }
+    };
+
+    // 6.递归网络请求
+    auto fetchNextPage = std::make_shared<std::function<void(int)>>();
+
+    *fetchNextPage = [this, baseUrl, strategy, state, fetchNextPage, finishFetching](int currentPage) {
+
+        //使用策略去构造目标链接
+        QString targetUrl = strategy->buildTargetUrl(baseUrl, currentPage);
+        //再构造Jina Reader链接
+        QString jinaUrl = "https://r.jina.ai/" + targetUrl;
+
+        //设置网络头
+        QNetworkRequest request((QUrl(jinaUrl)));
+        //设置一些基础Header模拟浏览器，防止被某些简单策略拦截
+        request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) YachiAgent/1.0");
+
+        QNetworkReply *reply = m_urlManager->get(request);
+
+        //信号连接
+        connect(reply, &QNetworkReply::finished, this, [=]() {
             if (reply->error() == QNetworkReply::NoError) {
-                //读取抓取到的纯文本（markdown格式）
-                QString content = reply->readAll();
+                QString pageContent = reply->readAll();
 
-                if (content.trimmed().isEmpty()) {
-                    QMessageBox::warning(this, "抓取失败", "网页内容为空，可能是该网站禁止了抓取。");
+                //仅在第一页时，让策略去解析最大页数
+                if (currentPage == 1) {
+                    state->maxPage = strategy->parseMaxPage(pageContent);
                 }
-                else
-                {
-                    if(m_hardFilterEnabled)
-                    {
-                        content = applyHardFilter(content);
-                    }
-                    //将结果填充到translationpage中的输入框
-                    sourceText->setPlainText(content);
-                    //自动滚动到顶部
-                    sourceText->moveCursor(QTextCursor::Start);
+
+                //累加内容
+                if (state->maxPage > 1) {
+                    state->fullContent += QString("\n\n### --- 第 %1 页 ---\n\n").arg(currentPage);
                 }
-            } else {
-                QMessageBox::critical(this, "抓取异常",
-                                      QString("无法读取网页！\n错误代码：%1\n原因：%2")
-                                          .arg(reply->error()).arg(reply->errorString()));
+                state->fullContent += pageContent;
+
+                //判断是否需要翻页
+                if (currentPage < state->maxPage) {
+                    sourceText->setPlaceholderText(QString("发现分页！正在自动抓取第 %1/%2 页，请稍候...")
+                                                       .arg(currentPage + 1).arg(state->maxPage));
+
+                    QTimer::singleShot(2000, this, [=]() {
+                        (*fetchNextPage)(currentPage + 1);
+                    });
+                } else {
+                    finishFetching(state->fullContent);
+                }
+            }
+            else { //网络异常处理
+                if (currentPage == 1) {
+                    QMessageBox::critical(this, "抓取异常", QString("无法读取网页！\n错误代码：%1\n原因：%2").arg(reply->error()).arg(reply->errorString()));
+                    finishFetching("");
+                } else {
+                    QMessageBox::warning(this, "部分抓取失败", QString("在读取第 %1 页时发生网络错误，已中断后续抓取，将保留前面成功抓取的内容。").arg(currentPage));
+                    finishFetching(state->fullContent);
+                }
             }
             reply->deleteLater();
         });
+    };
+
+    //永远从第 1 页开始启动抓取
+    (*fetchNextPage)(1);
 }
 
 ///

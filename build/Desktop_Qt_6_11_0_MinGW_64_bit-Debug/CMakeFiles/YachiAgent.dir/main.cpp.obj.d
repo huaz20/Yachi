@@ -590,5 +590,4 @@ CMakeFiles/YachiAgent.dir/main.cpp.obj: C:\Programming\cpp\Yachi\main.cpp \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkAccessManager \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkReply \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QApplication \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qapplication.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/QDebug
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qapplication.h

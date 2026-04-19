@@ -3285,7 +3285,9 @@ C:/Programming/cpp/Yachi/voicepage.h
 C:/Programming/cpp/Yachi/agentcore.cpp
 C:/Programming/cpp/Yachi/homepage.cpp
 C:/Programming/cpp/Yachi/main.cpp
+C:/Programming/cpp/Yachi/urlstrategy.h
 C:/Programming/cpp/Yachi/mainwindow.cpp
 C:/Programming/cpp/Yachi/modelconfigwidget.cpp
 C:/Programming/cpp/Yachi/translationpage.cpp
 C:/Programming/cpp/Yachi/voicepage.cpp
+C:/Programming/cpp/Yachi/urlstrategy.cpp

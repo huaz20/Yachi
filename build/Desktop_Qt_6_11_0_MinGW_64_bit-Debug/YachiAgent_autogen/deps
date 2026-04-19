@@ -21,6 +21,7 @@ YachiAgent_autogen/timestamp: \
 	C:/Programming/cpp/Yachi/res.qrc \
 	C:/Programming/cpp/Yachi/translationpage.cpp \
 	C:/Programming/cpp/Yachi/translationpage.h \
+	C:/Programming/cpp/Yachi/urlstrategy.h \
 	C:/Programming/cpp/Yachi/voicepage.cpp \
 	C:/Programming/cpp/Yachi/voicepage.h \
 	C:/Qt/6.11.0/mingw_64/include/QtCore/QBuffer \
