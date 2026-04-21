@@ -5,6 +5,8 @@
 #include <QRegularExpression>
 #include <QStringList>
 #include <memory>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 // ==========================================
 // 网页读取策略基类 (接口)
@@ -42,6 +44,12 @@ public:
     virtual QString getLoadingTip() const {
         return "正在通过 Jina Reader 提取网页正文，请稍候...";
     }
+
+    //对返回内容进行一次处理的接口
+    virtual QString processRawContent(const QString &rawContent) const
+    {
+        return rawContent;
+    }
 };
 
 
@@ -69,9 +77,23 @@ public:
         return url.contains("pixiv.net/novel/show.php?id=");
     }
 
+    ///
+    /// \brief extractBaseUrl
+    /// \brief 处理成Pixiv AJAX接口的URL
+    /// \details Pixiv隐藏返回接口：https://www.pixiv.net/ajax/novel/{id}
+    /// \param url
+    /// \return Pixiv AJAX接口的URL
+    ///
     QString extractBaseUrl(const QString &url) const override
     {
-        return url.split("#").first();
+        //从原网址中提取出小说 ID，转换为Pixiv内部的 AJAX 接口
+        QRegularExpression re("id=(\\d+)");
+        QRegularExpressionMatch match = re.match(url);
+        if (match.hasMatch()) {
+            QString id = match.captured(1);
+            return QString("https://www.pixiv.net/ajax/novel/%1").arg(id);
+        }
+        return url;
     }
 
     ///
@@ -83,31 +105,94 @@ public:
     ///
     QString buildTargetUrl(const QString &baseUrl, int page) const override
     {
-        if(page>1)
-        {
-            //动态拼接 #2, #3 等后缀
-            return QString("%1#%2").arg(baseUrl).arg(page);
-        }
+        Q_UNUSED(page);
         return baseUrl;
     }
 
     int parseMaxPage(const QString &pageContent) const override
     {
-        QRegularExpression re("Next\\s+([\\d\\s]+)\\s+Like", QRegularExpression::CaseInsensitiveOption);
-        QRegularExpressionMatch match = re.match(pageContent);
-        if (match.hasMatch()) {
-            QString nums = match.captured(1).trimmed();
-            QStringList numList = nums.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
-            if (!numList.isEmpty()) {
-                return numList.last().toInt();
-            }
-        }
-        return 1;
+        Q_UNUSED(pageContent);
+        return 1;  //读取接口，只需读一次就可以获取到全文
     }
 
     QString getLoadingTip() const override
     {
-        return "检测到Pixiv小说，正在读取第一页并分析总页数...";
+        return "检测到 Pixiv 小说，正在通过内部接口一键秒抓全文...";
+    }
+
+    QString processRawContent(const QString &rawContent) const override {
+        QString jsonStr = rawContent;
+
+        //提取纯Json内容
+        //剥离掉Jina Reader在开头塞入的Title/URL信息
+        int startIndex = jsonStr.indexOf('{');
+        int endIndex = jsonStr.lastIndexOf('}');
+
+        if (startIndex != -1 && endIndex != -1 && endIndex > startIndex) {
+            //只保留 { } 及其中间的部分
+            jsonStr = jsonStr.mid(startIndex, endIndex - startIndex + 1);
+        }
+
+        //解析接口返回的JSON
+        QJsonDocument doc = QJsonDocument::fromJson(jsonStr.toUtf8());
+        if (doc.isObject()) {
+            QJsonObject root = doc.object();
+
+            //【情况 A】成功获取到小说正文
+            if (root.contains("body") && root["body"].isObject()) {
+                QJsonObject body = root["body"].toObject();
+
+                QString title = body["title"].toString();
+                QString author = body["userName"].toString();
+
+                //提取简介、用回车替换 <br />
+                QString description = body["description"].toString();
+                description.replace(QRegularExpression("<br\\s*/?>"), "\n");
+
+                //提取正文、用纯文本分页符替换 [newpage]
+                QString content = body["content"].toString();
+                content.replace("[newpage]", "\n\n"
+                                             "                       ◆ ◆ ◆\n"
+                                             "                      （下一页）\n"
+                                             "                       ◆ ◆ ◆\n\n");
+
+                //组装成一个纯文本排版
+                return QString("《%1》\n"
+                               "作者：%2\n\n"
+                               "【内容简介】\n"
+                               "%3\n\n"
+                               "============================================================\n\n"
+                               "%4\n\n"
+                               "============================================================")
+                    .arg(title, author, description, content);
+            }
+            //【情况 B】因为某些报错返回的是JSON，而不是小说正文（利用Qt的 Indented 自动将 \uXXXX 转回中文并排版）
+            return QString::fromUtf8(doc.toJson(QJsonDocument::Indented));
+        }
+        //【情况 C】兜底处理：手动解码原始文本中的 \uXXXX
+        return decodeUnicodeEscapes(jsonStr);
+    }
+
+private:
+    ///
+    /// \brief decodeUnicodeEscapes
+    /// \brief 工具函数，硬代码将字符串中的 \uXXXX 替换为正常字符
+    /// \param input
+    /// \return
+    ///
+    QString decodeUnicodeEscapes(const QString &input) const {
+        QString result = input;
+        QRegularExpression rx("\\\\u([0-9a-fA-F]{4})");
+        QRegularExpressionMatch match;
+        int offset = 0;
+
+        while ((match = rx.match(result, offset)).hasMatch()) {
+            QString hexStr = match.captured(1);
+            QChar ch(hexStr.toUShort(nullptr, 16));
+            result.replace(match.capturedStart(), 6, QString(ch));
+            offset = match.capturedStart() + 1;
+        }
+        return result;
     }
 };
 

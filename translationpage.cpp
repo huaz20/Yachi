@@ -703,7 +703,7 @@ void TranslationPage::fetchUrlContent()
                 if (state->maxPage > 1) {
                     state->fullContent += QString("\n\n### --- 第 %1 页 ---\n\n").arg(currentPage);
                 }
-                state->fullContent += pageContent;
+                state->fullContent += strategy->processRawContent(pageContent);
 
                 //判断是否需要翻页
                 if (currentPage < state->maxPage) {
