@@ -677,15 +677,27 @@ void TranslationPage::fetchUrlContent()
 
     *fetchNextPage = [this, baseUrl, strategy, state, fetchNextPage, finishFetching](int currentPage) {
 
-        //使用策略去构造目标链接
-        QString targetUrl = strategy->buildTargetUrl(baseUrl, currentPage);
-        //再构造Jina Reader链接
-        QString jinaUrl = "https://r.jina.ai/" + targetUrl;
+        QString finalRequestUrl;
+
+        //通用策略：使用Jina Reader抓取
+        if (strategy->useJina()) {
+            finalRequestUrl = "https://r.jina.ai/" + strategy->buildTargetUrl(baseUrl, currentPage);
+        }
+        //Pixiv特化策略：直连Pixiv AJAX接口
+        else
+        {
+            finalRequestUrl = strategy->buildTargetUrl(baseUrl, currentPage);
+        }
 
         //设置网络头
-        QNetworkRequest request((QUrl(jinaUrl)));
+        QNetworkRequest request((QUrl(finalRequestUrl)));
         //设置一些基础Header模拟浏览器，防止被某些简单策略拦截
         request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) YachiAgent/1.0");
+
+        //没有使用Jina时（如Pixiv特化策略）注入Referer绕过403限制
+        if (!strategy->useJina()) {
+            request.setRawHeader("Referer", "https://www.pixiv.net/");
+        }
 
         QNetworkReply *reply = m_urlManager->get(request);
 

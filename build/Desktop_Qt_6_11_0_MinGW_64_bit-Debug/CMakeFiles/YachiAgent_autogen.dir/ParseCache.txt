@@ -2296,6 +2296,8 @@ C:/Programming/cpp/Yachi/modelconfigwidget.h
  mdp:C:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/time.h
  mdp:C:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/vadefs.h
  mdp:C:/Qt/Tools/mingw1310_64/x86_64-w64-mingw32/include/wchar.h
+C:/Programming/cpp/Yachi/mainwindow.cpp
+C:/Programming/cpp/Yachi/urlstrategy.h
 C:/Programming/cpp/Yachi/chatpage.cpp
 C:/Programming/cpp/Yachi/translationpage.h
  mmc:Q_OBJECT
@@ -3285,9 +3287,6 @@ C:/Programming/cpp/Yachi/voicepage.h
 C:/Programming/cpp/Yachi/agentcore.cpp
 C:/Programming/cpp/Yachi/homepage.cpp
 C:/Programming/cpp/Yachi/main.cpp
-C:/Programming/cpp/Yachi/urlstrategy.h
-C:/Programming/cpp/Yachi/mainwindow.cpp
 C:/Programming/cpp/Yachi/modelconfigwidget.cpp
 C:/Programming/cpp/Yachi/translationpage.cpp
 C:/Programming/cpp/Yachi/voicepage.cpp
-C:/Programming/cpp/Yachi/urlstrategy.cpp

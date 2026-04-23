@@ -33,6 +33,9 @@ public:
         return baseUrl;  //默认没有处理，直接返回baseUrl
     }
 
+    // 4.是否使用Jina Reader
+    virtual bool useJina() const { return true; }  //默认使用
+
     //解析总页数接口
     virtual int parseMaxPage(const QString &pageContent) const
     {
@@ -72,6 +75,8 @@ public:
 class PixivStrategy : public IUrlStrategy
 {
 public:
+    bool useJina() const override { return false; }  //因为可以读接口，这里选择不用Jina中转
+
     bool canHandle(const QString &url) const override
     {
         return url.contains("pixiv.net/novel/show.php?id=");
@@ -121,16 +126,16 @@ public:
     }
 
     QString processRawContent(const QString &rawContent) const override {
-        QString jsonStr = rawContent;
+        QString jsonStr = rawContent.trimmed();
 
         //提取纯Json内容
-        //剥离掉Jina Reader在开头塞入的Title/URL信息
-        int startIndex = jsonStr.indexOf('{');
-        int endIndex = jsonStr.lastIndexOf('}');
-
-        if (startIndex != -1 && endIndex != -1 && endIndex > startIndex) {
-            //只保留 { } 及其中间的部分
-            jsonStr = jsonStr.mid(startIndex, endIndex - startIndex + 1);
+        //如果被包含在Markdown代码块里，进行提取
+        if (jsonStr.startsWith("```")) {
+            int startIndex = jsonStr.indexOf('{');
+            int endIndex = jsonStr.lastIndexOf('}');
+            if (startIndex != -1 && endIndex != -1) {
+                jsonStr = jsonStr.mid(startIndex, endIndex - startIndex + 1);
+            }
         }
 
         //解析接口返回的JSON
