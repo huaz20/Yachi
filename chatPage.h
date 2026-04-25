@@ -25,13 +25,18 @@ public:
     void appendMessage(const QString &sender, const QString &msg, const QString &color);
     void appendSystemMsg(const QString &msg);
 
+    //多对话机制辅助函数：从历史记录重绘对话UI
+    void rebuildChatFromHistory(const QJsonArray &history);
+
 signals:
     void sendMessage(const QString &text);
-    void requestClearHistory(); // 通知底层清空当前 Agent 的记忆
-    void requestTitleSummary(const QString &firstMessage); // 请求 AI 生成标题
+    void requestClearHistory();                            //通知底层清空当前Agent的记忆
+    void requestTitleSummary(const QString &firstMessage); //请求AI生成标题
+
+    void chatSessionChanged(const QString &sessionId);     //当用户点击不同的对话项时触发
 
 public slots:
-    void updateCurrentChatTitle(const QString &title); // 供外部调用，更新当前列表项的标题
+    void updateCurrentChatTitle(const QString &title);  //供外部调用，更新当前列表项的标题
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;

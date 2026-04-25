@@ -463,4 +463,17 @@ CMakeFiles/YachiAgent.dir/chatpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDialogButtonBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialogbuttonbox.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/QTextDocument
+ C:/Qt/6.11.0/mingw_64/include/QtGui/QTextDocument \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QUuid \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/quuid.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QJsonArray \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonarray.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonvalue.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qcborvalue.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qcborcommon.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qdatetime.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qcalendar.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qjsondocument.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonparseerror.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QJsonObject \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonobject.h

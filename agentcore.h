@@ -9,6 +9,7 @@
 #include <QDir>
 #include <QFile>
 #include <QCoreApplication>
+#include <QMap>
 
 //能被Agent使用的模型所需的信息
 struct ModelToUseInfo
@@ -49,6 +50,13 @@ public:
     void setEnvSenseEnabled(bool _status);
     //开闭持久化记忆开关
     void setYachiMemoryEnabled(bool _status);
+
+    //切换当前活跃会话
+    void switchSession(const QString &sessionId);
+    //获取指定会话的历史记录（用于UI重绘）
+    QJsonArray getSessionHistory(const QString &sessionId) { return m_sessionMap.value(sessionId); }
+    //删除会话
+    void deleteSession(const QString &sessionId) { m_sessionMap.remove(sessionId); }
 
 signals:
     void responseMsg(const QString &reply);        //最终完整回复
@@ -112,6 +120,17 @@ private:
     bool m_envSenseEnabled = true; //默认开启
     //是否在系统提示词里注入持久化记忆（是否开启持久化记忆）
     bool m_YachiMemoryEnabled = true;  //默认开启
+    // ------
+
+    // --- 多对话机制 ---
+    QMap<QString, QJsonArray> m_sessionMap;
+    QString m_activeSessionId;  //当前选中的会话Id
+    /* 这里讲述多对话机制功能逻辑和UI层逻辑的工作机制
+     * 1、新建对话：ChatPage里会生成一个新的UUID，绑定到树节点，并发信号给MainWindow
+     * 2、点击列表：ChatPage提取节点的UUID，发信号给MainWindow
+     * 3、切换对话：MainWindow调用 AgentCore::switchSession(uuid) , AgentCore自动保存旧历史并加载新历史
+     * 4、UI刷新：MainWindow调取该UUID对应的 QJsonArray，传回给ChatPage调用 rebuildChatFromHistory，清空屏幕并重新画出所有气泡。
+     */
     // ------
 };
 

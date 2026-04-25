@@ -203,6 +203,18 @@ void MainWindow::setupUI()
         (*validateNext)(0);
         // ------
     });
+
+    //多会话机制的UI响应逻辑
+    connect(chatPageWidget, &ChatPage::chatSessionChanged, this, [this](const QString &sessionId){
+        // 1.让AgentCore切换上下文
+        m_chatAgent->switchSession(sessionId);
+
+        // 2.获取切换后的历史记录
+        QJsonArray history = m_chatAgent->getSessionHistory(sessionId);
+
+        // 3.通知UI重绘所有气泡
+        chatPageWidget->rebuildChatFromHistory(history);
+    });
 }
 
 

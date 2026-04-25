@@ -40,8 +40,13 @@ void AgentCore::setSystemPrompt(const QString &prompt) {
     m_systemPrompt = prompt;
 }
 
+///
+/// \brief AgentCore::clearHistory
+/// \brief 清空当前会话的历史记录
+///
 void AgentCore::clearHistory() {
-    m_history = QJsonArray(); // 重置为空
+    m_history = QJsonArray(); //重置为空
+    if(!m_activeSessionId.isEmpty()) m_sessionMap[m_activeSessionId] = m_history;
 }
 
 ///
@@ -65,7 +70,10 @@ void AgentCore::sendMsg(const QString &userPrompt) {
     userMsg.insert("content", userPrompt);
     m_history.append(userMsg);
 
-    // 3.每次发送新消息，强制切回主模型
+    // 3.在chatPage的多对话机制里同步历史记录
+    if(!m_activeSessionId.isEmpty()) m_sessionMap[m_activeSessionId] = m_history;
+
+    // 4.每次发送新消息，强制切回主模型
     setModelConfigWithIndex(0);
 
     // 4.发送网络请求
@@ -204,6 +212,9 @@ void AgentCore::onFinished() {
         assistantMsg.insert("role", "assistant");
         assistantMsg.insert("content", m_streamingBuffer);
         m_history.append(assistantMsg);
+
+        //在chatPage的多对话机制里同步历史记录
+        if(!m_activeSessionId.isEmpty()) m_sessionMap[m_activeSessionId] = m_history;
 
         //发送完整回答信号（可选，有些UI只需要partialResponseMsg）
         emit responseMsg(m_streamingBuffer);
@@ -475,4 +486,31 @@ QString AgentCore::buildFinalSystemPrompt() {
 
 // ********
 
+// ********************************
+
+// **************** 多对话机制 ****************
+///
+/// \brief AgentCore::switchSession
+/// \brief 切换会话
+/// \param sessionId 目标会话Id
+///
+void AgentCore::switchSession(const QString &sessionId)
+{
+    // 1.在切换前，确保当前的内存历史同步回Map
+    if (!m_activeSessionId.isEmpty()){
+        m_sessionMap[m_activeSessionId] = m_history;
+    }
+
+    // 2.切换ID
+    m_activeSessionId = sessionId;
+
+    // 3.如果是新会话，初始化空历史；如果是旧会话，加载历史
+    if (!m_sessionMap.contains(sessionId)) {
+        m_sessionMap.insert(sessionId, QJsonArray());
+    }
+    m_history = m_sessionMap.value(sessionId);
+
+    // 4.中断之前正在进行的请求（防止回复串位）
+    abort();
+}
 // ********************************

@@ -443,4 +443,5 @@ CMakeFiles/YachiAgent.dir/agentcore.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qdeadlinetimer.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qnativeinterface.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qcoreapplication_platform.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QMap \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QJsonDocument

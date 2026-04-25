@@ -2,7 +2,10 @@
 #include <QEvent>
 #include <QDialog>
 #include <QDialogButtonBox>
-#include <QTextDocument> // 新增引入，用于解析 Markdown
+#include <QTextDocument>
+#include <QUuid>
+#include <QJsonArray>
+#include <QJsonObject>
 
 ChatPage::ChatPage(QWidget *parent) : QWidget(parent) {
     // 根布局改为水平布局，左侧边栏 + 右侧聊天区
@@ -152,24 +155,41 @@ void ChatPage::setupSidebar() {
     // ========== 信号绑定 ==========
     connect(collapseBtn, &QPushButton::clicked, [this]() { toggleSidebar(false); });  //绑定收回按钮逻辑
     connect(expandBtn, &QPushButton::clicked, [this]() { toggleSidebar(true); });
+    connect(chatSessionsTree, &QTreeWidget::itemClicked, this, [this](QTreeWidgetItem *item, int column) {
+        if (!item) return;
+
+        //获取节点的类型（是对话还是文件夹）
+        QString type = item->data(0, Qt::UserRole).toString();
+
+        if (type == "chat") {
+            QString sessionId = item->data(0, Qt::UserRole + 1).toString();
+
+            emit chatSessionChanged(sessionId);
+
+            //确保UI响应
+            chatInput->setFocus();
+        }
+    });
     connect(chatSessionsTree, &QTreeWidget::customContextMenuRequested, this, &ChatPage::showContextMenu);
 
     auto createNewChat = [this]() {
-        chatHistory->clear();
-        m_isFirstMessage = true;
+        QString sessionId = QUuid::createUuid().toString(); //生成唯一ID
 
         QTreeWidgetItem *chat = new QTreeWidgetItem();
         chat->setText(0, "📝 新的聊天");
-
-        // 打上属于“对话”的暗号
         chat->setData(0, Qt::UserRole, "chat");
+        chat->setData(0, Qt::UserRole + 1, sessionId); //存储身份证
 
         chat->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
         chatSessionsTree->insertTopLevelItem(0, chat);
         chatSessionsTree->setCurrentItem(chat);
 
-        emit requestClearHistory();
-        if (expandedSidebar->isHidden()) toggleSidebar(true);
+        // 发送信号切换后端 Session
+        emit chatSessionChanged(sessionId);
+
+        // UI 清空
+        chatHistory->clear();
+        m_isFirstMessage = true;
     };
 
     connect(newChatBtnCol, &QPushButton::clicked, createNewChat);
@@ -307,26 +327,38 @@ void ChatPage::setupNormalChatUI() {
 
     auto sendFunc = [this]() {
         QString text = chatInput->toPlainText().trimmed();
-        if (!text.isEmpty()) {
+        if (text.isEmpty()) return;
 
-            // 容错：如果列表空了，自动建一个新对话
-            if (chatSessionsTree->topLevelItemCount() == 0 || chatSessionsTree->currentItem() == nullptr) {
-                QTreeWidgetItem *chat = new QTreeWidgetItem();
-                chat->setText(0, "📝 新的聊天");
-                chat->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
-                chatSessionsTree->insertTopLevelItem(0, chat);
-                chatSessionsTree->setCurrentItem(chat);
-                m_isFirstMessage = true;
-            }
+        // 1.确保当前有活跃的对话项
+        //如果树为空，或者当前没有选中项，则强制创建一个
+        if (chatSessionsTree->topLevelItemCount() == 0 || !chatSessionsTree->currentItem()) {
+            QString newId = QUuid::createUuid().toString();
 
-            emit sendMessage(text);
-            chatInput->clear();
+            QTreeWidgetItem *chat = new QTreeWidgetItem();
+            chat->setText(0, "💬 新的聊天");
+            chat->setData(0, Qt::UserRole, "chat");
+            chat->setData(0, Qt::UserRole + 1, newId);
+            chat->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
 
-            // 首句触发 AI 起名
-            if (m_isFirstMessage) {
-                emit requestTitleSummary(text);
-                m_isFirstMessage = false;
-            }
+            chatSessionsTree->insertTopLevelItem(0, chat);
+            chatSessionsTree->setCurrentItem(chat);
+
+            //先通知后端切换 ID，确保后端 m_activeSessionId 不为空
+            emit chatSessionChanged(newId);
+            m_isFirstMessage = true;
+        }
+
+        // 2.发送消息
+        // 注意：这里的信号会触发 MainWindow::handleSendRequest
+        emit sendMessage(text);
+
+        // 3.UI反馈
+        chatInput->clear();
+
+        // 4.首句总结标题
+        if (m_isFirstMessage) {
+            emit requestTitleSummary(text);
+            m_isFirstMessage = false;
         }
     };
     connect(sendBtn, &QPushButton::clicked, sendFunc);
@@ -514,3 +546,36 @@ QString ChatPage::wrapInBubble(const QString &rawContent, bool isUser) {
                    ).arg(bgColor, textColor, htmlContent);
     }
 }
+
+// **************** 多对话机制 ****************
+///
+/// \brief ChatPage::rebuildChatFromHistory
+/// \brief 多对话机制辅助函数：从历史记录重绘对话UI
+/// \param history
+///
+void ChatPage::rebuildChatFromHistory(const QJsonArray &history) {
+    chatHistory->clear();
+
+    for (const QJsonValue &value : history) {
+        QJsonObject obj = value.toObject();
+        QString role = obj["role"].toString();
+        QString content = obj["content"].toString();
+
+        if (role == "user")
+        {
+            appendMessage("我", content, "black");
+        }
+        else if (role == "assistant")
+        {
+            chatHistory->append(wrapInBubble(content, false));
+        }
+        else if (role == "system" && content.startsWith("[之前的对话总结]"))
+        {
+            appendSystemMsg(content);
+        }
+    }
+
+    //如果历史记录不为空，说明不是第一句话了
+    m_isFirstMessage = history.isEmpty();
+}
+// ********************************

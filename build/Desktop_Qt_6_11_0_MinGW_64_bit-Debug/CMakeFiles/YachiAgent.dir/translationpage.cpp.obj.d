@@ -516,6 +516,7 @@ CMakeFiles/YachiAgent.dir/translationpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qdeadlinetimer.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qnativeinterface.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qcoreapplication_platform.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QMap \
  C:\Programming\cpp\Yachi\urlstrategy.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QString \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QRegularExpression \
