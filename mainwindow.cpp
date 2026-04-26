@@ -12,21 +12,31 @@ MainWindow::MainWindow(QWidget *parent)
     //加载需要的Json文件
     loadVendorMapFromJson();
 
-    // --- 初始化各功能Agent---
+    // --- 实例各功能Agent---
     //实例（不共用1个，以防上下文串联）
     m_chatAgent = new AgentCore(this);
-    m_chatAgent->setSystemPrompt("和用户进行有用的、友善的聊天吧。");
-
     m_translateAgent = new AgentCore(this);
-
     m_titleAgent = new AgentCore(this);
-    m_titleAgent->setSystemPrompt("你是一个标题生成助手，请根据用户的输入，用10个字以内的短语概括该对话的主题，禁止回复其他任何客套话，禁止加标点符号！");
+    // ------
 
-    //功能配置
+    //UI初始化
+    setupUI();
+
+    // --- 配置各功能Agent ---
     //显式设置工作目录
     QString path = QDir(QCoreApplication::applicationDirPath()).filePath("sys");
 
+    m_chatAgent->setSystemPrompt("和用户进行有用的、友善的聊天吧。");
     m_chatAgent->setWorkspacePath(path);
+    m_chatAgent->loadAllSessionsFromDisk();    //从磁盘加载所有会话的历史记录
+    //从注册表恢复目录树结构
+    QSettings settings("Yachi", "PersistentData");
+    QString treeJson = settings.value("ChatTreeStructure").toString();
+    if (!treeJson.isEmpty()) {
+        QJsonDocument doc = QJsonDocument::fromJson(treeJson.toUtf8());
+        chatPageWidget->deserializeTree(doc.array());
+    }
+
     m_chatAgent->setYachiMemoryEnabled(true);  //开启持久化记忆
     m_chatAgent->setEnvSenseEnabled(true);     //开启环境感知
 
@@ -34,13 +44,11 @@ MainWindow::MainWindow(QWidget *parent)
     m_translateAgent->setYachiMemoryEnabled(false);  //关闭持久化记忆
     m_translateAgent->setEnvSenseEnabled(false);     //关闭环境感知
 
+    m_titleAgent->setSystemPrompt("你是一个标题生成助手，请根据用户的输入，用10个字以内的短语概括该对话的主题，禁止回复其他任何客套话，禁止加标点符号！");
     m_titleAgent->setWorkspacePath(path);
     m_titleAgent->setYachiMemoryEnabled(false);  //关闭持久化记忆
     m_titleAgent->setEnvSenseEnabled(false);     //关闭环境感知
     // ------
-
-    //UI初始化
-    setupUI();
 
     // --- Agent连接 ---
     connect(m_chatAgent, &AgentCore::partialResponseMsg, chatPageWidget, &ChatPage::handleStreamingResponse);
@@ -72,7 +80,21 @@ MainWindow::MainWindow(QWidget *parent)
     });
 }
 
-MainWindow::~MainWindow() {}
+MainWindow::~MainWindow()
+{
+    // --- 持久化保存会话的历史记录 ---
+    // 1.保存当前的对话内容
+    QString currentId = m_chatAgent->getActiveSessionId();
+    if (!currentId.isEmpty()){
+        m_chatAgent->saveSessionToFile(currentId);
+    }
+
+    // 2.保存目录树结构
+    QSettings settings("Yachi", "PersistentData");
+    QJsonArray treeData = chatPageWidget->serializeTree();
+    settings.setValue("ChatTreeStructure", QJsonDocument(treeData).toJson());
+    // ------
+}
 
 void MainWindow::onNavigationChanged(int index) {
     mainStack->setCurrentIndex(index);
@@ -130,6 +152,10 @@ void MainWindow::setupUI()
     connect(navigationBar, &QListWidget::currentRowChanged, this, &MainWindow::onNavigationChanged);
 
     connect(chatPageWidget, &ChatPage::sendMessage, this, &MainWindow::handleSendRequest);
+    //UI层会话删除传递信号通知删除持久化数据
+    connect(chatPageWidget, &ChatPage::sessionDeleted, this, [this](const QString &sessionId){
+        m_chatAgent->deleteSessionData(sessionId);
+    });
 
     connect(chatPageWidget, &ChatPage::requestClearHistory, this, [this](){
         m_chatAgent->clearHistory();
@@ -204,15 +230,24 @@ void MainWindow::setupUI()
         // ------
     });
 
-    //多会话机制的UI响应逻辑
+    //多会话机制的总响应逻辑
     connect(chatPageWidget, &ChatPage::chatSessionChanged, this, [this](const QString &sessionId){
-        // 1.让AgentCore切换上下文
+        // 1.记录上一个会话 ID，切换前先存盘
+        static QString s_lastId;
+        if (!s_lastId.isEmpty()) {
+            m_chatAgent->saveSessionToFile(s_lastId);
+        }
+        s_lastId = sessionId;
+
         m_chatAgent->switchSession(sessionId);
 
-        // 2.获取切换后的历史记录
+        // 2.让AgentCore切换上下文
+        m_chatAgent->switchSession(sessionId);
+
+        // 3.获取切换后的历史记录
         QJsonArray history = m_chatAgent->getSessionHistory(sessionId);
 
-        // 3.通知UI重绘所有气泡
+        // 4.通知UI重绘所有气泡
         chatPageWidget->rebuildChatFromHistory(history);
     });
 }

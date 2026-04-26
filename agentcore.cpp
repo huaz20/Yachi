@@ -513,4 +513,70 @@ void AgentCore::switchSession(const QString &sessionId)
     // 4.中断之前正在进行的请求（防止回复串位）
     abort();
 }
+
+///
+/// \brief AgentCore::saveSessionToFile
+/// \brief 保存特定的会话到磁盘
+/// \param sessionId
+///
+void AgentCore::saveSessionToFile(const QString &sessionId) {
+    if (m_workspacePath.isEmpty() || !m_sessionMap.contains(sessionId)) return;
+
+    //定义目标路径
+    QDir dir(m_workspacePath + "/history/session");
+    if (!dir.exists()) dir.mkpath(".");
+
+    QFile file(dir.filePath(sessionId + ".json"));
+    if (file.open(QIODevice::WriteOnly)) {
+        //将 QJsonArray 转为 JSON 文档并写入
+        QJsonDocument doc(m_sessionMap[sessionId]);
+        file.write(doc.toJson());
+        file.close();
+    }
+}
+
+///
+/// \brief AgentCore::loadAllSessionsFromDisk
+/// \brief 程序启动时，从磁盘加载所有已知的会话内容
+///
+void AgentCore::loadAllSessionsFromDisk() {
+    //定义目标路径
+    QDir dir(m_workspacePath + "/history/session");
+    if (!dir.exists()) return;
+
+    //查找文件夹下所有的 .json 文件
+    QStringList filters;
+    filters << "*.json";
+    for (const QString &fileName : dir.entryList(filters, QDir::Files)) {
+        QString sessionId = fileName.section('.', 0, 0); //取文件名作为 UUID
+        QFile file(dir.filePath(fileName));
+        if (file.open(QIODevice::ReadOnly)) {
+            QJsonArray history = QJsonDocument::fromJson(file.readAll()).array();
+            m_sessionMap.insert(sessionId, history);
+            file.close();
+        }
+    }
+}
+///
+/// \brief AgentCore::deleteSessionData
+/// \brief 删除会话数据
+/// \details 本函数实现里会调用一次 deleteSessionId 把ID也给删除。
+/// \param sessionId
+///
+void AgentCore::deleteSessionData(const QString &sessionId) {
+    // 1.删除Id
+    deleteSessionId(sessionId);
+
+    // 2.从磁盘物理删除
+    if (!m_workspacePath.isEmpty()) {
+        //目标路径
+        QDir dir(m_workspacePath + "/history/session");
+        //目标文件
+        QFile file(dir.filePath(sessionId + ".json"));
+        if (file.exists()) {
+            file.remove();
+            qDebug() << "Successfully deleted session file:" << sessionId;
+        }
+    }
+}
 // ********************************

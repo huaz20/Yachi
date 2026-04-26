@@ -231,7 +231,13 @@ void ChatPage::showContextMenu(const QPoint &pos) {
     QAction *selected = menu.exec(chatSessionsTree->mapToGlobal(pos));
     if (selected == delAction) {
         if (confirmDeletion(item->text(0))) {
-            delete item; // 自动从树中移除并释放内存
+            //获取 ID 并通知外界删除持久化数据
+            QString sessionId = item->data(0, Qt::UserRole + 1).toString();
+            if (!sessionId.isEmpty()) {
+                emit sessionDeleted(sessionId);
+            }
+
+            delete item; //销毁UI节点
         }
     }
 }
@@ -577,5 +583,70 @@ void ChatPage::rebuildChatFromHistory(const QJsonArray &history) {
 
     //如果历史记录不为空，说明不是第一句话了
     m_isFirstMessage = history.isEmpty();
+}
+// ********************************
+
+// **************** 数据存储 ****************
+///
+/// \brief serializeNodeHelper
+/// \brief 辅助函数：将树的节点和子节点转成JSON对象（递归）
+/// \param item
+/// \return
+///
+QJsonObject serializeNodeHelper(QTreeWidgetItem *item) {
+    QJsonObject obj;
+    obj.insert("text", item->text(0));
+    obj.insert("type", item->data(0, Qt::UserRole).toString());     //chat 或 folder
+    obj.insert("uuid", item->data(0, Qt::UserRole + 1).toString()); //会话ID
+
+    QJsonArray children;
+    for (int i = 0; i < item->childCount(); ++i) {
+        children.append(serializeNodeHelper(item->child(i)));
+    }
+    obj.insert("children", children);
+    return obj;
+}
+
+///
+/// \brief ChatPage::serializeTree
+/// \brief 将树转成JSON
+/// \return
+///
+QJsonArray ChatPage::serializeTree() {
+    QJsonArray root;
+    for (int i = 0; i < chatSessionsTree->topLevelItemCount(); ++i) {
+        root.append(serializeNodeHelper(chatSessionsTree->topLevelItem(i)));
+    }
+    return root;
+}
+
+///
+/// \brief ChatPage::deserializeTree
+/// \brief 将JSON恢复成树
+/// \param data
+///
+void ChatPage::deserializeTree(const QJsonArray &data) {
+    chatSessionsTree->clear();
+
+    //递归恢复节点
+    std::function<void(const QJsonArray&, QTreeWidgetItem*)> parse =
+        [&](const QJsonArray &nodeList, QTreeWidgetItem *parent) {
+            for (const QJsonValue &value : nodeList) {
+                QJsonObject obj = value.toObject();
+                QTreeWidgetItem *item = new QTreeWidgetItem();
+                item->setText(0, obj["text"].toString());
+                item->setData(0, Qt::UserRole, obj["type"].toString());
+                item->setData(0, Qt::UserRole + 1, obj["uuid"].toString());
+
+                //恢复可编辑等属性
+                item->setFlags(Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled);
+
+                if (parent) parent->addChild(item);
+                else chatSessionsTree->addTopLevelItem(item);
+
+                parse(obj["children"].toArray(), item);
+            }
+        };
+    parse(data, nullptr);
 }
 // ********************************

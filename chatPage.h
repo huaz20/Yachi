@@ -28,12 +28,21 @@ public:
     //多对话机制辅助函数：从历史记录重绘对话UI
     void rebuildChatFromHistory(const QJsonArray &history);
 
+    // --- 数据存储 ---
+    //树转JSON
+    QJsonArray serializeTree();
+    //JSON恢复树
+    void deserializeTree(const QJsonArray &data);
+    // ------
+
+
 signals:
     void sendMessage(const QString &text);
     void requestClearHistory();                            //通知底层清空当前Agent的记忆
     void requestTitleSummary(const QString &firstMessage); //请求AI生成标题
 
     void chatSessionChanged(const QString &sessionId);     //当用户点击不同的对话项时触发
+    void sessionDeleted(const QString &sessionId);         //UI层删除会话时传递的信号
 
 public slots:
     void updateCurrentChatTitle(const QString &title);  //供外部调用，更新当前列表项的标题

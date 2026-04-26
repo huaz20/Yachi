@@ -53,10 +53,23 @@ public:
 
     //切换当前活跃会话
     void switchSession(const QString &sessionId);
+    QString getActiveSessionId() const {return m_activeSessionId;}
     //获取指定会话的历史记录（用于UI重绘）
     QJsonArray getSessionHistory(const QString &sessionId) { return m_sessionMap.value(sessionId); }
     //删除会话
-    void deleteSession(const QString &sessionId) { m_sessionMap.remove(sessionId); }
+    void deleteSessionId(const QString &sessionId) { m_sessionMap.remove(sessionId); }
+    //保存特定的会话到磁盘
+    void saveSessionToFile(const QString &sessionId);
+    //程序启动时，从磁盘加载所有已知的会话内容
+    void loadAllSessionsFromDisk();
+    //删除会话数据
+    void deleteSessionData(const QString &sessionId);
+    /* 会话的持久化保存逻辑：
+     * 1、对话内容：可能很大，每个对话独立成一个.json放在sys/history/session/目录下，文件名是对话的UUID
+     * 2、目录树结构：比较轻量，直接转成JSON字符串存在系统的QSettings（注册表）里
+     * 3、触发时机：切换对话时自动保存上一段对话；程序关闭时保存当前的对话，并保存整个目录树；
+     * 4、初始化：agent（chatAgent）初始化配置时从磁盘加载所有历史记录，并从注册表里加载目录树结构。
+     */
 
 signals:
     void responseMsg(const QString &reply);        //最终完整回复
