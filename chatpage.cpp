@@ -375,29 +375,222 @@ void ChatPage::setupNormalChatUI() {
     });
 }
 
+// **************** 酒吧模式 ****************
+///
+/// \brief ChatPage::setupBarModeUI
+/// \brief UI层构建
+///
 void ChatPage::setupBarModeUI() {
     barWidget = new QWidget();
-    barWidget->setStyleSheet("background-color: #2b2b2b; color: white;");
-    QVBoxLayout *layout = new QVBoxLayout(barWidget);
+    barWidget->setStyleSheet("QWidget { background-color: #ffffff; color: #333; }");
+    QHBoxLayout *mainBarLayout = new QHBoxLayout(barWidget);
+    mainBarLayout->setContentsMargins(0, 0, 0, 0);
+    mainBarLayout->setSpacing(0);
 
-    QLabel *title = new QLabel("🍻 欢迎来到酒吧模式");
-    title->setAlignment(Qt::AlignCenter);
-    title->setStyleSheet("font-size: 24px; font-weight: bold;");
+    // ================== 左侧：主聊天区 ==================
+    QWidget *chatContainer = new QWidget();
+    QVBoxLayout *chatLayout = new QVBoxLayout(chatContainer);
+    chatLayout->setContentsMargins(0, 0, 0, 0);
+    chatLayout->setSpacing(0);
 
-    exitBarModeBtn = new QPushButton("退出");
-    exitBarModeBtn->setStyleSheet("background-color: #555; padding: 10px;");
+    // 1.顶部 Header
+    QWidget *header = new QWidget();
+    header->setFixedHeight(55);
+    header->setStyleSheet("background-color: #fff0f6; border-bottom: 1px solid #f0f0f0;");
+    QHBoxLayout *hLayout = new QHBoxLayout(header);
 
-    layout->addStretch();
-    layout->addWidget(title);
-    layout->addWidget(exitBarModeBtn, 0, Qt::AlignCenter);
-    layout->addStretch();
+    barCharNameEdit = new QLineEdit("月见八百代");
+    barCharNameEdit->setStyleSheet(
+        "QLineEdit { font-size: 16px; font-weight: bold; color: #d63384; background: transparent; border: none; }"
+        "QLineEdit:hover { background: #fce4ec; border-radius: 4px; padding: 2px; }"
+        );
 
+    exitBarModeBtn = new QPushButton("返回普通模式");
+    exitBarModeBtn->setFlat(true);
+    exitBarModeBtn->setStyleSheet("color: #666; font-size: 13px; text-decoration: underline;");
+
+    toggleBarSideBtn = new QPushButton("设定 ⚙️");
+    toggleBarSideBtn->setCheckable(true);
+    toggleBarSideBtn->setChecked(true);
+    toggleBarSideBtn->setStyleSheet("QPushButton { color: #db2777; font-weight: bold; border: none; padding: 5px; }"
+                                    "QPushButton:checked { background-color: #fce4ec; border-radius: 5px; }");
+
+    hLayout->addWidget(barCharNameEdit);
+    hLayout->addStretch();
+    hLayout->addWidget(exitBarModeBtn);
+    hLayout->addSpacing(10);
+    hLayout->addWidget(toggleBarSideBtn);
+    chatLayout->addWidget(header);
+
+    // 2.聊天历史记录区
+    barChatHistory = new QTextBrowser();
+    barChatHistory->setFrameShape(QFrame::NoFrame);
+    barChatHistory->setStyleSheet("background-color: #fff9fb;");
+    chatLayout->addWidget(barChatHistory, 3);
+
+    // 3.精简工具栏 (插入在历史记录和输入框之间，保持固定高度，不参与比例分配)
+    barChatToolbar = new QWidget();
+    barChatToolbar->setFixedHeight(35);
+    barChatToolbar->setStyleSheet("background-color: white; border-top: 1px solid #f2f2f2;");
+
+    QHBoxLayout *toolbarLayout = new QHBoxLayout(barChatToolbar);
+    toolbarLayout->setContentsMargins(10, 0, 10, 0);
+    toolbarLayout->setSpacing(8);
+
+    QString toolBtnStyle = R"(
+        QPushButton { border: none; background: transparent; font-size: 18px; border-radius: 4px; }
+        QPushButton:hover { background-color: #f0f0f0; }
+    )";
+
+    btnEmoji = new QPushButton("😊");
+    btnScreenShot = new QPushButton("✂️");
+    btnFile = new QPushButton("📁");
+    btnVibrate = new QPushButton("📳");
+
+    QList<QPushButton*> toolBtns = {btnEmoji, btnScreenShot, btnFile, btnVibrate};
+    for(auto btn : toolBtns) {
+        btn->setFixedSize(28, 28);
+        btn->setCursor(Qt::PointingHandCursor);
+        btn->setStyleSheet(toolBtnStyle);
+        toolbarLayout->addWidget(btn);
+    }
+    toolbarLayout->addStretch();
+    chatLayout->addWidget(barChatToolbar);
+
+    // 4.输入区
+    barChatInput = new QTextEdit();
+    barChatInput->setPlaceholderText("想对她说点什么...");
+    barChatInput->setStyleSheet("font-size: 15px;");  //14px（默认）+1
+    barChatInput->setFrameShape(QFrame::NoFrame);
+    chatLayout->addWidget(barChatInput,2);
+
+    mainBarLayout->addWidget(chatContainer, 1);
+
+    // ================== 右侧：设定面板 (3:2 比例) ==================
+    barSidePanel = new QWidget();
+    barSidePanel->setFixedWidth(320);
+    barSidePanel->setStyleSheet("background-color: #fafafa; border-left: 1px solid #eee;");
+    QVBoxLayout *sideLayout = new QVBoxLayout(barSidePanel);
+
+    // 1.预设与头像
+    presetCombo = new QComboBox();
+    presetCombo->addItems({"月见八百代", "高冷御姐", "元气少女"});
+    sideLayout->addWidget(presetCombo);
+
+    barAvatarLabel = new QLabel("上传头像");
+    barAvatarLabel->setFixedSize(80, 80);
+    barAvatarLabel->setStyleSheet("background-color: #eee; border-radius: 40px; border: 2px solid white;");
+    sideLayout->addWidget(barAvatarLabel, 0, Qt::AlignCenter);
+
+    // 2.人格设定 (伸缩权重 3)
+    QWidget *pArea = new QWidget();
+    QVBoxLayout *pLayout = new QVBoxLayout(pArea);
+    pLayout->addWidget(new QLabel("<b>人格设定</b>"));
+    barPersonaEdit = new QTextEdit();
+    barPersonaEdit->setStyleSheet("border: 1px solid #ddd; border-radius: 8px; background: white;");
+    pLayout->addWidget(barPersonaEdit);
+    sideLayout->addWidget(pArea, 3);
+
+    // 3.辅助对话 (伸缩权重 2)
+    QWidget *eArea = new QWidget();
+    QVBoxLayout *eLayout = new QVBoxLayout(eArea);
+
+    QHBoxLayout *eHeader = new QHBoxLayout();
+    eHeader->addWidget(new QLabel("<b>辅助对话</b>"));
+    exampleCountLabel = new QLabel("(共 0 条)");
+    exampleCountLabel->setStyleSheet("color: #999; font-size: 11px;");
+    eHeader->addWidget(exampleCountLabel);
+    eHeader->addStretch();
+    eLayout->addLayout(eHeader);
+
+    QScrollArea *scroll = new QScrollArea();
+    scroll->setWidgetResizable(true);
+    scroll->setFrameShape(QFrame::NoFrame);
+    QWidget *scrollContent = new QWidget();
+    talkExamplesLayout = new QVBoxLayout(scrollContent);
+    talkExamplesLayout->setAlignment(Qt::AlignTop);
+    scroll->setWidget(scrollContent);
+    eLayout->addWidget(scroll);
+
+    QPushButton *addBtn = new QPushButton("+ 添加条目");
+    addBtn->setStyleSheet("background: #fdf2f8; color: #db2777; border: 1px dashed #f9a8d4;");
+    eLayout->addWidget(addBtn);
+    sideLayout->addWidget(eArea, 2);
+
+    mainBarLayout->addWidget(barSidePanel);
     stackedWidget->addWidget(barWidget);
 
-    connect(exitBarModeBtn, &QPushButton::clicked, [this]() {
+    // ================== 信号绑定 ==================
+    connect(exitBarModeBtn, &QPushButton::clicked, [this](){
         stackedWidget->setCurrentWidget(normalWidget);
     });
+
+    //连接右侧面板折叠逻辑
+    connect(toggleBarSideBtn, &QPushButton::toggled, [this](bool checked){
+        barSidePanel->setVisible(checked);
+        toggleBarSideBtn->setText(checked ? "收起 ⚙️" : "设定 ⚙️");
+    });
+
+    //示例对话添加按钮
+    connect(addBtn, &QPushButton::clicked, [this](){ addTalkExampleItem(); });
 }
+
+///
+/// \brief ChatPage::addTalkExampleItem
+/// \brief 辅助函数：增加示例对话条目
+/// \param userText
+/// \param aiText
+///
+void ChatPage::addTalkExampleItem(const QString &userText, const QString &aiText) {
+    QFrame *frame = new QFrame();
+    frame->setStyleSheet("QFrame { background: #fff; border: 1px solid #eee; border-radius: 6px; margin-bottom: 5px; }");
+    QVBoxLayout *layout = new QVBoxLayout(frame);
+
+    QTextEdit *uEdit = new QTextEdit(userText);
+    uEdit->setPlaceholderText("用户提问...");
+    uEdit->setFixedHeight(35);
+    uEdit->setStyleSheet("border: none; background: #f9f9f9;");
+
+    QTextEdit *aEdit = new QTextEdit(aiText);
+    aEdit->setPlaceholderText("AI 回复...");
+    aEdit->setFixedHeight(35);
+    aEdit->setStyleSheet("border: none; background: #fdf2f8;");
+
+    QPushButton *delBtn = new QPushButton("×");
+    delBtn->setFixedSize(20, 20);
+    delBtn->setStyleSheet("color: #ccc; border: none; font-weight: bold;");
+
+    QHBoxLayout *h = new QHBoxLayout();
+    h->addStretch();
+    h->addWidget(delBtn);
+    layout->addLayout(h);
+    layout->addWidget(uEdit);
+    layout->addWidget(aEdit);
+
+    talkExamplesLayout->addWidget(frame);
+    m_talkExamples.append({ frame, uEdit, aEdit });
+    updateExampleCount();
+
+    connect(delBtn, &QPushButton::clicked, [this, frame]() {
+        for(int i=0; i<m_talkExamples.size(); ++i) {
+            if(m_talkExamples[i].container == frame) {
+                m_talkExamples.removeAt(i);
+                break;
+            }
+        }
+        frame->deleteLater();
+        updateExampleCount();
+    });
+}
+
+///
+/// \brief ChatPage::updateExampleCount
+/// \brief 辅助函数：更新示例对话条目计数标签
+///
+void ChatPage::updateExampleCount() {
+    if(exampleCountLabel) exampleCountLabel->setText(QString("(共 %1 条)").arg(m_talkExamples.size()));
+}
+// ********************************
 
 bool ChatPage::eventFilter(QObject *obj, QEvent *event) {
     if (obj == chatInput && event->type() == QEvent::KeyPress) {

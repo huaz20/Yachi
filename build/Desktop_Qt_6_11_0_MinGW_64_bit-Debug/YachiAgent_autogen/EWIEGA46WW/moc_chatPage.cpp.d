@@ -193,10 +193,13 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtGui/qvectornd.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qwindowdefs.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qwindowdefs_win.h \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QComboBox \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QHBoxLayout \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLabel \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLineEdit \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QMenu \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPushButton \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QScrollArea \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QStackedWidget \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextBrowser \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextEdit \
@@ -210,14 +213,17 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractslider.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractspinbox.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qboxlayout.h \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcombobox.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qframe.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgridlayout.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlabel.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlayout.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlayoutitem.h \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlineedit.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qmenu.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qpushbutton.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qrubberband.h \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qscrollarea.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qsizepolicy.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qslider.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qstackedwidget.h \

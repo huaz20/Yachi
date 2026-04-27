@@ -3,7 +3,8 @@
 
 #include <QWidget>
 #include <QTextEdit>
-#include <QTextBrowser> // 新增引入
+#include <QLineEdit>
+#include <QTextBrowser>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -12,6 +13,30 @@
 #include <QKeyEvent>
 #include <QTreeWidget>
 #include <QMenu>
+#include <QComboBox>
+#include <QScrollArea>
+
+///
+/// \brief The BarPreset class
+/// \brief 酒吧预设（角色卡预设）
+///
+struct BarPreset {
+    QString name;
+    QString avatarPath;
+    QString persona;
+    QList<QPair<QString, QString>> talkExamples; //用户/AI对话对
+    QString kbPath; //知识库路径
+};
+
+///
+/// \brief The TalkExamplePair class
+/// \brief 用户/AI对话对
+///
+struct TalkExamplePair {
+    QWidget *container;
+    QTextEdit *userEdit;
+    QTextEdit *aiEdit;
+};
 
 class ChatPage : public QWidget {
     Q_OBJECT
@@ -83,9 +108,41 @@ private:
     QPushButton *sendBtn;
     QPushButton *barModeBtn;
 
-    // --- 酒吧模式UI ---
-    QWidget *barWidget;
-    QPushButton *exitBarModeBtn;
+    // --- 酒吧模式 ---
+    //UI
+    QWidget *barWidget;              //酒吧模式进入条
+    QPushButton *exitBarModeBtn;     //酒吧模式退出按钮
+
+    QWidget *barSidePanel;           //右侧设定面板容器
+    QPushButton *toggleBarSideBtn;   //控制右侧面板收缩的按钮
+    QLineEdit *barCharNameEdit;      // 可修改的角色名称
+    QLabel *barAvatarLabel;          //酒吧模式圆形头像框
+    QTextEdit *barPersonaEdit;       //人格设定
+    QComboBox *presetCombo;          //预设下拉框声明
+
+    QLabel *exampleCountLabel;       //示例对话计数标签
+    QVBoxLayout *talkExamplesLayout; //对话条目的布局
+    QList<TalkExamplePair> m_talkExamples;
+
+    QWidget *personaContainer;       //人格设定容器
+    QWidget *examplesContainer;      //辅助对话容器
+
+    QTextBrowser *barChatHistory;    //聊天记录
+    QTextEdit *barChatInput;         //输入框
+
+    QWidget *barChatToolbar;         //酒吧模式工具栏容器
+    QPushButton *btnEmoji;           //表情
+    QPushButton *btnScreenShot;      //截图
+    QPushButton *btnFile;            //文件
+    QPushButton *btnVibrate;         //窗口抖动
+
+    //辅助函数
+    void addTalkExampleItem(const QString &userText = "", const QString &aiText = "");  //添加示例对话条目
+    void clearTalkExamples();                 //清空示例对话条目
+    void loadBarPreset(const QString &name);  //加载酒吧预设
+    void saveCurrentToBarPreset();            //保存当前酒吧预设
+    void updateExampleCount();                //更新计数显示
+    // ------
 };
 
 #endif // CHATPAGE_H

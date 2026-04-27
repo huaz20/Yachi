@@ -394,6 +394,8 @@ CMakeFiles/YachiAgent.dir/chatpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qtextcursor.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qtextformat.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qpen.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLineEdit \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlineedit.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextBrowser \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtextbrowser.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPushButton \
@@ -458,6 +460,10 @@ CMakeFiles/YachiAgent.dir/chatpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtreewidgetitemiterator.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QMenu \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qmenu.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QComboBox \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcombobox.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QScrollArea \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qscrollarea.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QEvent \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDialog \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
