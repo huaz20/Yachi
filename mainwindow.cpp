@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     // --- 实例各功能Agent---
     //实例（不共用1个，以防上下文串联）
     m_chatAgent = new AgentCore(this);
+    m_barAgent = new AgentCore(this);
     m_translateAgent = new AgentCore(this);
     m_titleAgent = new AgentCore(this);
     // ------
@@ -27,18 +28,27 @@ MainWindow::MainWindow(QWidget *parent)
     QString path = QDir(QCoreApplication::applicationDirPath()).filePath("sys");
 
     m_chatAgent->setSystemPrompt("和用户进行有用的、友善的聊天吧。");
-    m_chatAgent->setWorkspacePath(path);
+    m_chatAgent->setWorkspacePath(path + "/normal");
     m_chatAgent->loadAllSessionsFromDisk();    //从磁盘加载所有会话的历史记录
     //从注册表恢复目录树结构
     QSettings settings("Yachi", "PersistentData");
-    QString treeJson = settings.value("ChatTreeStructure").toString();
-    if (!treeJson.isEmpty()) {
-        QJsonDocument doc = QJsonDocument::fromJson(treeJson.toUtf8());
-        chatPageWidget->deserializeTree(doc.array());
+    QString normalTreeJson = settings.value("NormalChatTree").toString();
+    if (!normalTreeJson.isEmpty()) {
+        QJsonArray normalArr = QJsonDocument::fromJson(normalTreeJson.toUtf8()).array();
+        chatPageWidget->setNormalTreeData(normalArr);
+        chatPageWidget->deserializeTree(normalArr);  //初始默认显示普通模式
     }
+    m_chatAgent->setYachiMemoryEnabled(true);   //开启持久化记忆
+    m_chatAgent->setEnvSenseEnabled(true);      //开启环境感知
 
-    m_chatAgent->setYachiMemoryEnabled(true);  //开启持久化记忆
-    m_chatAgent->setEnvSenseEnabled(true);     //开启环境感知
+    m_barAgent->setWorkspacePath(path + "/bar"); //和chatAgent物理隔离下
+    m_barAgent->loadAllSessionsFromDisk();
+    //从注册表恢复目录树结构
+    QString barTreeJson = settings.value("BarChatTree").toString();
+    if (!barTreeJson.isEmpty()) {
+        QJsonArray barArr = QJsonDocument::fromJson(barTreeJson.toUtf8()).array();
+        chatPageWidget->setBarTreeData(barArr);
+    }
 
     m_translateAgent->setWorkspacePath(path);
     m_translateAgent->setYachiMemoryEnabled(false);  //关闭持久化记忆
@@ -85,14 +95,15 @@ MainWindow::~MainWindow()
     // --- 持久化保存会话的历史记录 ---
     // 1.保存当前的对话内容
     QString currentId = m_chatAgent->getActiveSessionId();
-    if (!currentId.isEmpty()){
-        m_chatAgent->saveSessionToFile(currentId);
-    }
+    if (!currentId.isEmpty()) m_chatAgent->saveSessionToFile(currentId);
 
-    // 2.保存目录树结构
+    QString barId = m_barAgent->getActiveSessionId();
+    if (!barId.isEmpty()) m_barAgent->saveSessionToFile(barId);
+
+    // 2.双路保存目录树结构
     QSettings settings("Yachi", "PersistentData");
-    QJsonArray treeData = chatPageWidget->serializeTree();
-    settings.setValue("ChatTreeStructure", QJsonDocument(treeData).toJson());
+    settings.setValue("NormalChatTree", QJsonDocument(chatPageWidget->getNormalTreeData()).toJson());
+    settings.setValue("BarChatTree", QJsonDocument(chatPageWidget->getBarTreeData()).toJson());
     // ------
 }
 
@@ -101,8 +112,21 @@ void MainWindow::onNavigationChanged(int index) {
 }
 
 void MainWindow::handleSendRequest(const QString &text) {
+    //这里 appendMessage 内部会根据模式自动选窗口
     chatPageWidget->appendMessage("我", text, "black");
-    m_chatAgent->sendMsg(text);
+
+    //根据ChatPage的状态决定使用哪个Agent
+    //酒吧模式逻辑
+    if (chatPageWidget->isBarMode()) {
+        //实时注入UI上的最新人格设定
+        m_barAgent->setSystemPrompt(chatPageWidget->getBarSystemPrompt());
+        m_barAgent->sendMsg(text);
+    }
+    //普通模式逻辑
+    else
+    {
+        m_chatAgent->sendMsg(text);
+    }
 }
 
 void MainWindow::setupUI()
@@ -164,6 +188,30 @@ void MainWindow::setupUI()
     connect(chatPageWidget, &ChatPage::requestTitleSummary, this, [this](const QString &firstMsg){
         m_titleAgent->clearHistory();
         m_titleAgent->sendMsg("请概括以下内容作为标题：" + firstMsg);
+    });
+    //切换到酒吧模式
+    connect(chatPageWidget, &ChatPage::modeChanged, this, [this](bool isBarMode){
+        //断开所有旧连接，防止混淆
+        disconnect(m_chatAgent, &AgentCore::partialResponseMsg, nullptr, nullptr);
+        disconnect(m_barAgent, &AgentCore::partialResponseMsg, nullptr, nullptr);
+        disconnect(m_chatAgent, &AgentCore::responseMsg, nullptr, nullptr);
+        disconnect(m_barAgent, &AgentCore::responseMsg, nullptr, nullptr);
+
+        AgentCore* activeAgent = isBarMode ? m_barAgent : m_chatAgent;
+
+        //重新绑定信号到 UI 接口
+        connect(activeAgent, &AgentCore::partialResponseMsg, chatPageWidget, &ChatPage::handleStreamingResponse);
+        connect(activeAgent, &AgentCore::responseMsg, this, [this](const QString &msg){
+            chatPageWidget->finishStreamingResponse(msg);
+        });
+
+        //确保酒吧模式Agent也拥有首页配置的模型列表
+        auto configs = homePageWidget->getAllConfigs();
+        if(!configs.isEmpty()){
+            QList<ModelToUseInfo> modelConfigs;
+            for(const auto& c : configs) modelConfigs.append({c.baseUrl, c.apiKey, c.model});
+            activeAgent->setModelConfig(modelConfigs);
+        }
     });
 
     //响应首页配置保存并应用到所有Agent
@@ -230,24 +278,29 @@ void MainWindow::setupUI()
         // ------
     });
 
+    //酒吧模式回车发送的信号
+    connect(chatPageWidget, &ChatPage::barSendMessage, this, &MainWindow::handleSendRequest);
     //多会话机制的总响应逻辑
     connect(chatPageWidget, &ChatPage::chatSessionChanged, this, [this](const QString &sessionId){
-        // 1.记录上一个会话 ID，切换前先存盘
+        // 1.获取当前活跃的 Agent
+        AgentCore* activeAgent = chatPageWidget->isBarMode() ? m_barAgent : m_chatAgent;
+
+        // 2.记录上一个会话 ID，切换前先存盘
         static QString s_lastId;
         if (!s_lastId.isEmpty()) {
-            m_chatAgent->saveSessionToFile(s_lastId);
+            activeAgent->saveSessionToFile(s_lastId);
         }
         s_lastId = sessionId;
 
-        m_chatAgent->switchSession(sessionId);
+        activeAgent->switchSession(sessionId);
 
-        // 2.让AgentCore切换上下文
-        m_chatAgent->switchSession(sessionId);
+        // 3.让AgentCore切换上下文
+        activeAgent->switchSession(sessionId);
 
-        // 3.获取切换后的历史记录
-        QJsonArray history = m_chatAgent->getSessionHistory(sessionId);
+        // 4.获取切换后的历史记录
+        QJsonArray history = activeAgent->getSessionHistory(sessionId);
 
-        // 4.通知UI重绘所有气泡
+        // 5.通知UI重绘所有气泡
         chatPageWidget->rebuildChatFromHistory(history);
     });
 }

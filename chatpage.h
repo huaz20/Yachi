@@ -15,6 +15,7 @@
 #include <QMenu>
 #include <QComboBox>
 #include <QScrollArea>
+#include <QJsonArray>
 
 ///
 /// \brief The BarPreset class
@@ -58,8 +59,23 @@ public:
     QJsonArray serializeTree();
     //JSON恢复树
     void deserializeTree(const QJsonArray &data);
+
+    //获取普通模式树数据
+    QJsonArray getNormalTreeData() const {
+        return m_isBarMode ? m_normalTreeData : const_cast<ChatPage*>(this)->serializeTree();
+    }
+    //获取酒吧模式树数据
+    QJsonArray getBarTreeData() const {
+        return m_isBarMode ? const_cast<ChatPage*>(this)->serializeTree() : m_barTreeData;
+    }
+    //设置数据
+    void setNormalTreeData(const QJsonArray &data) { m_normalTreeData = data; }
+    void setBarTreeData(const QJsonArray &data) { m_barTreeData = data; }
     // ------
 
+    bool isBarMode() const { return m_isBarMode; }
+    //组装酒吧模式的最终 System Prompt
+    QString getBarSystemPrompt() const;
 
 signals:
     void sendMessage(const QString &text);
@@ -68,6 +84,16 @@ signals:
 
     void chatSessionChanged(const QString &sessionId);     //当用户点击不同的对话项时触发
     void sessionDeleted(const QString &sessionId);         //UI层删除会话时传递的信号
+
+    //酒吧模式
+    void modeChanged(bool isBarMode);
+    void barSendMessage(const QString &text);
+    /* 酒吧模式逻辑层说明
+     * 1、数据隔离：普通对话存储在 sys/normal，酒吧对话存储在 sys/bar
+     * 2、树结构分离：有 m_normalTreeData 和 m_barTreeData 两个快照，在模式切换时通过序列化接口（serializeTree和deserializeTree）去切换。
+     * 3、实时更新Prompt：酒吧模式下，每次按回车发送时，MainWindow 都会调用 getBarSystemPrompt() 重新抓取UI右侧的人格设定和对话示例，确保AI始终遵循最新的角色卡。
+     * 4、AI的回复流向：handleStreamingResponse 内部根据 m_isBarMode 来选择 barChatHistory 或 chatHistory 进行打字机效果渲染。
+     */
 
 public slots:
     void updateCurrentChatTitle(const QString &title);  //供外部调用，更新当前列表项的标题
@@ -100,6 +126,8 @@ private:
     QWidget *collapsedSidebar;
     QWidget *expandedSidebar;
     QTreeWidget *chatSessionsTree; //支持拖拽和层级的树状列表
+    QJsonArray m_normalTreeData;   //存储普通模式树结构
+    QJsonArray m_barTreeData;      //存储酒吧模式树结构
 
     // --- 普通模式UI ---
     QWidget *normalWidget;
@@ -109,6 +137,7 @@ private:
     QPushButton *barModeBtn;
 
     // --- 酒吧模式 ---
+    bool m_isBarMode = false;
     //UI
     QWidget *barWidget;              //酒吧模式进入条
     QPushButton *exitBarModeBtn;     //酒吧模式退出按钮
@@ -142,6 +171,9 @@ private:
     void loadBarPreset(const QString &name);  //加载酒吧预设
     void saveCurrentToBarPreset();            //保存当前酒吧预设
     void updateExampleCount();                //更新计数显示
+
+    //主逻辑
+    void handleBarSend();             //处理酒吧模式的发送逻辑
     // ------
 };
 

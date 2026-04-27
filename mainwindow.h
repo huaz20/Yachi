@@ -40,9 +40,10 @@ private:
     VoicePage *voicePageWidget;
 
     //为不同功能分配独立的AgentCore
-    AgentCore *m_chatAgent;
+    AgentCore *m_chatAgent;      //对话普通模式的Agent
+    AgentCore *m_barAgent;       //对话酒吧模式的Agent
     AgentCore *m_translateAgent;
-    AgentCore *m_titleAgent; //专职生成对话标题的
+    AgentCore *m_titleAgent;     //对话标题生成Agent
 
     //厂商映射表
     QMap<QString, ModelInfo> m_vendorMap;

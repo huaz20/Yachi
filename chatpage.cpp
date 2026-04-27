@@ -369,9 +369,20 @@ void ChatPage::setupNormalChatUI() {
     };
     connect(sendBtn, &QPushButton::clicked, sendFunc);
 
+    //进入酒吧模式按钮
     connect(barModeBtn, &QPushButton::clicked, [this]() {
+        // 1.保存当前树结构到内存
+        m_normalTreeData = serializeTree();
+        m_isBarMode = true;
+
+        // 2.刷新树 UI：清空并加载酒吧模式数据
+        chatSessionsTree->clear();
+        if (!m_barTreeData.isEmpty()) {
+            deserializeTree(m_barTreeData);
+        }
+
         stackedWidget->setCurrentWidget(barWidget);
-        appendSystemMsg("已进入酒吧模式");
+        emit modeChanged(true); //通知MainWindow
     });
 }
 
@@ -462,6 +473,7 @@ void ChatPage::setupBarModeUI() {
     barChatInput->setPlaceholderText("想对她说点什么...");
     barChatInput->setStyleSheet("font-size: 15px;");  //14px（默认）+1
     barChatInput->setFrameShape(QFrame::NoFrame);
+    barChatInput->installEventFilter(this);           //安装过滤器以监听回车键
     chatLayout->addWidget(barChatInput,2);
 
     mainBarLayout->addWidget(chatContainer, 1);
@@ -521,8 +533,20 @@ void ChatPage::setupBarModeUI() {
     stackedWidget->addWidget(barWidget);
 
     // ================== 信号绑定 ==================
+    //返回普通模式按钮
     connect(exitBarModeBtn, &QPushButton::clicked, [this](){
+        // 1.保存酒吧模式树结构
+        m_barTreeData = serializeTree();
+        m_isBarMode = false;
+
+        // 2.刷新树 UI
+        chatSessionsTree->clear();
+        if (!m_normalTreeData.isEmpty()) {
+            deserializeTree(m_normalTreeData);
+        }
+
         stackedWidget->setCurrentWidget(normalWidget);
+        emit modeChanged(false);
     });
 
     //连接右侧面板折叠逻辑
@@ -590,16 +614,80 @@ void ChatPage::addTalkExampleItem(const QString &userText, const QString &aiText
 void ChatPage::updateExampleCount() {
     if(exampleCountLabel) exampleCountLabel->setText(QString("(共 %1 条)").arg(m_talkExamples.size()));
 }
+
+///
+/// \brief ChatPage::handleBarSend
+/// \brief 处理酒吧模式的发送逻辑
+///
+void ChatPage::handleBarSend() {
+    QString text = barChatInput->toPlainText().trimmed();
+    if (text.isEmpty()) return;
+
+    // 1.自动创建会话逻辑
+    if (chatSessionsTree->topLevelItemCount() == 0 || !chatSessionsTree->currentItem()) {
+        QString newId = QUuid::createUuid().toString();
+        QTreeWidgetItem *chat = new QTreeWidgetItem();
+        chat->setText(0, "💬 酒吧对话");
+        chat->setData(0, Qt::UserRole, "chat");
+        chat->setData(0, Qt::UserRole + 1, newId);
+        chatSessionsTree->insertTopLevelItem(0, chat);
+        chatSessionsTree->setCurrentItem(chat);
+
+        emit chatSessionChanged(newId);
+        m_isFirstMessage = true; //显式标记为首句
+    }
+
+    // 2.发射发送信号
+    emit barSendMessage(text);
+
+    // 3.联动titleAgent
+    if (m_isFirstMessage) {
+        emit requestTitleSummary(text); //通知 MainWindow 调用titleAgent生成标题
+        m_isFirstMessage = false;
+    }
+
+    barChatInput->clear();
+}
+
+///
+/// \brief ChatPage::getBarSystemPrompt
+/// \brief 组装酒吧模式的最终 System Prompt
+/// \return
+///
+QString ChatPage::getBarSystemPrompt() const {
+    //基础人格设定
+    QString persona = QString("你的角色名字是：%1。\n人格设定如下：\n%2\n")
+                          .arg(barCharNameEdit->text())
+                          .arg(barPersonaEdit->toPlainText());
+
+    //注入辅助对话示例
+    if (!m_talkExamples.isEmpty()) {
+        persona += "\n[对话风格参考示例]：\n";
+        for (const auto &pair : m_talkExamples) {
+            persona += QString("User: %1\nAssistant: %2\n")
+                        .arg(pair.userEdit->toPlainText())
+                        .arg(pair.aiEdit->toPlainText());
+        }
+    }
+    return persona;
+}
 // ********************************
 
 bool ChatPage::eventFilter(QObject *obj, QEvent *event) {
-    if (obj == chatInput && event->type() == QEvent::KeyPress) {
+    //同时拦截普通输入框和酒吧输入框的按键事件
+    if ((obj == chatInput || obj == barChatInput) && event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         if ((keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter)) {
             if (keyEvent->modifiers() & Qt::ShiftModifier) {
-                return false; //Shift+Enter换行
+                return false; //Shift+Enter 换行
             } else {
-                sendBtn->animateClick();
+                //根据当前所在的输入框执行不同的发送逻辑
+                if (obj == chatInput) {
+                    //普通模式下原有逻辑是调用 sendBtn 的点击
+                    sendBtn->animateClick();
+                } else if (obj == barChatInput) {
+                    handleBarSend();
+                }
                 return true;
             }
         }
@@ -611,16 +699,20 @@ void ChatPage::appendMessage(const QString &sender, const QString &msg, const QS
     Q_UNUSED(color);
     bool isUser = (sender == "Me" || sender == "用户" || sender == "我" || sender == "user");
 
+    //根据当前模式选择目标浏览器
+    QTextBrowser *targetBrowser = m_isBarMode ? barChatHistory : chatHistory;
+
     //如果是非流式的普通追加（如用户发送的消息）
     QString finalHtml = wrapInBubble(msg, isUser);
-    chatHistory->append(finalHtml);
+    targetBrowser->append(finalHtml);
 
     //自动滚动到底部
-    chatHistory->moveCursor(QTextCursor::End);
+    targetBrowser->moveCursor(QTextCursor::End);
 }
 
 void ChatPage::appendSystemMsg(const QString &msg) {
-    chatHistory->append(QString("<i style='color:gray; font-size:14px;'>系统: %1</i>").arg(msg));
+    QTextBrowser *targetBrowser = m_isBarMode ? barChatHistory : chatHistory;
+    targetBrowser->append(QString("<i style='color:gray; font-size:14px;'>系统: %1</i>").arg(msg));
 }
 
 // **************** 流式输出 ****************
@@ -630,13 +722,15 @@ void ChatPage::appendSystemMsg(const QString &msg) {
 ///
 void ChatPage::handleStreamingResponse(const QString &text)
 {
+    QTextBrowser *targetBrowser = m_isBarMode ? barChatHistory : chatHistory;
+
     if(!m_isStreamingTyping)
     {
         m_isStreamingTyping = true;
         m_currentResponse = "";
 
         //记录流式输出开始时光标的确切位置
-        QTextCursor cursor = chatHistory->textCursor();
+        QTextCursor cursor = targetBrowser->textCursor();
         cursor.movePosition(QTextCursor::End);
         m_startPos = cursor.position();
     }
@@ -647,7 +741,7 @@ void ChatPage::handleStreamingResponse(const QString &text)
     QString html = wrapInBubble(m_currentResponse + " ▌", false);  //加上Markdown渲染和打字机光标
 
     //设置键鼠光标
-    QTextCursor cursor = chatHistory->textCursor();
+    QTextCursor cursor = targetBrowser->textCursor();
 
     //精准选中上一次渲染的整个气泡并替换
     cursor.setPosition(m_startPos);  //回到起笔位置
@@ -655,7 +749,7 @@ void ChatPage::handleStreamingResponse(const QString &text)
     cursor.removeSelectedText();  //删掉旧内容
     cursor.insertHtml(html);      //插入新内容
 
-    chatHistory->ensureCursorVisible();
+    targetBrowser->ensureCursorVisible();
 }
 
 ///
@@ -666,19 +760,20 @@ void ChatPage::handleStreamingResponse(const QString &text)
 void ChatPage::finishStreamingResponse(const QString &fullMsg)
 {
     m_isStreamingTyping = false;
+    QTextBrowser *targetBrowser = m_isBarMode ? barChatHistory : chatHistory;
 
     //移除打字机光标，进行最终渲染
     QString html = wrapInBubble(fullMsg, false);
 
     //设置键鼠光标
-    QTextCursor cursor = chatHistory->textCursor();
+    QTextCursor cursor = targetBrowser->textCursor();
 
     cursor.setPosition(m_startPos);
     cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
     cursor.removeSelectedText();
     cursor.insertHtml(html);
 
-    chatHistory->ensureCursorVisible();
+    targetBrowser->ensureCursorVisible();
 }
 // ********************************
 
@@ -753,7 +848,9 @@ QString ChatPage::wrapInBubble(const QString &rawContent, bool isUser) {
 /// \param history
 ///
 void ChatPage::rebuildChatFromHistory(const QJsonArray &history) {
-    chatHistory->clear();
+    //根据当前模式清空对应的历史框
+    QTextBrowser *targetBrowser = m_isBarMode ? barChatHistory : chatHistory;
+    targetBrowser->clear();
 
     for (const QJsonValue &value : history) {
         QJsonObject obj = value.toObject();
@@ -766,11 +863,11 @@ void ChatPage::rebuildChatFromHistory(const QJsonArray &history) {
         }
         else if (role == "assistant")
         {
-            chatHistory->append(wrapInBubble(content, false));
+            targetBrowser->append(wrapInBubble(content, false));
         }
         else if (role == "system" && content.startsWith("[之前的对话总结]"))
         {
-            appendSystemMsg(content);
+            targetBrowser->append(QString("<i style='color:gray; font-size:14px;'>系统: %1</i>").arg(content));
         }
     }
 

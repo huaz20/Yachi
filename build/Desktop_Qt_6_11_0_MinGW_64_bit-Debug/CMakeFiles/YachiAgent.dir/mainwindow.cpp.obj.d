@@ -479,6 +479,16 @@ CMakeFiles/YachiAgent.dir/mainwindow.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtreewidgetitemiterator.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QMenu \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qmenu.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QJsonArray \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonarray.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonvalue.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qcborvalue.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qcborcommon.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qdatetime.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qcalendar.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/quuid.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qjsondocument.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonparseerror.h \
  C:\Programming\cpp\Yachi\agentcore.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QObject \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkAccessManager \
@@ -488,8 +498,6 @@ CMakeFiles/YachiAgent.dir/mainwindow.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/qtnetworkexports.h \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/qnetworkrequest.h \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/qhttpheaders.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/qdatetime.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/qcalendar.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qmetaobject.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QSharedDataPointer \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QString \
@@ -514,14 +522,6 @@ CMakeFiles/YachiAgent.dir/mainwindow.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/qnetworkreply.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QIODevice \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkRequest \
- C:/Qt/6.11.0/mingw_64/include/QtCore/QJsonArray \
- C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonarray.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonvalue.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/qcborvalue.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/qcborcommon.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/quuid.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/qjsondocument.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonparseerror.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QJsonObject \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonobject.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QDir \
