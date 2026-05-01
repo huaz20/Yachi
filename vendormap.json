@@ -15,8 +15,10 @@
             "name": "DeepSeek",
             "baseUrl": "https://api.deepseek.com/v1",
             "models": [
-                "deepseek-chat",
-                "deepseek-reasoner"
+                "deepseek-v4-flash",
+                "deepseek-v4-pro",
+                "deepseek-chat（2026/07/24弃用）",
+                "deepseek-reasoner（2026/07/24弃用）"
             ]
         },
         {
