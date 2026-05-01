@@ -104,6 +104,9 @@ MainWindow::~MainWindow()
     QSettings settings("Yachi", "PersistentData");
     settings.setValue("NormalChatTree", QJsonDocument(chatPageWidget->getNormalTreeData()).toJson());
     settings.setValue("BarChatTree", QJsonDocument(chatPageWidget->getBarTreeData()).toJson());
+
+    // 3.保存酒吧模式下各角色的对话树
+    chatPageWidget->saveCurrentToBarPreset();
     // ------
 }
 
@@ -178,7 +181,8 @@ void MainWindow::setupUI()
     connect(chatPageWidget, &ChatPage::sendMessage, this, &MainWindow::handleSendRequest);
     //UI层会话删除传递信号通知删除持久化数据
     connect(chatPageWidget, &ChatPage::sessionDeleted, this, [this](const QString &sessionId){
-        m_chatAgent->deleteSessionData(sessionId);
+        AgentCore* activeAgent = chatPageWidget->isBarMode() ? m_barAgent : m_chatAgent;
+        activeAgent->deleteSessionData(sessionId);
     });
 
     connect(chatPageWidget, &ChatPage::requestClearHistory, this, [this](){
@@ -286,13 +290,10 @@ void MainWindow::setupUI()
         AgentCore* activeAgent = chatPageWidget->isBarMode() ? m_barAgent : m_chatAgent;
 
         // 2.记录上一个会话 ID，切换前先存盘
-        static QString s_lastId;
-        if (!s_lastId.isEmpty()) {
-            activeAgent->saveSessionToFile(s_lastId);
+        QString oldSessionId = activeAgent->getActiveSessionId();
+        if (!oldSessionId.isEmpty()) {
+            activeAgent->saveSessionToFile(oldSessionId);
         }
-        s_lastId = sessionId;
-
-        activeAgent->switchSession(sessionId);
 
         // 3.让AgentCore切换上下文
         activeAgent->switchSession(sessionId);

@@ -78,6 +78,7 @@ YachiAgent_autogen/timestamp: CMakeFiles/YachiAgent.dir/compiler_depend.ts
 YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp: C:/Programming/cpp/Yachi/res.qrc
 YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp: CMakeFiles/YachiAgent_autogen.dir/AutoRcc_res_EWIEGA46WW_Info.json
 YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp: C:/Programming/cpp/Yachi/vendormap.json
+YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp: C:/Programming/cpp/Yachi/images/yachiyo_heart.jpg
 YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp: C:/Qt/6.11.0/mingw_64/bin/rcc.exe
 YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp: C:/Qt/6.11.0/mingw_64/bin/rcc.exe
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Automatic RCC for res.qrc"

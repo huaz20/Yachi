@@ -25,8 +25,9 @@ struct BarPreset {
     QString name;
     QString avatarPath;
     QString persona;
-    QList<QPair<QString, QString>> talkExamples; //用户/AI对话对
-    QString kbPath; //知识库路径
+    QList<QPair<QString, QString>> talkExamples;
+    QString kbPath;
+    QJsonArray treeSnapshot;  //该预设的对话树快照
 };
 
 ///
@@ -77,6 +78,7 @@ public:
     //组装酒吧模式的最终 System Prompt
     QString getBarSystemPrompt() const;
 
+    void saveCurrentToBarPreset();                //保存当前酒吧预设
 signals:
     void sendMessage(const QString &text);
     void requestClearHistory();                            //通知底层清空当前Agent的记忆
@@ -144,8 +146,11 @@ private:
 
     QWidget *barSidePanel;           //右侧设定面板容器
     QPushButton *toggleBarSideBtn;   //控制右侧面板收缩的按钮
-    QLineEdit *barCharNameEdit;      // 可修改的角色名称
+    QLineEdit *barCharNameEdit;      //可修改的角色名称
+
     QLabel *barAvatarLabel;          //酒吧模式圆形头像框
+    QString m_barAvatarPath;         //存储用户头像的路径
+
     QTextEdit *barPersonaEdit;       //人格设定
     QComboBox *presetCombo;          //预设下拉框声明
 
@@ -165,15 +170,22 @@ private:
     QPushButton *btnFile;            //文件
     QPushButton *btnVibrate;         //窗口抖动
 
+    QMap<QString, BarPreset> m_presets; //缓存所有已加载的预设
+    QString m_currentPresetName;        //当前正在使用的预设名称
+
     //辅助函数
     void addTalkExampleItem(const QString &userText = "", const QString &aiText = "");  //添加示例对话条目
     void clearTalkExamples();                 //清空示例对话条目
-    void loadBarPreset(const QString &name);  //加载酒吧预设
-    void saveCurrentToBarPreset();            //保存当前酒吧预设
     void updateExampleCount();                //更新计数显示
+    void handleAvatarUpload();                //处理头像上传逻辑
+    void setCircularAvatar(QLabel* label, const QString& path);  //确保头像框是圆形效果的辅助函数
 
     //主逻辑
     void handleBarSend();             //处理酒吧模式的发送逻辑
+
+    void initPresets();                           //初始化：扫描磁盘加载所有预设
+    void loadBarPreset(const QString &name);      //加载酒吧预设
+    void collectUItoPreset(const QString &name);  //将当前UI内容收集到 m_presets 缓存中
     // ------
 };
 

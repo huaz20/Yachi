@@ -7,7 +7,11 @@
 	"CROSS_CONFIG" : false,
 	"GENERATOR" : "MinGW Makefiles",
 	"INCLUDE_DIR" : "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/include",
-	"INPUTS" : [ "C:/Programming/cpp/Yachi/vendormap.json" ],
+	"INPUTS" : 
+	[
+		"C:/Programming/cpp/Yachi/vendormap.json",
+		"C:/Programming/cpp/Yachi/images/yachiyo_heart.jpg"
+	],
 	"LOCK_FILE" : "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/CMakeFiles/YachiAgent_autogen.dir/AutoRcc_res_EWIEGA46WW_Lock.lock",
 	"MULTI_CONFIG" : false,
 	"OPTIONS" : [ "--no-zstd", "-name", "res" ],

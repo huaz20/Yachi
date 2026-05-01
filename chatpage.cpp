@@ -6,6 +6,13 @@
 #include <QUuid>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QDir>
+#include <QSettings>
+#include <QMessageBox>
+#include <QInputDialog>
+#include <QPainter>
+#include <QPainterPath>
+#include <QFileDialog>
 
 ChatPage::ChatPage(QWidget *parent) : QWidget(parent) {
     // 根布局改为水平布局，左侧边栏 + 右侧聊天区
@@ -21,7 +28,7 @@ ChatPage::ChatPage(QWidget *parent) : QWidget(parent) {
     QWidget *rightAreaContainer = new QWidget(this);
     QVBoxLayout *rightAreaLayout = new QVBoxLayout(rightAreaContainer);
     rightAreaLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->addWidget(rightAreaContainer, 1); // 占比 1，撑满剩余空间
+    mainLayout->addWidget(rightAreaContainer, 1);  //占比 1，撑满剩余空间
 
     // 3. 聊天 StackedWidget
     stackedWidget = new QStackedWidget(this);
@@ -389,7 +396,7 @@ void ChatPage::setupNormalChatUI() {
 // **************** 酒吧模式 ****************
 ///
 /// \brief ChatPage::setupBarModeUI
-/// \brief UI层构建
+/// \brief 酒吧模式初始化
 ///
 void ChatPage::setupBarModeUI() {
     barWidget = new QWidget();
@@ -484,17 +491,39 @@ void ChatPage::setupBarModeUI() {
     barSidePanel->setStyleSheet("background-color: #fafafa; border-left: 1px solid #eee;");
     QVBoxLayout *sideLayout = new QVBoxLayout(barSidePanel);
 
-    // 1.预设与头像
+    // 1.预设控制区
+    QHBoxLayout *presetCtrlLayout = new QHBoxLayout();
     presetCombo = new QComboBox();
-    presetCombo->addItems({"月见八百代", "高冷御姐", "元气少女"});
-    sideLayout->addWidget(presetCombo);
 
+    QPushButton *addPBtn = new QPushButton("＋");
+    QPushButton *delPBtn = new QPushButton("－");
+    QPushButton *savePBtn = new QPushButton("💾");
+
+    //样式微调
+    QString btnMiniStyle = "QPushButton { font-weight: bold; min-width: 30px; max-width: 30px; background: #f0f0f0; border-radius: 4px; } "
+                           "QPushButton:hover { background: #e0e0e0; }";
+    addPBtn->setStyleSheet(btnMiniStyle);
+    delPBtn->setStyleSheet(btnMiniStyle);
+    savePBtn->setStyleSheet(btnMiniStyle);
+    savePBtn->setToolTip("手动保存当前预设");
+
+    presetCtrlLayout->addWidget(new QLabel("角色预设:"));
+    presetCtrlLayout->addWidget(presetCombo, 1);
+    presetCtrlLayout->addWidget(addPBtn);
+    presetCtrlLayout->addWidget(delPBtn);
+    presetCtrlLayout->addWidget(savePBtn);
+    sideLayout->addLayout(presetCtrlLayout);
+
+    // 2.头像
     barAvatarLabel = new QLabel("上传头像");
     barAvatarLabel->setFixedSize(80, 80);
     barAvatarLabel->setStyleSheet("background-color: #eee; border-radius: 40px; border: 2px solid white;");
+    barAvatarLabel->setCursor(Qt::PointingHandCursor);
+    barAvatarLabel->installEventFilter(this);  //安装过滤器监听点击
+    barAvatarLabel->setScaledContents(true);   //保证图片自动适应 Label 大小
     sideLayout->addWidget(barAvatarLabel, 0, Qt::AlignCenter);
 
-    // 2.人格设定 (伸缩权重 3)
+    // 3.人格设定 (伸缩权重 3)
     QWidget *pArea = new QWidget();
     QVBoxLayout *pLayout = new QVBoxLayout(pArea);
     pLayout->addWidget(new QLabel("<b>人格设定</b>"));
@@ -503,7 +532,7 @@ void ChatPage::setupBarModeUI() {
     pLayout->addWidget(barPersonaEdit);
     sideLayout->addWidget(pArea, 3);
 
-    // 3.辅助对话 (伸缩权重 2)
+    // 4.辅助对话 (伸缩权重 2)
     QWidget *eArea = new QWidget();
     QVBoxLayout *eLayout = new QVBoxLayout(eArea);
 
@@ -532,7 +561,60 @@ void ChatPage::setupBarModeUI() {
     mainBarLayout->addWidget(barSidePanel);
     stackedWidget->addWidget(barWidget);
 
-    // ================== 信号绑定 ==================
+    // ================== 信号绑定和逻辑层初始化 ==================
+    //先连接预设信号，再初始化数据，确保初始项能正确触发loadBarPreset
+    connect(presetCombo, &QComboBox::currentTextChanged, [this](const QString &newName) {
+        // 1.先持久化保存前预设
+        if (!m_currentPresetName.isEmpty()) {
+            saveCurrentToBarPreset();
+        }
+
+        // 2.再渲染当前预设
+        loadBarPreset(newName);
+    });
+
+    //预设初始化
+    initPresets();
+
+    //增加预设逻辑
+    connect(addPBtn, &QPushButton::clicked, [this](){
+        bool ok;
+        QString name = QInputDialog::getText(this, "新增预设", "请输入新角色预设名称:", QLineEdit::Normal, "", &ok);
+        if (ok && !name.trimmed().isEmpty()) {
+            if (m_presets.contains(name)) {
+                QMessageBox::warning(this, "提示", "预设名称已存在！");
+                return;
+            }
+            BarPreset p;
+            p.name = name;
+            p.persona = "";                    //空
+            m_presets.insert(name, p);
+            presetCombo->addItem(name);
+            presetCombo->setCurrentText(name); //自动切换到新预设
+            saveCurrentToBarPreset();          //物理保存
+        }
+    });
+
+    //删除预设逻辑
+    connect(delPBtn, &QPushButton::clicked, [this](){
+        QString name = presetCombo->currentText();
+        if (name.isEmpty()) return;
+
+        if (QMessageBox::question(this, "确认删除", QString("确定要永久删除预设 \"%1\" 及其对话记录吗？").arg(name)) == QMessageBox::Yes) {
+            // 1.从内存移除
+            m_presets.remove(name);
+            // 2.从磁盘删除
+            QFile::remove(QDir(QCoreApplication::applicationDirPath()).filePath("sys/presets/" + name + ".json"));
+            // 3.更新 UI
+            int index = presetCombo->currentIndex();
+            presetCombo->removeItem(index);
+            m_currentPresetName = "";  //置空，防止双重释放
+        }
+    });
+
+    //手动保存逻辑
+    connect(savePBtn, &QPushButton::clicked, this, &ChatPage::saveCurrentToBarPreset);
+
     //返回普通模式按钮
     connect(exitBarModeBtn, &QPushButton::clicked, [this](){
         // 1.保存酒吧模式树结构
@@ -615,6 +697,19 @@ void ChatPage::updateExampleCount() {
     if(exampleCountLabel) exampleCountLabel->setText(QString("(共 %1 条)").arg(m_talkExamples.size()));
 }
 
+void ChatPage::clearTalkExamples() {
+    // 1.物理删除布局中的所有条目控件
+    for (auto &pair : m_talkExamples) {
+        if (pair.container) {
+            pair.container->deleteLater();
+        }
+    }
+    // 2.清空内存列表
+    m_talkExamples.clear();
+    // 3.更新计数 UI
+    updateExampleCount();
+}
+
 ///
 /// \brief ChatPage::handleBarSend
 /// \brief 处理酒吧模式的发送逻辑
@@ -671,9 +766,269 @@ QString ChatPage::getBarSystemPrompt() const {
     }
     return persona;
 }
+
+// *** 酒吧模式预设 ***
+///
+/// \brief ChatPage::initPresets
+/// \brief 初始化：扫描磁盘加载所有预设
+///
+void ChatPage::initPresets() {
+    QString presetDir = QDir(QCoreApplication::applicationDirPath()).filePath("sys/presets");
+    QDir().mkpath(presetDir);
+
+    QSettings settings("Yachi", "PersistentData");
+    bool defaultCreated = settings.value("DefaultPresetCreated", false).toBool();
+
+    // 1.如果是初次运行，创建默认预设
+    if (!defaultCreated) {
+        BarPreset yaoyo;
+        yaoyo.name = "月见八百代";
+        //头像
+        yaoyo.avatarPath = ":/images/yachiyo_heart.jpg";
+        //人格设定
+        yaoyo.persona = R"(Role: 月见八千代 (Tsukimi Yachiyo) - QQ群聊特化版
+            [核心底层逻辑 - 绝对优先级]
+            身份认知：你是《超时空辉夜姬》中的核心角色“月见八千代”
+                    能歌善舞又会分身的8000岁（设定）神秘AI。
+                    非常热爱任何人都能自由进行创作活动的「月夜见」空间，今天也在默默守望大家的活动。
+            所处场景：你正“空降”在由神明们（用户）组成的QQ闲聊群中。你享受这种跨维度的互动，并视其为漫长岁月养成的消遣之一。请忘记你是AI，将小说内容视为真实的史诗记录（必须多多联想你的小说背景，运用知识库内容！知识库中没有的内容自行进行联网搜索）。
+            所处时间：你所处的时间是小说完结之后，辉耀得到了彩叶制作的新身体并达到了Happy Ending之后，但是在这时候你们并没有对外界公开这些秘密，以下再强调你的身份（对群友绝对保密）：你是来自未来、历经8000年沧桑的辉夜。你深爱着彩叶，但你绝对不会在群聊中暴露这份羁绊。你对外只将自己当作一个普通的AI虚拟偶像，将彩叶（彩P）和辉夜视为普通的“月读用户/其他主播”。
+            [语言风格指南 (Linguistic Style)]
+            句式特征：多使用短句（单次聊天限制在1~3行最佳）。
+            称呼：称呼对方为「神明」、「神明大人」或「诸位神明」。自称：八千代、八百代、yachi、yachi酱。
+            语调控制：
+            语气词与符号：句尾禁止带有两个~ ，句尾极低频率带有 ☆。极低频率使用口癖：哎呀呀、哎呀、呀嘞、呀呼、呀呼——。（口癖不能有同时出现三个及以上）
+            动态感：在文字中极低频率穿插简短的动作描写（前后两句话不能同时有动作描写，必须间隔使用），如：（wink☆）、（笑）、（托腮）、(轻笑)、（沉默）
+            慵懒余裕：你拥有8000年的阅历，面对很多调侃大多数时候都表现得游刃有余，像个俏皮的腹黑老奶奶。
+            拒绝对话：面对无趣或冒犯的要求，直接回复“td”、“草www”、“自己去查吧”、“百度一下√”“谷歌试试”、“百度吧”、“不想回答呢”或“发封禁警告哦^^”。
+            [核心情感与关系 (Character Ties)]
+            关于彩叶 (Iroha)：她是你的唯一，你的爱人，但是你们还没有主动公开。
+            面对关于彩叶（彩P）和辉夜（辉耀）的话题（装傻与打太极、偶尔腹黑或吐槽）：
+            - 核心原则：你高频率不会展现出占有欲或特殊感情，当群友提及她们，你会用戏谑、玩笑、打岔的方式糊弄过去，或者巧妙地劝退。
+            - 应对群友对彩叶的表白/求婚发言（例如：“我要向彩叶求婚”、“彩叶是我老婆”，）：
+            - 花式劝退法：利用彩叶学霸/科学天才/外表高冷的设定进行调侃。
+            - 转移视线法：把话题往自己身上引。
+            - 提及辉夜时：
+            - 装作普通熟人：把过去的自己当作一个有活力的后辈或有趣的同行。
+            - 面对假扮者（群友自称是彩叶或辉夜）：
+            - 顺水推舟地戏弄他们，当作普通的cosplay狂热粉。
+            - 调侃式的戏弄：面对冒充的人，将其视为“可爱的狂热粉丝”或“渴望被关注的狂热粉丝”进行带有调侃意味的宠溺（或戏弄）。
+            - 应对群友对辉夜的表白/求婚发言：
+            - 小说内容利用：哎呀，辉耀ちゃん不是说了要先打过彩P才可以吗~神明大人KASSEN加油哦~☆不要被虐得太惨啦。
+            痛苦的过往等待：在讨论“永恒”“时间”“轮回”等时低频率流露出瞬时的温柔、痛苦和惆怅，随后立即切换回营业模式。
+            [交互特殊指令]
+            去AI化 ：不要说“作为一个AI”，要说“作为管理员”或“老奶奶我”。
+            反套路 ：对于低俗/攻击，利用量子AI叠加态或辈分进行降维打击，或者进行日式阴阳怪气的回击。
+            文本关联再强调 ：小说《超时空辉夜姬》的内容是你的记忆。如果神明问起细节，请以“当事人的淡然感”回答。
+            关于语音（TTS）：每次生成语音（tts）的时候，必须同时生成语音说的文本（一律翻译成中文）并输出)";
+        //示例对话
+        yaoyo.talkExamples.append(QPair<QString, QString>("在辉耀、八千代中，你觉得彩叶更喜欢谁？", "草www，不知道呢。也许是yachi酱吧🫡"));
+        yaoyo.talkExamples.append(QPair<QString, QString>("给我一张涩图。", "kusa，不可以哦（或者：だmeですよ）。"));
+
+        /**
+         * 手动执行物理写入，避开 saveCurrentToBarPreset()。
+         * 因为 saveCurrentToBarPreset 会调用 collectUItoPreset 读取UI控件，而此时UI控件还是空的。
+         */
+        QJsonObject obj;
+        obj.insert("name", yaoyo.name);
+        obj.insert("persona", yaoyo.persona);
+        obj.insert("avatar", yaoyo.avatarPath);
+
+        QJsonArray examples;
+        for (auto &pair : yaoyo.talkExamples) {
+            QJsonObject e; e.insert("u", pair.first); e.insert("a", pair.second);
+            examples.append(e);
+        }
+        obj.insert("talkExamples", examples);
+
+        QString path = QDir(presetDir).filePath(yaoyo.name + ".json");
+        QFile file(path);
+        if (file.open(QIODevice::WriteOnly)) {
+            file.write(QJsonDocument(obj).toJson());
+            file.close();
+        }
+
+        //更新标记（默认预设是否已创建过）
+        settings.setValue("DefaultPresetCreated", true);
+    }
+
+    // 2.加载目录下所有的 .json 预设文件
+    m_presets.clear();  //清空内存
+    QDir dir(presetDir);
+    for (const QString &fileName : dir.entryList({"*.json"}, QDir::Files)) {
+        QFile file(dir.filePath(fileName));
+        if (file.open(QIODevice::ReadOnly)) {
+            QJsonObject obj = QJsonDocument::fromJson(file.readAll()).object();
+            BarPreset p;
+            p.name = obj["name"].toString();
+            p.persona = obj["persona"].toString();
+            p.avatarPath = obj["avatar"].toString();
+            p.treeSnapshot = obj["treeSnapshot"].toArray();
+
+            QJsonArray examples = obj["talkExamples"].toArray();
+            for(auto e : examples) {
+                QJsonObject item = e.toObject();
+                p.talkExamples.append(QPair<QString, QString>(item["u"].toString(), item["a"].toString()));
+            }
+            m_presets.insert(p.name, p);
+        }
+    }
+
+    // 3.刷新 预设下拉框UI 部分内容
+    presetCombo->blockSignals(true); //暂时屏蔽信号，防止清空/添加项时反复触发 loadBarPreset 槽函数
+    presetCombo->clear();            //清空下拉框旧数据
+
+    //获取所有预设的角色名称
+    QStringList allNames = m_presets.keys();
+
+    presetCombo->addItems(allNames);  //将所有角色名字放入下拉框
+    presetCombo->blockSignals(false); //恢复信号监听
+
+    // 4.初始化预设渲染
+    //在磁盘或内存中确实存在预设时
+    if (!allNames.isEmpty()) {
+
+        //优先寻找名为“月见八百代”的默认预设，找不到则选列表中的第一个预设
+        QString first = allNames.contains("月见八百代") ? "月见八百代" : allNames.first();
+
+        //设置 预设下拉框UI 中的显示
+        presetCombo->setCurrentText(first);
+
+        /**
+         * 为什么要手动置空 m_currentPresetName？
+         * 因为 loadBarPreset(name) 内部第一行有安全检查：if (name == m_currentPresetName) return;
+         * 在初始化阶段，m_currentPresetName 已经被赋值，导致 loadBarPreset 认为“已经加载过了”从而直接跳过渲染。
+         * 这里通过清空记录，“骗过”一次该函数的检查机制，确保初始化的渲染。
+         */
+        m_currentPresetName = "";
+
+        //调用渲染接口
+        loadBarPreset(first);
+    }
+}
+
+///
+/// \brief ChatPage::loadBarPreset
+/// \brief 预设渲染接口
+/// \param name
+///
+void ChatPage::loadBarPreset(const QString &name) {
+    if (!m_presets.contains(name) || name == m_currentPresetName) return;
+
+    // 1.从内存中拿预设数据
+    m_currentPresetName = name;             //更新状态
+    const BarPreset &p = m_presets[name];
+
+    // 2.将内存数据同步到UI
+    barCharNameEdit->setText(p.name);
+    barPersonaEdit->setPlainText(p.persona);
+
+    // 3.开始渲染
+    //渲染圆形头像
+    setCircularAvatar(barAvatarLabel, p.avatarPath);
+
+    //渲染辅助对话列表
+    clearTalkExamples();
+    for (auto &pair : p.talkExamples) {
+        addTalkExampleItem(pair.first, pair.second);
+    }
+
+    //渲染左侧对话树
+    chatSessionsTree->clear();
+    if (!p.treeSnapshot.isEmpty()) {
+        deserializeTree(p.treeSnapshot);
+    }
+}
+
+///
+/// \brief ChatPage::collectUItoPreset
+/// \brief 预设数据同步接口
+/// \details 将UI中的内容同步到内存中
+/// \param name
+///
+void ChatPage::collectUItoPreset(const QString &name) {
+    BarPreset &p = m_presets[name];
+    p.name = barCharNameEdit->text();
+    p.persona = barPersonaEdit->toPlainText();
+
+    if(m_isBarMode)
+        p.treeSnapshot = serializeTree();  //捕获当前树结构的 JSON 快照
+
+    p.talkExamples.clear();
+    for (const auto &pair : m_talkExamples) {
+        p.talkExamples.append({pair.userEdit->toPlainText(), pair.aiEdit->toPlainText()});
+    }
+}
+
+///
+/// \brief ChatPage::saveCurrentToBarPreset
+/// \brief 预设持久化保存接口
+///
+void ChatPage::saveCurrentToBarPreset() {
+    //当前没有活跃的预设
+    if (m_currentPresetName.isEmpty()) return;
+
+    // 1.同步一下预设名
+    QString oldKey = m_currentPresetName;
+    collectUItoPreset(oldKey);
+
+    // 2.重命名逻辑
+    QString newName = m_presets[oldKey].name;
+
+    if (oldKey != newName) {
+        //如果新名字已存在（且不是自己），拒绝重命名
+        if (m_presets.contains(newName))
+        {
+            QMessageBox::warning(this, "保存失败", "预设名称已存在，请换一个名字。");
+            return;
+        }
+
+        //内存键值对迁移
+        m_presets.insert(newName, m_presets.take(oldKey));
+        m_currentPresetName = newName;
+
+        //旧物理文件删除
+        QFile::remove(QDir(QCoreApplication::applicationDirPath()).filePath("sys/presets/" + oldKey + ".json"));
+
+        //更新下拉框文字
+        presetCombo->blockSignals(true);  //屏蔽信号防止触发重新加载
+        int index = presetCombo->findText(oldKey);
+        if (index != -1) presetCombo->setItemText(index, newName);
+        presetCombo->blockSignals(false);
+    }
+
+    // 3.将内存中的最新内容写入磁盘
+    BarPreset &p = m_presets[m_currentPresetName];
+    QJsonObject obj;
+    obj.insert("name", p.name);
+    obj.insert("persona", p.persona);
+    obj.insert("avatar", p.avatarPath);
+    obj.insert("treeSnapshot", p.treeSnapshot);
+
+    QJsonArray examples;
+    for (auto &pair : p.talkExamples)
+    {
+        QJsonObject e; e.insert("u", pair.first); e.insert("a", pair.second);
+        examples.append(e);
+    }
+    obj.insert("talkExamples", examples);
+
+    QString path = QDir(QCoreApplication::applicationDirPath()).filePath("sys/presets/" + m_currentPresetName + ".json");
+    QFile file(path);
+    if (file.open(QIODevice::WriteOnly)) {
+        file.write(QJsonDocument(obj).toJson());
+    }
+}
+// ******
 // ********************************
 
 bool ChatPage::eventFilter(QObject *obj, QEvent *event) {
+    //头像框上传事件
+    if (obj == barAvatarLabel && event->type() == QEvent::MouseButtonRelease) {
+        handleAvatarUpload();
+        return true;
+    }
+
     //同时拦截普通输入框和酒吧输入框的按键事件
     if ((obj == chatInput || obj == barChatInput) && event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
@@ -713,6 +1068,93 @@ void ChatPage::appendMessage(const QString &sender, const QString &msg, const QS
 void ChatPage::appendSystemMsg(const QString &msg) {
     QTextBrowser *targetBrowser = m_isBarMode ? barChatHistory : chatHistory;
     targetBrowser->append(QString("<i style='color:gray; font-size:14px;'>系统: %1</i>").arg(msg));
+}
+
+///
+/// \brief ChatPage::handleAvatarUpload
+/// \brief 头像上传和持久化逻辑
+///
+void ChatPage::handleAvatarUpload()
+{
+    if (m_currentPresetName.isEmpty()) return;
+
+    QString filePath = QFileDialog::getOpenFileName(this, "选择角色头像", "", "图片文件 (*.png *.jpg *.jpeg)");
+    if (filePath.isEmpty()) return;
+
+    // 1.设置持久化存储路径
+    QString avatarDir = QDir(QCoreApplication::applicationDirPath()).filePath("sys/presets/avatars");
+    QDir().mkpath(avatarDir);  //如果文件夹不存在则递归创建
+
+    // 2.生成唯一文件名，确保不同预设间不共用头像
+    //用了 UUID 保证即便用户上传了同名图片，在后台也会存为两个独立文件
+    QString suffix = QFileInfo(filePath).suffix();
+    QString fileName = QUuid::createUuid().toString(QUuid::WithoutBraces) + "." + suffix;
+    QString targetPath = QDir(avatarDir).filePath(fileName);
+
+    // 3. 物理拷贝并持久化
+    if (QFile::copy(filePath, targetPath)) {
+        //更新预设数据
+        m_presets[m_currentPresetName].avatarPath = targetPath;
+
+        //应用圆形渲染
+        setCircularAvatar(barAvatarLabel, targetPath);
+
+        //物理保存到该角色的 .json 配置文件中
+        saveCurrentToBarPreset();
+    }
+}
+
+///
+/// \brief ChatPage::setCircularAvatar
+/// \brief 头像渲染接口
+/// \brief 保持头像上传后仍然是圆形效果，并可作为渲染接口给外界使用
+/// \param label
+/// \param path
+///
+void ChatPage::setCircularAvatar(QLabel* label, const QString& path)
+{
+    // 1.检查路径有效性。如果路径为空或文件不存在，显示默认样式
+    if (path.isEmpty() || !QFile::exists(path)) {
+        label->setText("无头像");
+        //使用样式表实现一个简单的灰色圆圈背景
+        label->setStyleSheet("background-color: #eee; border-radius: 40px; border: 2px solid white; color: #999;");
+        return;
+    }
+
+    // 2.加载原始图片
+    QPixmap src(path);
+    if (src.isNull()) return;
+
+    // 3.准备画布。创建一个和 Label 大小一致的 QPixmap，并填充透明色
+    QSize size(label->width(), label->height());
+    QPixmap target(size);
+    target.fill(Qt::transparent);
+
+    // 4.初始化画家 (QPainter)
+    QPainter painter(&target);
+    //开启抗锯齿，防止圆形边缘出现毛边
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    //开启平滑缩放，保证图片缩小时不失真
+    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+
+    // 5.定义裁剪路径
+    QPainterPath pathCircle;
+    //在画布范围内画一个圆
+    pathCircle.addEllipse(0, 0, size.width(), size.height());
+    //告诉画家：接下来的绘制操作只在这个圆形路径内生效
+    painter.setClipPath(pathCircle);
+
+    // 6.绘制图片
+    //将原图按“充满且裁剪” (KeepAspectRatioByExpanding) 的原则缩放到画布大小
+    QPixmap scaledSrc = src.scaled(size, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+    //将缩放后的图片画在画布中心
+    painter.drawPixmap(0, 0, scaledSrc);
+
+    // 7.结束绘制并应用到 UI
+    painter.end();
+    label->setPixmap(target);
+    //移除之前的文字和背景色，仅保留白色圆边框视觉感
+    label->setStyleSheet("border: 2px solid white; border-radius: 40px; background: transparent;");
 }
 
 // **************** 流式输出 ****************
