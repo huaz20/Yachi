@@ -51,8 +51,7 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
     presetCtrlLayout->addWidget(savePromptBtn);
     configLayout->addLayout(presetCtrlLayout);
 
-    promptEdit = new QTextEdit();
-    promptEdit->setAcceptRichText(false);  // 禁止富文本，来修复拷贝内容到框里时出现带白框的问题
+    promptEdit = new QPlainTextEdit();
     promptEdit->setPlaceholderText("在这里编辑提示词...");
     promptEdit->setMinimumHeight(100);
     promptEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -174,11 +173,10 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
 
     // --- 翻译文本区 (比例2) ---
     QHBoxLayout *textAreaLayout = new QHBoxLayout();
-    sourceText = new QTextEdit();
-    sourceText->setAcceptRichText(false);  // 禁止富文本，来修复拷贝内容到框里时出现带白框的问题
+    sourceText = new QPlainTextEdit();
     sourceText->setPlaceholderText("请输入源文本...");
 
-    targetText = new QTextEdit();
+    targetText = new QPlainTextEdit();
     targetText->setReadOnly(true);
     targetText->setPlaceholderText("等待翻译结果...");
     targetText->setStyleSheet("background-color: #fcfcfc; border: 1px solid #eee;");
@@ -435,6 +433,7 @@ void TranslationPage::doTranslate() {
     // 2.UI反馈
     translateBtn->setEnabled(false);
     btnStack->setCurrentIndex(1); //切换到“中止”按钮
+
     targetText->setPlainText(QString("翻译中（共 %1 块）...").arg(m_totalChunks));
 
     // 3.启动第一个块（递归按块翻译）
@@ -991,7 +990,7 @@ void TranslationPage::abortTranslation()
     m_chunkList.clear();
 
     // 3.UI反馈
-    targetText->append("\n[翻译已中断]");
+    targetText->appendPlainText("\n[翻译已中断]");
     targetText->moveCursor(QTextCursor::End);
 
     btnStack->setCurrentIndex(0); //恢复“开始翻译”按钮

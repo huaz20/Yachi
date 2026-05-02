@@ -564,6 +564,13 @@ CMakeFiles/YachiAgent.dir/mainwindow.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QFile \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QCoreApplication \
  C:\Programming\cpp\Yachi\translationpage.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPlainTextEdit \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qplaintextedit.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qabstracttextdocumentlayout.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qtextlayout.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qglyphrun.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qrawfont.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qfontdatabase.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QGroupBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgroupbox.h \
  C:\Programming\cpp\Yachi\voicepage.h \

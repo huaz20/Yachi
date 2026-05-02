@@ -2,7 +2,7 @@
 #define TRANSLATIONPAGE_H
 
 #include <QWidget>
-#include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QComboBox>
 #include <QLineEdit>
@@ -46,9 +46,9 @@ private:
     void initTutorialPresets();
 
     //UI组件
-    QTextEdit *sourceText;
-    QTextEdit *targetText;
-    QTextEdit *promptEdit;
+    QPlainTextEdit *sourceText;
+    QPlainTextEdit *targetText;
+    QPlainTextEdit *promptEdit;
     QComboBox *langCombo;
     QComboBox *presetCombo;
 
