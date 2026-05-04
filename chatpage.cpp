@@ -649,30 +649,73 @@ void ChatPage::setupBarModeUI() {
 ///
 void ChatPage::addTalkExampleItem(const QString &userText, const QString &aiText) {
     QFrame *frame = new QFrame();
-    frame->setStyleSheet("QFrame { background: #fff; border: 1px solid #eee; border-radius: 6px; margin-bottom: 5px; }");
-    QVBoxLayout *layout = new QVBoxLayout(frame);
+    //整体卡片样式：增加阴影感和内边距
+    frame->setStyleSheet(
+        "QFrame { "
+        "   background: #ffffff; "
+        "   border: 1px solid #e1e4e8; "
+        "   border-radius: 10px; "
+        "   margin-bottom: 10px; "
+        "}"
+        "QFrame:hover { border-color: #f9a8d4; }" // 悬停时高亮边缘
+        );
 
-    QTextEdit *uEdit = new QTextEdit(userText);
-    uEdit->setPlaceholderText("用户提问...");
-    uEdit->setFixedHeight(35);
-    uEdit->setStyleSheet("border: none; background: #f9f9f9;");
+    //主布局：垂直排列
+    QVBoxLayout *mainLayout = new QVBoxLayout(frame);
+    mainLayout->setContentsMargins(12, 12, 12, 12);
+    mainLayout->setSpacing(8);
 
-    QTextEdit *aEdit = new QTextEdit(aiText);
-    aEdit->setPlaceholderText("AI 回复...");
-    aEdit->setFixedHeight(35);
-    aEdit->setStyleSheet("border: none; background: #fdf2f8;");
-
+    // --- 顶部栏：删除按钮 ---
+    QHBoxLayout *header = new QHBoxLayout();
+    header->setContentsMargins(0, 0, 0, 0);
     QPushButton *delBtn = new QPushButton("×");
-    delBtn->setFixedSize(20, 20);
-    delBtn->setStyleSheet("color: #ccc; border: none; font-weight: bold;");
+    delBtn->setFixedSize(22, 22);
+    delBtn->setCursor(Qt::PointingHandCursor);
+    delBtn->setToolTip("删除此条示例");
+    //红色悬浮效果
+    delBtn->setStyleSheet(
+        "QPushButton { color: #aaa; border: none; font-size: 18px; font-weight: bold; background: transparent; }"
+        "QPushButton:hover { color: #ef4444; background: #fee2e2; border-radius: 11px; }"
+        );
+    header->addStretch();
+    header->addWidget(delBtn);
+    mainLayout->addLayout(header);
 
-    QHBoxLayout *h = new QHBoxLayout();
-    h->addStretch();
-    h->addWidget(delBtn);
-    layout->addLayout(h);
-    layout->addWidget(uEdit);
-    layout->addWidget(aEdit);
+    // --- 用户输入区 (问) ---
+    QHBoxLayout *uLayout = new QHBoxLayout();
+    QLabel *uLabel = new QLabel("问:");
+    uLabel->setStyleSheet("color: #0078d4; font-weight: bold; font-size: 12px;");
+    QTextEdit *uEdit = new QTextEdit(userText);
+    uEdit->setPlaceholderText("用户可能会问的话...");
+    uEdit->setAcceptRichText(false);
+    uEdit->setMinimumHeight(45);  //增加初始高度
+    uEdit->setMaximumHeight(100); //限制最大高度防止过长
+    uEdit->setStyleSheet(
+        "QTextEdit { border: 1px solid #f0f0f0; background: #f8faff; border-radius: 6px; padding: 4px; color: #333; }"
+        "QTextEdit:focus { border: 1px solid #0078d4; }"
+        );
+    uLayout->addWidget(uLabel, 0, Qt::AlignTop);
+    uLayout->addWidget(uEdit, 1);
+    mainLayout->addLayout(uLayout);
 
+    // --- AI 回复区 (答) ---
+    QHBoxLayout *aLayout = new QHBoxLayout();
+    QLabel *aLabel = new QLabel("答:");
+    aLabel->setStyleSheet("color: #db2777; font-weight: bold; font-size: 12px;");
+    QTextEdit *aEdit = new QTextEdit(aiText);
+    aEdit->setPlaceholderText("期望 AI 回复的内容...");
+    aEdit->setAcceptRichText(false);
+    aEdit->setMinimumHeight(60);  //AI回复通常较长，给更高空间
+    aEdit->setMaximumHeight(150);
+    aEdit->setStyleSheet(
+        "QTextEdit { border: 1px solid #f0f0f0; background: #fff9fb; border-radius: 6px; padding: 4px; color: #333; }"
+        "QTextEdit:focus { border: 1px solid #db2777; }"
+        );
+    aLayout->addWidget(aLabel, 0, Qt::AlignTop);
+    aLayout->addWidget(aEdit, 1);
+    mainLayout->addLayout(aLayout);
+
+    //逻辑绑定
     talkExamplesLayout->addWidget(frame);
     m_talkExamples.append({ frame, uEdit, aEdit });
     updateExampleCount();
