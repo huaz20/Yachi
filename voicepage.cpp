@@ -562,7 +562,7 @@ void VoicePage::openTrainingConfigDialog() {
     QHBoxLayout *actionLayout = new QHBoxLayout();
     QPushButton *cancelBtn = new QPushButton("取消");
     cancelBtn->setMinimumHeight(36);
-    QPushButton *startBtn = new QPushButton("🔥 确认配置并启动流程");
+    QPushButton *startBtn = new QPushButton("🔥 确认配置后执行第三步");
     startBtn->setMinimumHeight(36);
     startBtn->setStyleSheet("background-color: #ff9800; color: white; font-weight: bold; border: none; border-radius: 4px; padding: 0 20px;");
 

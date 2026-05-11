@@ -645,6 +645,7 @@ void TranslationPage::fetchUrlContent()
     {
         QString fullContent;
         int maxPage = 1;
+        QStringList seriesIds;  //系列链接会有的章节ID队列
     };
     auto state = std::make_shared<FetchState>();
 
@@ -682,10 +683,26 @@ void TranslationPage::fetchUrlContent()
         if (strategy->useJina()) {
             finalRequestUrl = "https://r.jina.ai/" + strategy->buildTargetUrl(baseUrl, currentPage);
         }
-        //Pixiv特化策略：直连Pixiv AJAX接口
         else
         {
-            finalRequestUrl = strategy->buildTargetUrl(baseUrl, currentPage);
+            if(strategy->isSeries())
+            {
+                //系列抓取逻辑：0 阶段抓取目录，1~N 阶段抓取各个章节ID
+                if (currentPage == 0) {
+                    finalRequestUrl = strategy->buildTargetUrl(baseUrl, 1);
+                } else {
+                    //增加一层越界保护
+                    if (currentPage - 1 < state->seriesIds.size()) {
+                        finalRequestUrl = QString("https://www.pixiv.net/ajax/novel/%1").arg(state->seriesIds[currentPage - 1]);
+                    } else {
+                        return; //越界直接中止
+                    }
+                }
+            }
+            else
+            {
+                finalRequestUrl = strategy->buildTargetUrl(baseUrl, currentPage);
+            }
         }
 
         //设置网络头
@@ -705,35 +722,72 @@ void TranslationPage::fetchUrlContent()
             if (reply->error() == QNetworkReply::NoError) {
                 QString pageContent = reply->readAll();
 
-                //仅在第一页时，让策略去解析最大页数
-                if (currentPage == 1) {
-                    state->maxPage = strategy->parseMaxPage(pageContent);
+                // --- 系列读取逻辑 ---
+                if (strategy->isSeries()) {
+                    if (currentPage == 0) {
+                        //解析第一步获取的目录内容
+                        state->seriesIds = strategy->extractSeriesNovels(pageContent);
+                        state->maxPage = state->seriesIds.size();
+
+                        if (state->maxPage == 0) {
+                            QMessageBox::warning(this, "抓取失败", "未能从系列链接中提取到任何章节！（可能无权访问或链接有误）");
+                            finishFetching("");
+                            reply->deleteLater();
+                            return;
+                        }
+
+                        sourceText->setPlaceholderText(QString("获取系列目录成功，共 %1 章。开始抓取第 1 章...").arg(state->maxPage));
+
+                        //间隔0.5秒后开始拉取第1章正文
+                        QTimer::singleShot(500, this, [=]() {
+                            (*fetchNextPage)(1);
+                        });
+                    } else {
+                        //累加各个章节正文内容
+                        state->fullContent += QString("\n\n### --- 第 %1 章 ---\n\n").arg(currentPage);
+                        state->fullContent += strategy->processRawContent(pageContent);
+
+                        if (currentPage < state->maxPage) {
+                            sourceText->setPlaceholderText(QString("正在自动抓取系列章节：第 %1/%2 章，请稍候...")
+                                                               .arg(currentPage + 1).arg(state->maxPage));
+                            //给服务器喘口气，延时1秒
+                            QTimer::singleShot(1000, this, [=]() {
+                                (*fetchNextPage)(currentPage + 1);
+                            });
+                        } else {
+                            finishFetching(state->fullContent); //所有章节全部完成
+                        }
+                    }
                 }
+                // --- 单页/分页读取逻辑 ---
+                else {
+                    if (currentPage == 1) {
+                        state->maxPage = strategy->parseMaxPage(pageContent);
+                    }
 
-                //累加内容
-                if (state->maxPage > 1) {
-                    state->fullContent += QString("\n\n### --- 第 %1 页 ---\n\n").arg(currentPage);
-                }
-                state->fullContent += strategy->processRawContent(pageContent);
+                    if (state->maxPage > 1) {
+                        state->fullContent += QString("\n\n### --- 第 %1 页 ---\n\n").arg(currentPage);
+                    }
+                    state->fullContent += strategy->processRawContent(pageContent);
 
-                //判断是否需要翻页
-                if (currentPage < state->maxPage) {
-                    sourceText->setPlaceholderText(QString("发现分页！正在自动抓取第 %1/%2 页，请稍候...")
-                                                       .arg(currentPage + 1).arg(state->maxPage));
+                    if (currentPage < state->maxPage) {
+                        sourceText->setPlaceholderText(QString("发现分页！正在自动抓取第 %1/%2 页，请稍候...")
+                                                           .arg(currentPage + 1).arg(state->maxPage));
 
-                    QTimer::singleShot(2000, this, [=]() {
-                        (*fetchNextPage)(currentPage + 1);
-                    });
-                } else {
-                    finishFetching(state->fullContent);
+                        QTimer::singleShot(2000, this, [=]() {
+                            (*fetchNextPage)(currentPage + 1);
+                        });
+                    } else {
+                        finishFetching(state->fullContent);
+                    }
                 }
             }
             else { //网络异常处理
-                if (currentPage == 1) {
+                if (currentPage <= 1) {
                     QMessageBox::critical(this, "抓取异常", QString("无法读取网页！\n错误代码：%1\n原因：%2").arg(reply->error()).arg(reply->errorString()));
                     finishFetching("");
                 } else {
-                    QMessageBox::warning(this, "部分抓取失败", QString("在读取第 %1 页时发生网络错误，已中断后续抓取，将保留前面成功抓取的内容。").arg(currentPage));
+                    QMessageBox::warning(this, "部分抓取失败", QString("在读取阶段 %1 时发生网络错误，已中断后续抓取，将保留前面成功抓取的内容。").arg(currentPage));
                     finishFetching(state->fullContent);
                 }
             }
@@ -741,8 +795,13 @@ void TranslationPage::fetchUrlContent()
         });
     };
 
-    //永远从第 1 页开始启动抓取
-    (*fetchNextPage)(1);
+
+    //决定起点：如果是系列，从 0（目录页）开始启动；否则从 1（第一页正文）开始启动
+    if (strategy->isSeries()) {
+        (*fetchNextPage)(0);
+    } else {
+        (*fetchNextPage)(1);
+    }
 }
 
 ///

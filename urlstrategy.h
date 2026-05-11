@@ -7,6 +7,7 @@
 #include <memory>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 
 // ==========================================
 // 网页读取策略基类 (接口)
@@ -35,6 +36,16 @@ public:
 
     // 4.是否使用Jina Reader
     virtual bool useJina() const { return true; }  //默认使用
+
+    // 5.是否是包含多个子项的系列链接
+    virtual bool isSeries() const {return false;}
+
+    //解析系列中所有的子项ID
+    virtual QStringList extractSeriesNovels(const QString &rawContent) const
+    {
+        Q_UNUSED(rawContent);
+        return QStringList();
+    }
 
     //解析总页数接口
     virtual int parseMaxPage(const QString &pageContent) const
@@ -202,6 +213,64 @@ private:
 };
 
 // ==========================================
+// Pixiv系列特化策略 (继承自PixivStrategy以复用正文解析)
+// ==========================================
+class PixivSeriesStrategy : public PixivStrategy
+{
+public:
+    bool canHandle(const QString &url) const override
+    {
+        return url.contains("pixiv.net/novel/series/");
+    }
+
+    QString extractBaseUrl(const QString &url) const override
+    {
+        QRegularExpression re("series/(\\d+)");
+        QRegularExpressionMatch match = re.match(url);
+        if (match.hasMatch()) {
+            QString id = match.captured(1);
+            //构造系列的AJAX接口请求（limit=30基本够用，不够可增加一些，太多则可能会被服务器拒绝）
+            return QString("https://www.pixiv.net/ajax/novel/series_content/%1?limit=30&last_order=0&order_by=asc&lang=zh").arg(id);
+        }
+        return url;
+    }
+
+    QString getLoadingTip() const override
+    {
+        return "检测到 Pixiv 小说系列，正在获取目录并准备提取所有章节...";
+    }
+
+    //标记为系列
+    bool isSeries() const override { return true; }
+
+    //从系列目录API返回的 JSON 中提取所有的 子小说ID
+    QStringList extractSeriesNovels(const QString &pageContent) const override
+    {
+        QStringList ids;
+        QJsonDocument doc = QJsonDocument::fromJson(pageContent.toUtf8());
+        if (doc.isObject()) {
+            QJsonObject body = doc.object()["body"].toObject();
+            QJsonArray contents;
+
+            //适配可能存在的多种 JSON 层级嵌套
+            if (body.contains("seriesContents")) {
+                contents = body["seriesContents"].toArray();
+            } else if (body.contains("page") && body["page"].toObject().contains("seriesContents")) {
+                contents = body["page"].toObject()["seriesContents"].toArray();
+            }
+
+            for (auto v : contents) {
+                QJsonObject obj = v.toObject();
+                if (obj.contains("id")) {
+                    ids << obj["id"].toVariant().toString();  //安全转换为QString
+                }
+            }
+        }
+        return ids;
+    }
+};
+
+// ==========================================
 // 策略工厂（根据输入的 URL 自动分发任务）
 // ==========================================
 class StrategyFactory
@@ -209,6 +278,9 @@ class StrategyFactory
 public:
     static std::shared_ptr<IUrlStrategy> getStrategy(const QString &url)
     {
+        PixivSeriesStrategy pixivSeries;  //优先匹配系列
+        if(pixivSeries.canHandle(url)) return std::make_shared<PixivSeriesStrategy>();
+
         PixivStrategy pixiv;
         if(pixiv.canHandle(url)) return std::make_shared<PixivStrategy>();
 
