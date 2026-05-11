@@ -1,4 +1,5 @@
 #include "voicepage.h"
+#include "voiceagentcore.h"
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFileDialog>
@@ -11,8 +12,9 @@
 #include <QGraphicsDropShadowEffect>
 #include <QDialog>
 #include <QFileInfo>
+#include <QDesktopServices>
 
-VoicePage::VoicePage(QWidget *parent) : QWidget(parent) {
+VoicePage::VoicePage(VoiceAgentCore *agent, QWidget *parent) : QWidget(parent), m_voiceAgent(agent) {
     networkManager = new QNetworkAccessManager(this);
 
     //全局样式表
@@ -147,7 +149,7 @@ void VoicePage::setupUI() {
     cacheGroup = new QGroupBox("启用本地音频缓存 (参数相同时复用)");
     cacheGroup->setCheckable(true);
     cacheGroup->setChecked(true);
-    // [修复点1]：增加 margin-top 和 padding-top，去除导致裁切的负数
+    //增加 margin-top 和 padding-top，去除导致裁切的负数
     cacheGroup->setStyleSheet("QGroupBox { border: 1px solid #e0e0e0; border-radius: 4px; margin-top: 20px; padding-top: 10px; } "
                               "QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; left: 10px; padding: 0 5px; }");
     QGridLayout *cacheLayout = new QGridLayout(cacheGroup);
@@ -361,9 +363,9 @@ void VoicePage::setupUI() {
 // **************** 训练向导弹窗逻辑 (独立 QDialog) ****************
 void VoicePage::openTrainingConfigDialog() {
     QDialog dialog(this);
+
     dialog.setWindowTitle("🚀 训练向导");
     dialog.resize(580, 580);
-
     //弹窗样式表
     dialog.setStyleSheet(R"(
         QDialog { background-color: #f3f5f8; font-family: "Segoe UI", "Microsoft YaHei"; font-size: 13px; }
@@ -418,7 +420,6 @@ void VoicePage::openTrainingConfigDialog() {
     s1Layout->addLayout(pyEnvLayout);
     mainLayout->addWidget(step1Group);
 
-
     // --- 第二步：准备数据集 ---
     QGroupBox *step2Group = new QGroupBox("2️⃣ 第二步：准备声音数据集 (切片与打标)");
     QVBoxLayout *s2Layout = new QVBoxLayout(step2Group);
@@ -443,6 +444,14 @@ void VoicePage::openTrainingConfigDialog() {
     rawLayout->addWidget(rawAudioPathEdit, 1);
     rawLayout->addWidget(btnRawAudio);
     autoMakeLayout->addLayout(rawLayout);
+
+    QHBoxLayout *langLayout = new QHBoxLayout();
+    QComboBox *mediaLangCombo = new QComboBox();
+    mediaLangCombo->addItems({"中文", "日本語", "English", "한국어"});
+    mediaLangCombo->setCurrentText(settings.value("Voice_Train_MediaLang", "中文").toString());
+    langLayout->addWidget(new QLabel("素材语种:"));
+    langLayout->addWidget(mediaLangCombo, 1);
+    autoMakeLayout->insertLayout(2,langLayout);
 
     QPushButton *btnProcessData = new QPushButton("✂️ 开始处理");
     btnProcessData->setStyleSheet("background-color: #e8f5e9; color: #2e7d32; font-weight: bold; border: 1px solid #a5d6a7; padding: 6px;");
@@ -472,7 +481,56 @@ void VoicePage::openTrainingConfigDialog() {
 
     s2Layout->addWidget(datasetTabs);
     mainLayout->addWidget(step2Group);
+    // --- 声音数据集流水线 配置选项 ---
+    QGroupBox *asrGroup = new QGroupBox("模型训练可配置项");
+    QVBoxLayout *asrLayout = new QVBoxLayout(asrGroup);
+    asrLayout->setContentsMargins(15, 15, 15, 15);
+    asrLayout->setSpacing(10); //增加部件间的间距
 
+    QLabel *paramRowTip = new QLabel(
+        "<span style='color:#666; font-size:12px;'>"
+        "💡模型规模越大文本识别越好，下载时间会长一些，后面可以手动修改识别有误的地方。"
+        "</span>"
+        );
+    paramRowTip->setWordWrap(true);
+    asrLayout->addWidget(paramRowTip);
+
+    QHBoxLayout *paramRow = new QHBoxLayout();
+    QComboBox *modelSizeCombo = new QComboBox();
+    modelSizeCombo->addItems({"base", "small", "medium", "large-v3"});
+    modelSizeCombo->setCurrentText(settings.value("Voice_Train_ModelSize", "small").toString());
+
+    QCheckBox *cudaCheck = new QCheckBox("使用 CUDA 加速");
+    cudaCheck->setChecked(settings.value("Voice_Train_UseCuda", false).toBool());
+
+    paramRow->addWidget(new QLabel("ASR 模型:"));
+    paramRow->addWidget(modelSizeCombo, 1);
+    paramRow->addWidget(cudaCheck);
+    asrLayout->addLayout(paramRow);
+
+    QLabel *promptTip = new QLabel(
+        "<span style='color:#666; font-size:12px;'>"
+        "💡写下面这个能提高识别准确率，可以不写，写可以写涉及的角色名、特定名词、或语气词等。"
+        "</span>"
+        );
+    promptTip->setWordWrap(true);
+    asrLayout->addWidget(promptTip);
+
+    QHBoxLayout *promptLayout = new QHBoxLayout();
+    QLineEdit *initialPromptEdit = new QLineEdit();
+    initialPromptEdit->setPlaceholderText("建议在20~100字间！例如写一段：“角色名是月見（ルナミ）ヤチヨ。”");
+    initialPromptEdit->setMinimumHeight(32);
+
+    promptLayout->addWidget(new QLabel("ASR 引导文本:"));
+    promptLayout->addWidget(initialPromptEdit, 1);
+    asrLayout->addLayout(promptLayout);
+
+    QPushButton *btnConfirmConfig = new QPushButton("✅ 确认设置");
+    btnConfirmConfig->setMinimumHeight(32);
+    btnConfirmConfig->setStyleSheet("background-color: #f0f7ff; color: #005a9e; font-weight: bold; border: 1px solid #0078d4;");
+    asrLayout->addWidget(btnConfirmConfig);
+
+    mainLayout->addWidget(asrGroup);
 
     // --- 第三步：训练参数 ---
     QGroupBox *step3Group = new QGroupBox("3️⃣ 第三步：训练模型");
@@ -513,7 +571,6 @@ void VoicePage::openTrainingConfigDialog() {
     actionLayout->addWidget(startBtn);
     mainLayout->addLayout(actionLayout);
 
-
     // ==========================================
     // 弹窗内部交互逻辑
     // ==========================================
@@ -550,7 +607,26 @@ void VoicePage::openTrainingConfigDialog() {
                 break;
             }
         }
-        if (!found) QMessageBox::warning(&dialog, "未检测到环境", "未在默认路径(runtime文件夹)下找到 python.exe。\n请手动选择。");
+        if (!found) {
+            //如果没找到，询问用户是否自动安装
+            auto result = QMessageBox::question(&dialog, "未检测到环境",
+                                                "未在默认路径找到 Python 环境。\n是否需要为您自动下载并安装？ (约 238MB)？",
+                                                QMessageBox::Yes | QMessageBox::No);
+
+            if (result == QMessageBox::Yes) {
+                startAutomaticPythonInstall(pyPathEdit);
+            }
+        }
+    });
+
+    //模型训练可配置项 确认按钮
+    connect(btnConfirmConfig, &QPushButton::clicked, [&]() {
+        settings.setValue("Voice_Train_ModelSize", modelSizeCombo->currentText());
+        settings.setValue("Voice_Train_UseCuda", cudaCheck->isChecked());
+        settings.setValue("Voice_Train_ASRPrompt", initialPromptEdit->text());
+        settings.setValue("Voice_Train_UVR5", true); //强制设为 true，默认必走 UVR5
+
+        QMessageBox::information(&dialog, "配置保存", "已保存！");
     });
 
     //配置自动化数据处理管道
@@ -559,22 +635,25 @@ void VoicePage::openTrainingConfigDialog() {
             QMessageBox::warning(&dialog, "配置不全", "请确保已配置 Python 环境并选择了原始素材文件！");
             return;
         }
-        //自动推导输出目录名
+
+        // 1.自动推导输出目录
         QFileInfo fi(rawAudioPathEdit->text());
         QString outDir = fi.absolutePath() + "/" + fi.baseName() + "_dataset";
-        datasetPathEdit->setText(outDir); // 填入 Tab B
+        datasetPathEdit->setText(outDir);
 
-        QMessageBox::information(&dialog, "管道已对接",
-                                 "✨ 自动化数据管道配置完成！\n\n"
-                                 "数据将输出至：\n" + outDir + "\n\n"
-                                                "系统已自动帮您切换至确认面板，请核对无误后点击右下角【确认配置并启动流程】。");
+        // 2.将当前关键参数立即写入配置，确保主流程能读取到最新值
+        settings.setValue("Voice_Train_MediaLang", mediaLangCombo->currentText());
+        settings.setValue("Voice_Train_ModelSize", modelSizeCombo->currentText());
+        settings.setValue("Voice_Train_UseCuda", cudaCheck->isChecked());
+        settings.setValue("Voice_Train_UVR5", true);
+        settings.setValue("Voice_Train_ASRPrompt", initialPromptEdit->text());
+        settings.setValue("Voice_Train_NeedPreprocess", true); //标记需要执行流水线
 
-        datasetTabs->setCurrentIndex(1);  //切到导入数据集界面确认
-        settings.setValue("Voice_Train_NeedPreprocess", true);
-        settings.setValue("Voice_Train_RawAudio", rawAudioPathEdit->text());
+        // 3.直接以Accepted状态关闭弹窗
+        dialog.accept();
     });
 
-    //启动总体流程
+    //启动总体流程：仅保存参数并返回验证状态
     connect(startBtn, &QPushButton::clicked, [&]() {
         if (pyPathEdit->text().isEmpty() || datasetPathEdit->text().isEmpty()) {
             QMessageBox::warning(&dialog, "参数缺失", "请先完善 Python 路径和最终的数据集路径！");
@@ -585,31 +664,347 @@ void VoicePage::openTrainingConfigDialog() {
         settings.setValue("Voice_Train_Epochs", epochSpin->value());
         settings.setValue("Voice_Train_Batch", batchSpin->value());
 
-        dialog.accept();  //关闭窗口返回主界面
+        dialog.accept();  //关闭窗口返回主界面，执行权在外部流程
     });
 
-    // --- 返回主界面渲染日志 ---
+    // --- 返回主界面渲染日志、与执行流水线 ---
     if (dialog.exec() == QDialog::Accepted) {
         trainLogConsole->clear();
-        trainLogConsole->append(QString(">> [运行环境] Python解析器: %1").arg(pyPathEdit->text()));
 
-        if (settings.value("Voice_Train_NeedPreprocess", false).toBool()) {
-            QString rawFile = settings.value("Voice_Train_RawAudio").toString();
-            trainLogConsole->append(QString(">> [任务调度] 侦测到原始素材提取任务: %1").arg(rawFile));
-            trainLogConsole->append(QString(">> [任务调度] 数据集流水线挂载点: %1").arg(datasetPathEdit->text()));
-            trainLogConsole->append(">> \n>> ⏳ [阶段 1/4] 正在拉起 UVR5 进行人声分离与去混响...");
-            trainLogConsole->append(">> (日志流将实时回显外部程序的输出进度)");
-            settings.setValue("Voice_Train_NeedPreprocess", false); // 消费标志位
-        } else {
-            trainLogConsole->append(QString(">> [任务调度] 侦测到直连已有数据集: %1").arg(datasetPathEdit->text()));
-        }
+        // 1. 从 QSettings 提取用户在弹窗中确定的最新参数
+        QString pyPath = settings.value("Voice_Train_PyPath").toString();
+        QString datasetPath = settings.value("Voice_Train_Dataset").toString();
+        int epochs = settings.value("Voice_Train_Epochs", 15).toInt();
+        int batch = settings.value("Voice_Train_Batch", 4).toInt();
+        bool needPre = settings.value("Voice_Train_NeedPreprocess", false).toBool();
 
-        trainLogConsole->append(QString(">> [训练参数] Epochs: %1 | Batch: %2").arg(epochSpin->value()).arg(batchSpin->value()));
-        trainLogConsole->append(">> \n>> 🚀 [核心进程] 后台系统已接管队列，准备拉起底层服务...");
+        // 2. 启动自动化依赖检查（异步流程）
+        // 注意：这里需要捕获所有后续逻辑需要的变量
+        ensureDependenciesInstalled(pyPath, [this, pyPath, datasetPath, epochs, batch, needPre](bool success) {
+            if (!success) {
+                trainLogConsole->append(">> ❌ [中止] 环境依赖不足，无法启动后续流程。");
+                return;
+            }
 
-        // TODO: 在这里通过 QProcess 真正拉起 Python
+            // 3. 安全机制：强行终结可能正在运行的旧进程，防止资源占用
+            if (m_trainingProcess && m_trainingProcess->state() != QProcess::NotRunning) {
+                trainLogConsole->append(">> [系统] 检测到旧任务，正在强制结束进程...");
+                m_trainingProcess->kill();
+                m_trainingProcess->waitForFinished(1000);
+            }
+
+            // 4. 根据标志位决定进入哪个流水线阶段[cite: 5]
+            if (needPre) {
+                // 阶段 1：执行数据集准备（UVR5 -> Slicer -> ASR）[cite: 5, 6]
+                QSettings settings("Yachi", "PersistentData");
+                settings.setValue("Voice_Train_NeedPreprocess", false); // 消费标志位[cite: 5]
+
+                QString rawFile = settings.value("Voice_Train_RawAudio").toString();
+
+                trainLogConsole->append(QString(">> [运行环境] Python解析器: %1").arg(pyPath));
+                trainLogConsole->append(QString(">> [任务调度] 正在拉起自动化处理管道..."));
+                trainLogConsole->append(QString(">> [输入文件]: %1").arg(rawFile));
+                trainLogConsole->append(QString(">> [输出目录]: %1").arg(datasetPath));
+
+                runDatasetPipeline(pyPath, rawFile, datasetPath);
+            }
+            else {
+                // 阶段 2：直接开始模型训练[cite: 5, 6]
+                trainLogConsole->append(QString(">> [任务调度] 侦测到已有数据集，直接拉起训练流水线..."));
+                trainLogConsole->append(QString(">> [训练参数] Epochs: %1 | Batch: %2").arg(epochs).arg(batch));
+
+                startModelTraining(pyPath, datasetPath, epochs, batch);
+            }
+        });
     }
 }
+// ********************************
+
+// **************** 模型训练弹窗 ****************
+///
+/// \brief VoicePage::startAutomaticPythonInstall
+/// \brief 自动下载并安装Python环境的接口
+/// \param pyPathEdit
+///
+void VoicePage::startAutomaticPythonInstall(QLineEdit *pyPathEdit) {
+    QString runtimeDir = QCoreApplication::applicationDirPath() + "/runtime";
+    QDir().mkpath(runtimeDir);
+
+    trainLogConsole->append(">> [系统] 准备从 GitHub 获取全量环境包...");
+
+    //GitHub Release下载直链
+    QUrl url("https://github.com/maomaonwn/Yachi/releases/download/Library/yachi-tts-runtime.zip");
+    QNetworkRequest request(url);
+    QNetworkReply *reply = networkManager->get(request);
+
+    progressBar->setVisible(true);
+    connect(reply, &QNetworkReply::downloadProgress, this, [this](qint64 recv, qint64 total) {
+        if (total > 0) progressBar->setValue(static_cast<int>(recv * 100 / total));
+    });
+
+    connect(reply, &QNetworkReply::finished, this, [this, reply, runtimeDir, pyPathEdit]() {
+        progressBar->setVisible(false);
+        if (reply->error() == QNetworkReply::NoError) {
+            QString zipPath = runtimeDir + "/yachi_runtime.zip";
+            QFile file(zipPath);
+            if (file.open(QIODevice::WriteOnly)) {
+                file.write(reply->readAll());
+                file.close();
+
+                trainLogConsole->append(">> [解压] 下载完成，正在部署全量环境...");
+
+                QProcess *unzipProc = new QProcess(this);
+                unzipProc->setWorkingDirectory(runtimeDir);
+
+                // 【修复点】：在此处的捕获列表中添加了 unzipProc
+                connect(unzipProc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+                        this, [this, runtimeDir, pyPathEdit, zipPath, unzipProc](int exitCode){
+                            if (exitCode == 0) {
+                                QString finalExe = runtimeDir + "/python.exe";
+                                pyPathEdit->setText(finalExe);
+                                trainLogConsole->append(">> [成功] 环境部署完毕！");
+                                QFile::remove(zipPath);
+                            } else {
+                                trainLogConsole->append(">> [错误] 解压失败，请检查系统 tar 命令。");
+                            }
+                            unzipProc->deleteLater();
+                        });
+
+                unzipProc->start("tar", {"-xf", "yachi_runtime.zip"});
+            }
+        } else {
+            trainLogConsole->append(">> [错误] 网络请求失败：" + reply->errorString());
+        }
+        reply->deleteLater();
+    });
+}
+
+///
+/// \brief VoicePage::ensureDependenciesInstalled
+/// \brief 检查并安装依赖
+/// \param pyPath
+/// \param callback
+///
+void VoicePage::ensureDependenciesInstalled(const QString &pyPath, std::function<void(bool)> callback) {
+    //检查下核心库是否存在
+    //如果存在 pydub 文件夹，则直接跳过冗长的 pip install
+    QString sitePackages = QFileInfo(pyPath).absolutePath() + "/Lib/site-packages/pydub";
+
+    if (QDir(sitePackages).exists()) {
+        trainLogConsole->append(">> [检查] 核心依赖库已就绪，跳过安装。");
+        callback(true);
+        return;
+    }
+
+    //否则，执行一次静默修复
+    trainLogConsole->append(">> [环境] 正在检查缺失依赖...");
+    QProcess *pipProc = new QProcess(this);
+    pipProc->start(pyPath, {"-m", "pip", "install", "pydub", "librosa", "numpy", "-i", "https://pypi.tuna.tsinghua.edu.cn/simple"});
+
+    connect(pipProc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [=](int exitCode){
+        callback(true); //无论结果如何尝试继续，因为py脚本内也有自愈逻辑
+        pipProc->deleteLater();
+    });
+}
+
+void VoicePage::runDatasetPipeline(const QString &pyPath, const QString &rawAudio, const QString &outDir) {
+    QString scriptPath = QCoreApplication::applicationDirPath() + "/tools/make_dataset.py";
+
+    // 1.清理旧进程
+    if (m_trainingProcess) {
+        m_trainingProcess->kill();
+        m_trainingProcess->deleteLater();
+    }
+    m_trainingProcess = new QProcess(this);
+    m_trainingProcess->setProcessChannelMode(QProcess::MergedChannels);
+
+    // 2.从注册表读取最新的相关配置
+    QSettings settings("Yachi", "PersistentData");
+    QString modelSize = settings.value("Voice_Train_ModelSize", "medium").toString(); //默认为 small
+    bool useCuda = settings.value("Voice_Train_UseCuda", false).toBool();
+    bool useUvr5 = settings.value("Voice_Train_UVR5", true).toBool(); //默认开启 UVR5
+    QString mediaLang = settings.value("Voice_Train_MediaLang", "中文").toString();
+
+    // 3.组装命令行参数（传递给make_dataset.py使用）
+    QStringList args;
+    args << scriptPath
+         << "--input" << rawAudio
+         << "--output" << outDir
+         << "--model_size" << modelSize
+         << "--language" << mediaLang;
+
+    if (useUvr5) args << "--uvr5";
+    if (useCuda) args << "--use_cuda";
+
+    // 4.绑定输出信号
+    connect(m_trainingProcess, &QProcess::readyReadStandardOutput, this, [this]() {
+        trainLogConsole->append(QString::fromUtf8(m_trainingProcess->readAllStandardOutput()).trimmed());
+    });
+
+    // 5.绑定结束信号，用于弹出网页编辑器
+    connect(m_trainingProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+            this, [this, outDir](int exitCode) {
+                if (exitCode == 0) {
+                    trainLogConsole->append("\n>> [完成] 数据集准备完毕！正在为您打开标注编辑器...");
+
+                    //自动拉起浏览器进行人工核对
+                    QString listPath = outDir + "/list.txt";
+                    openExternalLabelEditor(listPath);
+
+                    trainLogConsole->append(">> 💡 提示：确认 list.txt 后，即可开启下一步训练。");
+                } else {
+                    trainLogConsole->append("\n>> ❌ [失败] 处理进程非正常退出，请检查上方 Python 报错信息。");
+                }
+
+                //任务结束，清理句柄
+                m_trainingProcess->deleteLater();
+                m_trainingProcess = nullptr;
+            });
+    // 6.启动进程
+    trainLogConsole->append(">> [启动] 正在以参数: " + args.join(" ") + " 启动 Python 脚本...");
+    m_trainingProcess->start(pyPath, args);
+}
+
+void VoicePage::startModelTraining(const QString &pyPath, const QString &datasetPath, int epochs, int batch) {
+    //根据你实际的底层项目结构(GPT-SoVITS等)，这里指向实际的训练脚本
+    QString scriptPath = QCoreApplication::applicationDirPath() + "/tools/train_model.py";
+
+    m_trainingProcess = new QProcess(this);
+    m_trainingProcess->setProcessChannelMode(QProcess::MergedChannels);
+
+    connect(m_trainingProcess, &QProcess::readyReadStandardOutput, this, [this]() {
+        trainLogConsole->append(QString::fromLocal8Bit(m_trainingProcess->readAllStandardOutput()).trimmed());
+        QTextCursor cursor = trainLogConsole->textCursor();
+        cursor.movePosition(QTextCursor::End);
+        trainLogConsole->setTextCursor(cursor);
+    });
+
+    connect(m_trainingProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+            this, [this](int exitCode) {
+                if (exitCode == 0) {
+                    trainLogConsole->append("\n>> 🎉 [成功] 模型训练流水线圆满完成！");
+                    trainLogConsole->append(">> 请切换至“模型导入”页签，选择刚生成的 .ckpt (GPT) 和 .pth (SoVITS) 文件进行效果测试。");
+                } else {
+                    trainLogConsole->append("\n>> ❌ [错误] 训练进程非正常退出，请检查环境配置或上方日志报错。");
+                }
+                m_trainingProcess->deleteLater();
+                m_trainingProcess = nullptr;
+            });
+
+    //组装参数队列
+    QStringList args;
+    args << scriptPath
+         << "--dataset" << datasetPath
+         << "--epochs" << QString::number(epochs)
+         << "--batch_size" << QString::number(batch);
+
+    //发射火箭
+    m_trainingProcess->start(pyPath, args);
+}
+
+void VoicePage::openExternalLabelEditor(const QString &listPath) {
+    QFile file(listPath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        trainLogConsole->append(">> [错误] 无法读取标注文件: " + listPath);
+        return;
+    }
+
+    // 1.生成HTML
+    QString htmlContent = R"raw(
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Yachi 标注编辑器</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { color: #0078d4; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #eee; padding: 12px; text-align: left; }
+        th { background: #f8f9fa; }
+        input { width: 95%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+        .save-area { position: sticky; top: 0; background: white; padding: 15px 0; border-bottom: 2px solid #0078d4; margin-bottom: 10px; z-index: 100; }
+        button { background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #218838; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="save-area">
+            <h2>📝 标注内容核对</h2>
+            <p>如有修改，修改完成后，点击按钮复制结果并手动粘贴回 list.txt 文件。</p>
+            <button onclick="copyToClipboard()">复制修改后的全部内容</button>
+        </div>
+        <table>
+            <tr><th>音频预览</th><th>转写文本 (可修改)</th></tr>
+)raw";
+
+    // 2.遍历读取标注文件内容并构建表格行
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QString line = in.readLine().trimmed();
+        if (line.isEmpty()) continue;
+
+        QStringList parts = line.split("|"); // GPT-SoVITS 格式: 路径|角色|语种|内容
+        if (parts.size() >= 4) {
+            QString audioPath = parts[0];
+            QString text = parts[3];
+
+            //将路径转为浏览器可识别的 file 协议路径
+            QString webAudioPath = "file:///" + audioPath.replace("\\", "/");
+            //前三部分（路径|角色|语种|）作为前缀保留
+            QString prefix = parts.mid(0, 3).join("|") + "|";
+
+            htmlContent += QString(
+                               "<tr>"
+                               "  <td><audio controls src=\"%1\" style=\"height:30px; width:220px;\"></audio></td>"
+                               "  <td><input type=\"text\" class=\"label-input\" data-prefix=\"%2\" value=\"%3\"></td>"
+                               "</tr>"
+                               ).arg(webAudioPath).arg(prefix).arg(text.replace("\"", "&quot;")); // 转义文本中的双引号
+        }
+    }
+
+    // 3.注入JS逻辑并闭合标签
+    htmlContent += R"raw(
+        </table>
+    </div>
+    <script>
+        function copyToClipboard() {
+            const inputs = document.querySelectorAll('.label-input');
+            let output = [];
+            inputs.forEach(input => {
+                output.push(input.getAttribute('data-prefix') + input.value);
+            });
+            const text = output.join('\n');
+
+            // 使用标准的 Clipboard API 复制[cite: 26]
+            navigator.clipboard.writeText(text).then(() => {
+                alert('内容已成功复制到剪贴板！\n请打开 list.txt，全选并粘贴覆盖即可。');
+            }).catch(err => {
+                console.error('无法复制: ', err);
+                alert('复制失败，请查看控制台错误。');
+            });
+        }
+    </script>
+</body>
+</html>
+)raw";
+
+    // 4.保存为临时文件并调用默认浏览器
+    QString tempPath = QDir::tempPath() + "/yachi_label_editor.html";
+    QFile outFile(tempPath);
+    if (outFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&outFile);
+        out << htmlContent;
+        outFile.close();
+
+        //使用QDesktopServices打开
+        QDesktopServices::openUrl(QUrl::fromLocalFile(tempPath));
+        trainLogConsole->append(">> [系统] 已在浏览器中打开标注编辑器。路径: " + tempPath);
+    }
+}
+
 // ********************************
 
 // **************** 预设管理逻辑 ****************
@@ -814,12 +1209,30 @@ void VoicePage::onBrowseCachePath() {
 void VoicePage::onGenerateClicked() {
     QString text = inputText->toPlainText().trimmed();
     if (text.isEmpty()) return;
+    // --- 实例化配置对象 ---
+    VoiceConfig config;
+    config.text = text;
+    config.lang = "zh";  //TODO: 语种后面弄下动态设置
 
-    generateBtn->setEnabled(false);
+    config.speed = speedSpin->value();
+    config.temp = tempSpin->value();
+    config.topP = topPSpin->value();
+    config.topK = topKSpin->value();
+
+    config.refAudioPath = refAudioPathEdit->text();
+    config.promptText = refTextEdit->text();
+
+    config.useCache = cacheGroup->isChecked();
+    config.cacheDir = cachePathEdit->text();
+
+    // --- 调用逻辑层 ---
+    // 通过信号或直接调用，将任务下发给 m_voiceAgent
+    m_voiceAgent->generate(config);
+
+    // --- UI 反馈 ---
+    generateBtn->setEnabled(false); // 防止重复点击造成网络拥堵
     progressBar->setVisible(true);
-    progressBar->setRange(0, 0);
-
-    // TODO: 实现网络请求或本地进程调用逻辑
+    progressBar->setRange(0, 0);    // 设置为动画忙碌状态 (Marquee 效果)[cite: 10]
 }
 
 void VoicePage::handleFinished() {

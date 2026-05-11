@@ -35,6 +35,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         res.qrc
         voicepage.h voicepage.cpp
         urlstrategy.h
+        voiceagentcore.h voiceagentcore.cpp
 
 
 

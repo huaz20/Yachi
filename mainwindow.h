@@ -11,6 +11,7 @@
 #include "agentcore.h"
 #include "translationpage.h"
 #include "voicepage.h"
+#include "voiceagentcore.h"
 
 class MainWindow : public QMainWindow
 {
@@ -44,6 +45,7 @@ private:
     AgentCore *m_barAgent;       //对话酒吧模式的Agent
     AgentCore *m_translateAgent;
     AgentCore *m_titleAgent;     //对话标题生成Agent
+    VoiceAgentCore *m_voiceAgent;
 
     //厂商映射表
     QMap<QString, ModelInfo> m_vendorMap;

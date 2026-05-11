@@ -18,6 +18,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "C:/Programming/cpp/Yachi/mainwindow.cpp" "CMakeFiles/YachiAgent.dir/mainwindow.cpp.obj" "gcc" "CMakeFiles/YachiAgent.dir/mainwindow.cpp.obj.d"
   "C:/Programming/cpp/Yachi/modelconfigwidget.cpp" "CMakeFiles/YachiAgent.dir/modelconfigwidget.cpp.obj" "gcc" "CMakeFiles/YachiAgent.dir/modelconfigwidget.cpp.obj.d"
   "C:/Programming/cpp/Yachi/translationpage.cpp" "CMakeFiles/YachiAgent.dir/translationpage.cpp.obj" "gcc" "CMakeFiles/YachiAgent.dir/translationpage.cpp.obj.d"
+  "C:/Programming/cpp/Yachi/voiceagentcore.cpp" "CMakeFiles/YachiAgent.dir/voiceagentcore.cpp.obj" "gcc" "CMakeFiles/YachiAgent.dir/voiceagentcore.cpp.obj.d"
   "C:/Programming/cpp/Yachi/voicepage.cpp" "CMakeFiles/YachiAgent.dir/voicepage.cpp.obj" "gcc" "CMakeFiles/YachiAgent.dir/voicepage.cpp.obj.d"
   )
 

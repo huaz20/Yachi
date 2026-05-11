@@ -485,17 +485,21 @@ CMakeFiles/YachiAgent.dir/voicepage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QIODevice \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkRequest \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkAccessManager \
- C:/Qt/6.11.0/mingw_64/include/QtCore/QJsonDocument \
- C:/Qt/6.11.0/mingw_64/include/QtCore/qjsondocument.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonparseerror.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QProcess \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qprocess.h \
+ C:\Programming\cpp\Yachi\voiceagentcore.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QObject \
+ C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkReply \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QByteArray \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QJsonObject \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonobject.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonvalue.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qcborvalue.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qcborcommon.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/quuid.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/QFileDialog \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qfiledialog.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qjsondocument.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonparseerror.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QDir \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qdir.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qdirlisting.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qfiledevice.h \
@@ -532,13 +536,16 @@ CMakeFiles/YachiAgent.dir/voicepage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qfile.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qfileinfo.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qtimezone.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QFile \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QJsonDocument \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QFileDialog \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qfiledialog.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QMessageBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qmessagebox.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialogbuttonbox.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QStandardPaths \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qstandardpaths.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/QFile \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QSettings \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qsettings.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QInputDialog \
@@ -559,4 +566,6 @@ CMakeFiles/YachiAgent.dir/voicepage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QGraphicsDropShadowEffect \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgraphicseffect.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDialog \
- C:/Qt/6.11.0/mingw_64/include/QtCore/QFileInfo
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QFileInfo \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/QDesktopServices \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qdesktopservices.h

@@ -1,7 +1,5 @@
-C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/EWIEGA46WW/moc_voicepage.cpp: C:/Programming/cpp/Yachi/voicepage.h \
+C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/EWIEGA46WW/moc_voiceagentcore.cpp: C:/Programming/cpp/Yachi/voiceagentcore.h \
   C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/moc_predefs.h \
-  C:/Programming/cpp/Yachi/voiceagentcore.h \
-  C:/Qt/6.11.0/mingw_64/include/QtCore/QBuffer \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QByteArray \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QDir \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QFile \
@@ -11,7 +9,6 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtCore/QList \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QMetaType \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QObject \
-  C:/Qt/6.11.0/mingw_64/include/QtCore/QProcess \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QSharedDataPointer \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QString \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QUrl \
@@ -26,7 +23,6 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtCore/q23type_traits.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/q23utility.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/q26numeric.h \
-  C:/Qt/6.11.0/mingw_64/include/QtCore/qabstractitemmodel.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qalgorithms.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qalloc.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qanystringview.h \
@@ -38,7 +34,6 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtCore/qatomic_cxx11.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qbasicatomic.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qbindingstorage.h \
-  C:/Qt/6.11.0/mingw_64/include/QtCore/qbuffer.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qbytearray.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qbytearrayalgorithms.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qbytearraylist.h \
@@ -47,7 +42,6 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtCore/qcborcommon.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qcborvalue.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qchar.h \
-  C:/Qt/6.11.0/mingw_64/include/QtCore/qcheckedint_impl.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qcompare.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qcompare_impl.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qcomparehelpers.h \
@@ -89,13 +83,11 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonparseerror.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonvalue.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qlatin1stringview.h \
-  C:/Qt/6.11.0/mingw_64/include/QtCore/qline.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qlist.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qlocale.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qlogging.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qmalloc.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qmap.h \
-  C:/Qt/6.11.0/mingw_64/include/QtCore/qmargins.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qmath.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qmetacontainer.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qmetaobject.h \
@@ -109,10 +101,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtCore/qobjectdefs_impl.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qoverload.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qpair.h \
-  C:/Qt/6.11.0/mingw_64/include/QtCore/qpoint.h \
-  C:/Qt/6.11.0/mingw_64/include/QtCore/qprocess.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qprocessordetection.h \
-  C:/Qt/6.11.0/mingw_64/include/QtCore/qrect.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qrefcount.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qregularexpression.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qscopedpointer.h \
@@ -122,7 +111,6 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtCore/qshareddata_impl.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qsharedpointer.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qsharedpointer_impl.h \
-  C:/Qt/6.11.0/mingw_64/include/QtCore/qsize.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qspan.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qstdlibdetection.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qstring.h \
@@ -169,48 +157,6 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtCore/qversiontagging.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qxptype_traits.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qyieldcpu.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qaction.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qbitmap.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qbrush.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qcolor.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qcursor.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qfont.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qfontinfo.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qfontmetrics.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qfontvariableaxis.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qicon.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qimage.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qkeysequence.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qpaintdevice.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qpalette.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qpen.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qpicture.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qpixelformat.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qpixmap.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qpolygon.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qregion.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qrgb.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qrgba64.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qtextcursor.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qtextdocument.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qtextformat.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qtextoption.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qtgui-config.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qtguiexports.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qtguiglobal.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qtransform.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qvalidator.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qwindowdefs.h \
-  C:/Qt/6.11.0/mingw_64/include/QtGui/qwindowdefs_win.h \
-  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/QAudioOutput \
-  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/QMediaPlayer \
-  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qaudio.h \
-  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qaudiooutput.h \
-  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qmediaplayer.h \
-  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qtaudio.h \
-  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qtmultimedia-config.h \
-  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qtmultimediaexports.h \
-  C:/Qt/6.11.0/mingw_64/include/QtMultimedia/qtmultimediaglobal.h \
   C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkAccessManager \
   C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkReply \
   C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkRequest \
@@ -232,54 +178,6 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtNetwork/qtnetwork-config.h \
   C:/Qt/6.11.0/mingw_64/include/QtNetwork/qtnetworkexports.h \
   C:/Qt/6.11.0/mingw_64/include/QtNetwork/qtnetworkglobal.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QCheckBox \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QComboBox \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDoubleSpinBox \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QFrame \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QGroupBox \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QHBoxLayout \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLabel \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLineEdit \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QProgressBar \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPushButton \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QScrollArea \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QSlider \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QSpinBox \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTabWidget \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextEdit \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QVBoxLayout \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QWidget \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractbutton.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractitemdelegate.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractscrollarea.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractslider.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractspinbox.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qboxlayout.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcheckbox.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcombobox.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qframe.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgridlayout.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgroupbox.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlabel.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlayout.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlayoutitem.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlineedit.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qprogressbar.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qpushbutton.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qrubberband.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qscrollarea.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qsizepolicy.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qslider.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qspinbox.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qstyle.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qstyleoption.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtabbar.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtabwidget.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtextedit.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtwidgets-config.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtwidgetsexports.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtwidgetsglobal.h \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qwidget.h \
   C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/algorithm \
   C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/array \
   C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/atomic \

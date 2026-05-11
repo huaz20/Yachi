@@ -447,6 +447,12 @@
 			null
 		],
 		[
+			"C:/Programming/cpp/Yachi/voiceagentcore.h",
+			"MU",
+			"EWIEGA46WW/moc_voiceagentcore.cpp",
+			null
+		],
+		[
 			"C:/Programming/cpp/Yachi/voicepage.h",
 			"MU",
 			"EWIEGA46WW/moc_voicepage.cpp",
@@ -536,6 +542,7 @@
 		[ "C:/Programming/cpp/Yachi/mainwindow.cpp", "MU", null ],
 		[ "C:/Programming/cpp/Yachi/modelconfigwidget.cpp", "MU", null ],
 		[ "C:/Programming/cpp/Yachi/translationpage.cpp", "MU", null ],
+		[ "C:/Programming/cpp/Yachi/voiceagentcore.cpp", "MU", null ],
 		[ "C:/Programming/cpp/Yachi/voicepage.cpp", "MU", null ]
 	],
 	"UIC_OPTIONS" : [],

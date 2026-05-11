@@ -87,6 +87,7 @@
             "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
             "models": [
                 "qwen-max",
+                "qwen/qwen3.5-27b",
                 "qwen-plus",
                 "qwen-turbo",
                 "qwen2.5-72b-instruct"

@@ -5,8 +5,10 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Programming/cpp/Yachi/homepage.h \
   C:/Programming/cpp/Yachi/modelconfigwidget.h \
   C:/Programming/cpp/Yachi/translationpage.h \
+  C:/Programming/cpp/Yachi/voiceagentcore.h \
   C:/Programming/cpp/Yachi/voicepage.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QBuffer \
+  C:/Qt/6.11.0/mingw_64/include/QtCore/QByteArray \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QCoreApplication \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QDir \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QFile \
@@ -18,6 +20,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtCore/QMap \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QMetaType \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QObject \
+  C:/Qt/6.11.0/mingw_64/include/QtCore/QProcess \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QRect \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QSettings \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QSharedDataPointer \
@@ -130,6 +133,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtCore/qoverload.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qpair.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qpoint.h \
+  C:/Qt/6.11.0/mingw_64/include/QtCore/qprocess.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qprocessordetection.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qrect.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/qrefcount.h \

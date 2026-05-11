@@ -23,11 +23,13 @@
 #include <QBuffer>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QProcess>
+#include "voiceagentcore.h"
 
 class VoicePage : public QWidget {
     Q_OBJECT
 public:
-    explicit VoicePage(QWidget *parent = nullptr);
+    explicit VoicePage(VoiceAgentCore *agent, QWidget *parent = nullptr);
 
 private slots:
     void onGenerateClicked();
@@ -45,12 +47,18 @@ private slots:
     void saveCurrentPreset();
     void refreshPresetList();
 
-    // --- 训练配置弹窗槽函数 ---
+    // --- 训练模型弹窗槽函数 ---
     void openTrainingConfigDialog();
+
+    //准备声音数据集
+    void runDatasetPipeline(const QString &pyPath, const QString &rawAudio, const QString &outDir);
+    void openExternalLabelEditor(const QString &listPath);  //生成并打开网页编辑器
 
 private:
     void setupUI();
     void initAudio();
+
+    VoiceAgentCore *m_voiceAgent;  //用来存储构造传来的，MainWindow里面的m_voiceAgent
 
     //辅助函数
     QHBoxLayout* createSliderWithSpinBox(const QString &label, double min, double max, double step, double defaultVal, QSlider*& outSlider, QDoubleSpinBox*& outSpin, int decimals = 2);
@@ -120,6 +128,21 @@ private:
     QNetworkAccessManager *networkManager;
     QBuffer *audioBuffer;
     QByteArray m_audioData;
+
+    // ==========================================
+    // 模型训练弹窗
+    // ==========================================
+    //自动检测Python环境
+    void handlePythonAutoDetect(QLineEdit *pyPathEdit);
+    //自动安装Python环境
+    void startAutomaticPythonInstall(QLineEdit *pyPathEdit);
+    //依赖检查与安装
+    void ensureDependenciesInstalled(const QString &pyPath, std::function<void(bool)> callback);
+
+    //开始数据集训练流水线
+    void startModelTraining(const QString &pyPath, const QString &datasetPath, int epochs, int batch);
+
+    QProcess *m_trainingProcess = nullptr;  //用于拉起Python脚本
 };
 
 #endif // VOICEPAGE_H

@@ -18,6 +18,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_barAgent = new AgentCore(this);
     m_translateAgent = new AgentCore(this);
     m_titleAgent = new AgentCore(this);
+
+    m_voiceAgent = new VoiceAgentCore(this);
     // ------
 
     //UI初始化
@@ -72,6 +74,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_titleAgent, &AgentCore::responseMsg, this, [this](const QString &titleText){
         chatPageWidget->updateCurrentChatTitle(titleText);
     });
+
+    //VoiceAgentCore
     // -------
 
     //持久化配置定时器（存储在注册表regedit里）
@@ -160,7 +164,7 @@ void MainWindow::setupUI()
     chatPageWidget = new ChatPage(this);
     translationPageWidget = new TranslationPage(m_translateAgent, this);
     settingsPage = new QWidget(this);
-    voicePageWidget = new VoicePage(this);
+    voicePageWidget = new VoicePage(m_voiceAgent,this);
 
     mainStack->addWidget(homePageWidget);
     mainStack->addWidget(chatPageWidget);
