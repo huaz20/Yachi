@@ -159,6 +159,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtCore/qyieldcpu.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/QKeyEvent \
   C:/Qt/6.11.0/mingw_64/include/QtGui/QTransform \
+  C:/Qt/6.11.0/mingw_64/include/QtGui/qabstracttextdocumentlayout.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qaction.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qbitmap.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qbrush.h \
@@ -167,9 +168,11 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtGui/qevent.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qeventpoint.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qfont.h \
+  C:/Qt/6.11.0/mingw_64/include/QtGui/qfontdatabase.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qfontinfo.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qfontmetrics.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qfontvariableaxis.h \
+  C:/Qt/6.11.0/mingw_64/include/QtGui/qglyphrun.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qguiapplication.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qguiapplication_platform.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qicon.h \
@@ -185,6 +188,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtGui/qpixmap.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qpointingdevice.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qpolygon.h \
+  C:/Qt/6.11.0/mingw_64/include/QtGui/qrawfont.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qregion.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qrgb.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qrgba64.h \
@@ -193,6 +197,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtGui/qtextcursor.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qtextdocument.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qtextformat.h \
+  C:/Qt/6.11.0/mingw_64/include/QtGui/qtextlayout.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qtextoption.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qtgui-config.h \
   C:/Qt/6.11.0/mingw_64/include/QtGui/qtguiexports.h \
@@ -208,11 +213,11 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLabel \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLineEdit \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QMenu \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPlainTextEdit \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPushButton \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QScrollArea \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QStackedWidget \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextBrowser \
-  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextEdit \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTreeWidget \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QVBoxLayout \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QWidget \
@@ -231,6 +236,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlayoutitem.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlineedit.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qmenu.h \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qplaintextedit.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qpushbutton.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qrubberband.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qscrollarea.h \

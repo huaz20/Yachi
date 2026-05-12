@@ -2,7 +2,6 @@
 #define CHATPAGE_H
 
 #include <QWidget>
-#include <QTextEdit>
 #include <QLineEdit>
 #include <QTextBrowser>
 #include <QPushButton>
@@ -16,6 +15,7 @@
 #include <QComboBox>
 #include <QScrollArea>
 #include <QJsonArray>
+#include <QPlainTextEdit>
 
 ///
 /// \brief The BarPreset class
@@ -36,8 +36,8 @@ struct BarPreset {
 ///
 struct TalkExamplePair {
     QWidget *container;
-    QTextEdit *userEdit;
-    QTextEdit *aiEdit;
+    QPlainTextEdit *userEdit;
+    QPlainTextEdit *aiEdit;
 };
 
 class ChatPage : public QWidget {
@@ -134,7 +134,7 @@ private:
     // --- 普通模式UI ---
     QWidget *normalWidget;
     QTextBrowser *chatHistory;
-    QTextEdit *chatInput;
+    QPlainTextEdit *chatInput;
     QPushButton *sendBtn;
     QPushButton *barModeBtn;
 
@@ -151,7 +151,7 @@ private:
     QLabel *barAvatarLabel;          //酒吧模式圆形头像框
     QString m_barAvatarPath;         //存储用户头像的路径
 
-    QTextEdit *barPersonaEdit;       //人格设定
+    QPlainTextEdit *barPersonaEdit;       //人格设定
     QComboBox *presetCombo;          //预设下拉框声明
 
     QLabel *exampleCountLabel;       //示例对话计数标签
@@ -162,7 +162,7 @@ private:
     QWidget *examplesContainer;      //辅助对话容器
 
     QTextBrowser *barChatHistory;    //聊天记录
-    QTextEdit *barChatInput;         //输入框
+    QPlainTextEdit *barChatInput;         //输入框
 
     QWidget *barChatToolbar;         //酒吧模式工具栏容器
     QPushButton *btnEmoji;           //表情

@@ -384,20 +384,19 @@ CMakeFiles/YachiAgent.dir/chatpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qsizepolicy.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qcursor.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qbitmap.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextEdit \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtextedit.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractscrollarea.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qframe.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qtextdocument.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/qurl.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qtextoption.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qtextcursor.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qtextformat.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qpen.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLineEdit \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlineedit.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qframe.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qtextcursor.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qtextdocument.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qurl.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qtextformat.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qpen.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qtextoption.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextBrowser \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtextbrowser.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtextedit.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractscrollarea.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPushButton \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qpushbutton.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractbutton.h \
@@ -474,6 +473,13 @@ CMakeFiles/YachiAgent.dir/chatpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/quuid.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qjsondocument.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonparseerror.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPlainTextEdit \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qplaintextedit.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qabstracttextdocumentlayout.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qtextlayout.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qglyphrun.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qrawfont.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qfontdatabase.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QEvent \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDialog \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \

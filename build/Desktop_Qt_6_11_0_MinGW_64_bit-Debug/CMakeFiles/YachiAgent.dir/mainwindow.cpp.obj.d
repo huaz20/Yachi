@@ -438,10 +438,9 @@ CMakeFiles/YachiAgent.dir/mainwindow.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qpushbutton.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractbutton.h \
  C:\Programming\cpp\Yachi\chatPage.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextEdit \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtextedit.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextBrowser \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtextbrowser.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtextedit.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QHBoxLayout \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLabel \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlabel.h \
@@ -489,6 +488,13 @@ CMakeFiles/YachiAgent.dir/mainwindow.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/quuid.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qjsondocument.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonparseerror.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPlainTextEdit \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qplaintextedit.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qabstracttextdocumentlayout.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qtextlayout.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qglyphrun.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qrawfont.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qfontdatabase.h \
  C:\Programming\cpp\Yachi\agentcore.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QObject \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkAccessManager \
@@ -564,16 +570,10 @@ CMakeFiles/YachiAgent.dir/mainwindow.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QFile \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QCoreApplication \
  C:\Programming\cpp\Yachi\translationpage.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPlainTextEdit \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qplaintextedit.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qabstracttextdocumentlayout.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qtextlayout.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qglyphrun.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qrawfont.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qfontdatabase.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QGroupBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgroupbox.h \
  C:\Programming\cpp\Yachi\voicepage.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextEdit \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QSlider \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QProgressBar \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qprogressbar.h \

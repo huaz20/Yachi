@@ -317,7 +317,7 @@ void ChatPage::setupNormalChatUI() {
     QVBoxLayout *inputLayout = new QVBoxLayout(inputContainer);
     inputLayout->setContentsMargins(0, 0, 0, 0);
 
-    chatInput = new QTextEdit();
+    chatInput = new QPlainTextEdit();
     chatInput->setPlaceholderText("开始聊天吧~👋（Enter发送，Shift+Enter换行）");
     chatInput->setStyleSheet("font-size: 15px;");  //14px（默认）+1
     chatInput->installEventFilter(this);
@@ -476,7 +476,7 @@ void ChatPage::setupBarModeUI() {
     chatLayout->addWidget(barChatToolbar);
 
     // 4.输入区
-    barChatInput = new QTextEdit();
+    barChatInput = new QPlainTextEdit();
     barChatInput->setPlaceholderText("想对她说点什么...");
     barChatInput->setStyleSheet("font-size: 15px;");  //14px（默认）+1
     barChatInput->setFrameShape(QFrame::NoFrame);
@@ -527,7 +527,7 @@ void ChatPage::setupBarModeUI() {
     QWidget *pArea = new QWidget();
     QVBoxLayout *pLayout = new QVBoxLayout(pArea);
     pLayout->addWidget(new QLabel("<b>人格设定</b>"));
-    barPersonaEdit = new QTextEdit();
+    barPersonaEdit = new QPlainTextEdit();
     barPersonaEdit->setStyleSheet("border: 1px solid #ddd; border-radius: 8px; background: white;");
     pLayout->addWidget(barPersonaEdit);
     sideLayout->addWidget(pArea, 3);
@@ -685,14 +685,13 @@ void ChatPage::addTalkExampleItem(const QString &userText, const QString &aiText
     QHBoxLayout *uLayout = new QHBoxLayout();
     QLabel *uLabel = new QLabel("问:");
     uLabel->setStyleSheet("color: #0078d4; font-weight: bold; font-size: 12px;");
-    QTextEdit *uEdit = new QTextEdit(userText);
+    QPlainTextEdit *uEdit = new QPlainTextEdit(userText);
     uEdit->setPlaceholderText("用户可能会问的话...");
-    uEdit->setAcceptRichText(false);
     uEdit->setMinimumHeight(45);  //增加初始高度
     uEdit->setMaximumHeight(100); //限制最大高度防止过长
     uEdit->setStyleSheet(
-        "QTextEdit { border: 1px solid #f0f0f0; background: #f8faff; border-radius: 6px; padding: 4px; color: #333; }"
-        "QTextEdit:focus { border: 1px solid #0078d4; }"
+        "QPlainTextEdit { border: 1px solid #f0f0f0; background: #f8faff; border-radius: 6px; padding: 4px; color: #333; }"
+        "QPlainTextEdit:focus { border: 1px solid #0078d4; }"
         );
     uLayout->addWidget(uLabel, 0, Qt::AlignTop);
     uLayout->addWidget(uEdit, 1);
@@ -702,14 +701,13 @@ void ChatPage::addTalkExampleItem(const QString &userText, const QString &aiText
     QHBoxLayout *aLayout = new QHBoxLayout();
     QLabel *aLabel = new QLabel("答:");
     aLabel->setStyleSheet("color: #db2777; font-weight: bold; font-size: 12px;");
-    QTextEdit *aEdit = new QTextEdit(aiText);
+    QPlainTextEdit *aEdit = new QPlainTextEdit(aiText);
     aEdit->setPlaceholderText("期望 AI 回复的内容...");
-    aEdit->setAcceptRichText(false);
     aEdit->setMinimumHeight(60);  //AI回复通常较长，给更高空间
     aEdit->setMaximumHeight(150);
     aEdit->setStyleSheet(
-        "QTextEdit { border: 1px solid #f0f0f0; background: #fff9fb; border-radius: 6px; padding: 4px; color: #333; }"
-        "QTextEdit:focus { border: 1px solid #db2777; }"
+        "QPlainTextEdit { border: 1px solid #f0f0f0; background: #fff9fb; border-radius: 6px; padding: 4px; color: #333; }"
+        "QPlainTextEdit:focus { border: 1px solid #db2777; }"
         );
     aLayout->addWidget(aLabel, 0, Qt::AlignTop);
     aLayout->addWidget(aEdit, 1);

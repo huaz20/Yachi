@@ -489,19 +489,18 @@ CMakeFiles/YachiAgent.dir/YachiAgent_autogen/mocs_compilation.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qsizepolicy.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qcursor.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qbitmap.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextEdit \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtextedit.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractscrollarea.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qframe.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qtextdocument.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qtextoption.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qtextcursor.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qtextformat.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qpen.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLineEdit \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlineedit.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qframe.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qtextcursor.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qtextdocument.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qtextformat.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qpen.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qtextoption.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextBrowser \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtextbrowser.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtextedit.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractscrollarea.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPushButton \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qpushbutton.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractbutton.h \
@@ -555,6 +554,13 @@ CMakeFiles/YachiAgent.dir/YachiAgent_autogen/mocs_compilation.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcombobox.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QScrollArea \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qscrollarea.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPlainTextEdit \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qplaintextedit.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qabstracttextdocumentlayout.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qtextlayout.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qglyphrun.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qrawfont.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qfontdatabase.h \
  C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_homepage.cpp \
  C:/Programming/cpp/Yachi/homepage.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QList \
@@ -574,16 +580,10 @@ CMakeFiles/YachiAgent.dir/YachiAgent_autogen/mocs_compilation.cpp.obj: \
  C:/Programming/cpp/Yachi/homepage.h C:/Programming/cpp/Yachi/chatPage.h \
  C:/Programming/cpp/Yachi/agentcore.h \
  C:/Programming/cpp/Yachi/translationpage.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPlainTextEdit \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qplaintextedit.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qabstracttextdocumentlayout.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qtextlayout.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qglyphrun.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qrawfont.h \
- C:/Qt/6.11.0/mingw_64/include/QtGui/qfontdatabase.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QGroupBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgroupbox.h \
  C:/Programming/cpp/Yachi/voicepage.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextEdit \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QSlider \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QProgressBar \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qprogressbar.h \
