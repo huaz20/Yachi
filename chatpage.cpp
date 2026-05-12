@@ -73,24 +73,24 @@ void ChatPage::setupSidebar() {
     expandedSidebar->setFixedWidth(200);
     QVBoxLayout *expandedLayout = new QVBoxLayout(expandedSidebar);
 
-    // 顶部的收起按钮栏
+    //顶部的收起按钮栏
     QHBoxLayout *topCollapseLayout = new QHBoxLayout();
-    topCollapseLayout->setContentsMargins(5, 5, 5, 0); // 微调边距
+    topCollapseLayout->setContentsMargins(5, 5, 5, 0); //微调边距
 
-    QPushButton *collapseBtn = new QPushButton("<"); // 收回符号
+    QPushButton *collapseBtn = new QPushButton("<"); //收回符号
     collapseBtn->setFixedSize(30, 30);
     collapseBtn->setCursor(Qt::PointingHandCursor);
     collapseBtn->setToolTip("收起侧边栏");
-    // 设置无边框、悬停变灰色的扁平圆按钮样式
+    //设置无边框、悬停变灰色的扁平圆按钮样式
     collapseBtn->setStyleSheet("QPushButton { background: transparent; border: none; border-radius: 15px; font-size: 18px; font-weight: bold; color: #666; }"
                                "QPushButton:hover { background-color: #e2e6ea; color: #000; }");
 
     topCollapseLayout->addWidget(collapseBtn);
-    topCollapseLayout->addStretch(); // 添加弹簧，把按钮推到最左侧
+    topCollapseLayout->addStretch(); //添加弹簧，把按钮推到最左侧
 
-    expandedLayout->addLayout(topCollapseLayout); // 将顶部栏加到展开布局的最上方
+    expandedLayout->addLayout(topCollapseLayout); //将顶部栏加到展开布局的最上方
 
-    // 树状结构（使对话可以放在文件夹里）
+    //树状结构（使对话可以放在文件夹里）
     QPushButton *newChatBtnExp = new QPushButton("📝 新建对话");
     newChatBtnExp->setStyleSheet("QPushButton { text-align: left; padding: 10px; background: transparent; border-radius: 5px;}"
                                  "QPushButton:hover { background-color: #e2e6ea; }");
@@ -118,7 +118,7 @@ void ChatPage::setupSidebar() {
     expandedLayout->addWidget(newChatBtnExp);
     expandedLayout->addWidget(newFolderBtn);
 
-    // “最近对话”分割线装饰
+    //“最近对话”分割线装饰
     QLabel *recentLabel = new QLabel("最近对话:");
     recentLabel->setStyleSheet("font-size: 15px; font-weight: bold; color: #555; margin-top: 5px; margin-bottom: 2px;");
     expandedLayout->addWidget(recentLabel);
@@ -133,29 +133,29 @@ void ChatPage::setupSidebar() {
     connect(chatSessionsTree, &QTreeWidget::itemChanged, this, [this](QTreeWidgetItem *item, int column) {
         if (column != 0) return;
 
-        // 读取我们在创建节点时打上的暗号
+        //读取我们在创建节点时打上的暗号
         QString type = item->data(0, Qt::UserRole).toString();
         if (type.isEmpty()) return;
 
         QString text = item->text(0);
 
-        // 关键：暂时屏蔽信号，防止在下面 setText 时触发死循环
+        //暂时屏蔽信号，防止在下面 setText 时触发死循环
         chatSessionsTree->blockSignals(true);
 
-        // 清理用户输入时可能残留的旧图标，防止出现 "📁 📁 名字" 的情况
+        //清理用户输入时可能残留的旧图标，防止出现 "📁 📁 名字" 的情况
         text.remove("📁");
         text.remove("💬");
         text.remove("📝");
         text = text.trimmed();
 
-        // 根据不同类型，强行加上专属图标
+        //根据不同类型，强行加上专属图标
         if (type == "folder") {
             item->setText(0, "📁 " + text);
         } else if (type == "chat") {
             item->setText(0, "💬 " + text);
         }
 
-        // 恢复信号
+        //恢复信号
         chatSessionsTree->blockSignals(false);
     });
 
@@ -527,39 +527,33 @@ void ChatPage::setupBarModeUI() {
     QWidget *pArea = new QWidget();
     QVBoxLayout *pLayout = new QVBoxLayout(pArea);
     pLayout->addWidget(new QLabel("<b>人格设定</b>"));
+
     barPersonaEdit = new QPlainTextEdit();
     barPersonaEdit->setStyleSheet("border: 1px solid #ddd; border-radius: 8px; background: white;");
     pLayout->addWidget(barPersonaEdit);
+
     sideLayout->addWidget(pArea, 3);
 
-    // 4.辅助对话 (伸缩权重 2)
-    QWidget *eArea = new QWidget();
-    QVBoxLayout *eLayout = new QVBoxLayout(eArea);
+    pLayout->addSpacing(14);
 
-    QHBoxLayout *eHeader = new QHBoxLayout();
-    eHeader->addWidget(new QLabel("<b>辅助对话</b>"));
-    exampleCountLabel = new QLabel("(共 0 条)");
-    exampleCountLabel->setStyleSheet("color: #999; font-size: 11px;");
-    eHeader->addWidget(exampleCountLabel);
-    eHeader->addStretch();
-    eLayout->addLayout(eHeader);
+    // 4.跳转入口区域 (伸缩权重 2)
+    QHBoxLayout *extraLayout = new QHBoxLayout();
+    btnTalkExamples = new QPushButton("💬 辅助对话设置");
+    btnKnowledgeLibrary = new QPushButton("📚 知识库设置");
 
-    QScrollArea *scroll = new QScrollArea();
-    scroll->setWidgetResizable(true);
-    scroll->setFrameShape(QFrame::NoFrame);
-    QWidget *scrollContent = new QWidget();
-    talkExamplesLayout = new QVBoxLayout(scrollContent);
-    talkExamplesLayout->setAlignment(Qt::AlignTop);
-    scroll->setWidget(scrollContent);
-    eLayout->addWidget(scroll);
+    QString extraBtnStyle = "QPushButton { background: #fdf2f8; color: #db2777; border: none; padding: 10px 5px; border-radius: 6px; font-weight: bold; }"
+                            "QPushButton:hover { background: #fce7f3; color: #f472b6; }";
+    btnTalkExamples->setStyleSheet(extraBtnStyle);
+    btnTalkExamples->setCursor(Qt::PointingHandCursor);
+    btnKnowledgeLibrary->setStyleSheet(extraBtnStyle);
+    btnKnowledgeLibrary->setCursor(Qt::PointingHandCursor);
 
-    QPushButton *addBtn = new QPushButton("+ 添加条目");
-    addBtn->setStyleSheet("background: #fdf2f8; color: #db2777; border: 1px dashed #f9a8d4;");
-    eLayout->addWidget(addBtn);
-    sideLayout->addWidget(eArea, 2);
+    extraLayout->addWidget(btnTalkExamples);
+    extraLayout->addWidget(btnKnowledgeLibrary);
 
-    mainBarLayout->addWidget(barSidePanel);
-    stackedWidget->addWidget(barWidget);
+    pLayout->addLayout(extraLayout);         // 1.将按钮区域加到人格设定的布局底部
+    mainBarLayout->addWidget(barSidePanel);  // 2.将右侧设定面板加到酒吧模式主布局中
+    stackedWidget->addWidget(barWidget);     // 3.将酒吧模式主布局加到 StackedWidget 堆栈中
 
     // ================== 信号绑定和逻辑层初始化 ==================
     //先连接预设信号，再初始化数据，确保初始项能正确触发loadBarPreset
@@ -637,118 +631,20 @@ void ChatPage::setupBarModeUI() {
         toggleBarSideBtn->setText(checked ? "收起 ⚙️" : "设定 ⚙️");
     });
 
-    //示例对话添加按钮
-    connect(addBtn, &QPushButton::clicked, [this](){ addTalkExampleItem(); });
-}
-
-///
-/// \brief ChatPage::addTalkExampleItem
-/// \brief 辅助函数：增加示例对话条目
-/// \param userText
-/// \param aiText
-///
-void ChatPage::addTalkExampleItem(const QString &userText, const QString &aiText) {
-    QFrame *frame = new QFrame();
-    //整体卡片样式：增加阴影感和内边距
-    frame->setStyleSheet(
-        "QFrame { "
-        "   background: #ffffff; "
-        "   border: 1px solid #e1e4e8; "
-        "   border-radius: 10px; "
-        "   margin-bottom: 10px; "
-        "}"
-        "QFrame:hover { border-color: #f9a8d4; }" // 悬停时高亮边缘
-        );
-
-    //主布局：垂直排列
-    QVBoxLayout *mainLayout = new QVBoxLayout(frame);
-    mainLayout->setContentsMargins(12, 12, 12, 12);
-    mainLayout->setSpacing(8);
-
-    // --- 顶部栏：删除按钮 ---
-    QHBoxLayout *header = new QHBoxLayout();
-    header->setContentsMargins(0, 0, 0, 0);
-    QPushButton *delBtn = new QPushButton("×");
-    delBtn->setFixedSize(22, 22);
-    delBtn->setCursor(Qt::PointingHandCursor);
-    delBtn->setToolTip("删除此条示例");
-    //红色悬浮效果
-    delBtn->setStyleSheet(
-        "QPushButton { color: #aaa; border: none; font-size: 18px; font-weight: bold; background: transparent; }"
-        "QPushButton:hover { color: #ef4444; background: #fee2e2; border-radius: 11px; }"
-        );
-    header->addStretch();
-    header->addWidget(delBtn);
-    mainLayout->addLayout(header);
-
-    // --- 用户输入区 (问) ---
-    QHBoxLayout *uLayout = new QHBoxLayout();
-    QLabel *uLabel = new QLabel("问:");
-    uLabel->setStyleSheet("color: #0078d4; font-weight: bold; font-size: 12px;");
-    QPlainTextEdit *uEdit = new QPlainTextEdit(userText);
-    uEdit->setPlaceholderText("用户可能会问的话...");
-    uEdit->setMinimumHeight(45);  //增加初始高度
-    uEdit->setMaximumHeight(100); //限制最大高度防止过长
-    uEdit->setStyleSheet(
-        "QPlainTextEdit { border: 1px solid #f0f0f0; background: #f8faff; border-radius: 6px; padding: 4px; color: #333; }"
-        "QPlainTextEdit:focus { border: 1px solid #0078d4; }"
-        );
-    uLayout->addWidget(uLabel, 0, Qt::AlignTop);
-    uLayout->addWidget(uEdit, 1);
-    mainLayout->addLayout(uLayout);
-
-    // --- AI 回复区 (答) ---
-    QHBoxLayout *aLayout = new QHBoxLayout();
-    QLabel *aLabel = new QLabel("答:");
-    aLabel->setStyleSheet("color: #db2777; font-weight: bold; font-size: 12px;");
-    QPlainTextEdit *aEdit = new QPlainTextEdit(aiText);
-    aEdit->setPlaceholderText("期望 AI 回复的内容...");
-    aEdit->setMinimumHeight(60);  //AI回复通常较长，给更高空间
-    aEdit->setMaximumHeight(150);
-    aEdit->setStyleSheet(
-        "QPlainTextEdit { border: 1px solid #f0f0f0; background: #fff9fb; border-radius: 6px; padding: 4px; color: #333; }"
-        "QPlainTextEdit:focus { border: 1px solid #db2777; }"
-        );
-    aLayout->addWidget(aLabel, 0, Qt::AlignTop);
-    aLayout->addWidget(aEdit, 1);
-    mainLayout->addLayout(aLayout);
-
-    //逻辑绑定
-    talkExamplesLayout->addWidget(frame);
-    m_talkExamples.append({ frame, uEdit, aEdit });
-    updateExampleCount();
-
-    connect(delBtn, &QPushButton::clicked, [this, frame]() {
-        for(int i=0; i<m_talkExamples.size(); ++i) {
-            if(m_talkExamples[i].container == frame) {
-                m_talkExamples.removeAt(i);
-                break;
-            }
+    //弹出“辅助对话”弹窗
+    connect(btnTalkExamples, &QPushButton::clicked, this, [this]() {
+        TalkExampleDialog dlg(m_activeTalkExamples, this);
+        if (dlg.exec() == QDialog::Accepted) {
+            m_activeTalkExamples = dlg.getExamples();
+            saveCurrentToBarPreset(); //改动后自动进行一次保存
         }
-        frame->deleteLater();
-        updateExampleCount();
     });
-}
 
-///
-/// \brief ChatPage::updateExampleCount
-/// \brief 辅助函数：更新示例对话条目计数标签
-///
-void ChatPage::updateExampleCount() {
-    if(exampleCountLabel) exampleCountLabel->setText(QString("(共 %1 条)").arg(m_talkExamples.size()));
-}
-
-void ChatPage::clearTalkExamples() {
-    // 1.物理删除布局中的所有条目控件
-    for (auto &pair : m_talkExamples) {
-        if (pair.container) {
-            pair.container->deleteLater();
-        }
-    }
-    // 2.清空内存列表
-    m_talkExamples.clear();
-    // 3.更新计数 UI
-    updateExampleCount();
+    //弹出“知识库”弹窗
+    connect(btnKnowledgeLibrary, &QPushButton::clicked, this, [this]() {
+        KnowledgeLibraryDialog dlg(this);
+        dlg.exec();
+    });
 }
 
 ///
@@ -797,12 +693,12 @@ QString ChatPage::getBarSystemPrompt() const {
                           .arg(barPersonaEdit->toPlainText());
 
     //注入辅助对话示例
-    if (!m_talkExamples.isEmpty()) {
+    if (!m_activeTalkExamples.isEmpty()) {
         persona += "\n[对话风格参考示例]：\n";
-        for (const auto &pair : m_talkExamples) {
+        for (const auto &pair : m_activeTalkExamples) {
             persona += QString("User: %1\nAssistant: %2\n")
-                        .arg(pair.userEdit->toPlainText())
-                        .arg(pair.aiEdit->toPlainText());
+            .arg(pair.first)
+                .arg(pair.second);
         }
     }
     return persona;
@@ -968,13 +864,10 @@ void ChatPage::loadBarPreset(const QString &name) {
     //渲染圆形头像
     setCircularAvatar(barAvatarLabel, p.avatarPath);
 
-    //渲染辅助对话列表
-    clearTalkExamples();
-    for (auto &pair : p.talkExamples) {
-        addTalkExampleItem(pair.first, pair.second);
-    }
+    // 4.刷新对话存储
+    m_activeTalkExamples = p.talkExamples;
 
-    //渲染左侧对话树
+    // 5.渲染左侧对话树
     chatSessionsTree->clear();
     if (!p.treeSnapshot.isEmpty()) {
         deserializeTree(p.treeSnapshot);
@@ -995,10 +888,8 @@ void ChatPage::collectUItoPreset(const QString &name) {
     if(m_isBarMode)
         p.treeSnapshot = serializeTree();  //捕获当前树结构的 JSON 快照
 
-    p.talkExamples.clear();
-    for (const auto &pair : m_talkExamples) {
-        p.talkExamples.append({pair.userEdit->toPlainText(), pair.aiEdit->toPlainText()});
-    }
+    //读取对话存储
+    p.talkExamples = m_activeTalkExamples;
 }
 
 ///
@@ -1423,3 +1314,179 @@ void ChatPage::deserializeTree(const QJsonArray &data) {
     parse(data, nullptr);
 }
 // ********************************
+
+// ========================== 弹窗实现区 ==========================
+
+TalkExampleDialog::TalkExampleDialog(const QList<QPair<QString, QString>> &examples, QWidget *parent)
+    : QDialog(parent)
+{
+    setWindowTitle("辅助对话设定");
+    resize(550, 600);
+    setStyleSheet("QDialog { background: #fafafa; }");
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+
+    QHBoxLayout *header = new QHBoxLayout();
+    QLabel *titleLabel = new QLabel("<b>辅助对话</b>");
+    titleLabel->setStyleSheet("font-size: 15px; color: #333;");
+    header->addWidget(titleLabel);
+
+    countLabel = new QLabel("(共 0 条)");
+    countLabel->setStyleSheet("color: #999; font-size: 12px;");
+    header->addWidget(countLabel);
+    header->addStretch();
+    mainLayout->addLayout(header);
+
+    //滚动区域
+    QScrollArea *scroll = new QScrollArea();
+    scroll->setWidgetResizable(true);
+    scroll->setFrameShape(QFrame::NoFrame);
+    scroll->setStyleSheet("background: transparent;");
+    QWidget *scrollContent = new QWidget();
+    listLayout = new QVBoxLayout(scrollContent);
+    listLayout->setAlignment(Qt::AlignTop);
+    scroll->setWidget(scrollContent);
+    mainLayout->addWidget(scroll);
+
+    QPushButton *addBtn = new QPushButton("+ 添加对话条目");
+    addBtn->setCursor(Qt::PointingHandCursor);
+    addBtn->setStyleSheet(
+        "QPushButton { background: #fdf2f8; color: #db2777; border: 1px dashed #f9a8d4; padding: 10px; border-radius: 6px; font-weight: bold; margin-top: 5px; }"
+        "QPushButton:hover { background: #fce7f3; border-color: #f472b6; }"
+        );
+    connect(addBtn, &QPushButton::clicked, this, [this](){ addItem(); });
+    mainLayout->addWidget(addBtn);
+
+    //底部按钮
+    QDialogButtonBox *btnBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    btnBox->button(QDialogButtonBox::Ok)->setText("保存");
+    btnBox->button(QDialogButtonBox::Cancel)->setText("取消");
+
+    btnBox->setStyleSheet(
+        "QPushButton { padding: 6px 15px; border-radius: 4px; font-size: 13px; font-weight: bold; outline: none; }"
+        "QPushButton[text=\"保存\"] { background: #db2777; color: white; border: none; }"
+        "QPushButton[text=\"保存\"]:hover { background: #be185d; }"
+        "QPushButton[text=\"取消\"] { background: white; color: #333; border: 1px solid #ccc; }"
+        "QPushButton[text=\"取消\"]:hover { background: #f0f0f0; }"
+        );
+    connect(btnBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(btnBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    mainLayout->addWidget(btnBox);
+
+    //渲染传入的现有数据
+    for (const auto &pair : examples) {
+        addItem(pair.first, pair.second);
+    }
+    updateCount();
+}
+
+void TalkExampleDialog::addItem(const QString &u, const QString &a) {
+    QFrame *frame = new QFrame();
+    frame->setStyleSheet(
+        "QFrame { background: #ffffff; border: 1px solid #e1e4e8; border-radius: 10px; margin-bottom: 5px; }"
+        "QFrame:hover { border-color: #f9a8d4; }"
+        );
+
+    QVBoxLayout *frameLayout = new QVBoxLayout(frame);
+    frameLayout->setContentsMargins(12, 12, 12, 12);
+    frameLayout->setSpacing(8);
+
+    //删除按钮
+    QHBoxLayout *frameHeader = new QHBoxLayout();
+    frameHeader->setContentsMargins(0, 0, 0, 0);
+    QPushButton *delBtn = new QPushButton("×");
+    delBtn->setFixedSize(22, 22);
+    delBtn->setCursor(Qt::PointingHandCursor);
+    delBtn->setToolTip("删除此条示例");
+    delBtn->setStyleSheet(
+        "QPushButton { color: #aaa; border: none; font-size: 18px; font-weight: bold; background: transparent; }"
+        "QPushButton:hover { color: #ef4444; background: #fee2e2; border-radius: 11px; }"
+        );
+    frameHeader->addStretch();
+    frameHeader->addWidget(delBtn);
+    frameLayout->addLayout(frameHeader);
+
+    //问
+    QHBoxLayout *uLayout = new QHBoxLayout();
+    QLabel *uLabel = new QLabel("问:");
+    uLabel->setStyleSheet("color: #0078d4; font-weight: bold; font-size: 13px; border: none; background: transparent;");
+    QPlainTextEdit *uEdit = new QPlainTextEdit(u);
+    uEdit->setPlaceholderText("用户可能会问的话...");
+    uEdit->setMinimumHeight(45);
+    uEdit->setMaximumHeight(100);
+    uEdit->setStyleSheet(
+        "QPlainTextEdit { border: 1px solid #f0f0f0; background: #f8faff; border-radius: 6px; padding: 4px; color: #333; }"
+        "QPlainTextEdit:focus { border: 1px solid #0078d4; }"
+        );
+    uLayout->addWidget(uLabel, 0, Qt::AlignTop);
+    uLayout->addWidget(uEdit, 1);
+    frameLayout->addLayout(uLayout);
+
+    //答
+    QHBoxLayout *aLayout = new QHBoxLayout();
+    QLabel *aLabel = new QLabel("答:");
+    aLabel->setStyleSheet("color: #db2777; font-weight: bold; font-size: 13px; border: none; background: transparent;");
+    QPlainTextEdit *aEdit = new QPlainTextEdit(a);
+    aEdit->setPlaceholderText("期望 AI 回复的内容...");
+    aEdit->setMinimumHeight(60);
+    aEdit->setMaximumHeight(150);
+    aEdit->setStyleSheet(
+        "QPlainTextEdit { border: 1px solid #f0f0f0; background: #fff9fb; border-radius: 6px; padding: 4px; color: #333; }"
+        "QPlainTextEdit:focus { border: 1px solid #db2777; }"
+        );
+    aLayout->addWidget(aLabel, 0, Qt::AlignTop);
+    aLayout->addWidget(aEdit, 1);
+    frameLayout->addLayout(aLayout);
+
+    listLayout->addWidget(frame);
+    m_items.append({ frame, uEdit, aEdit });
+    updateCount();
+
+    connect(delBtn, &QPushButton::clicked, [this, frame]() {
+        for(int i=0; i < m_items.size(); ++i) {
+            if(m_items[i].container == frame) {
+                m_items.removeAt(i);
+                break;
+            }
+        }
+        frame->deleteLater();
+        updateCount();
+    });
+}
+
+void TalkExampleDialog::updateCount() {
+    countLabel->setText(QString("(共 %1 条)").arg(m_items.size()));
+}
+
+QList<QPair<QString, QString>> TalkExampleDialog::getExamples() const {
+    QList<QPair<QString, QString>> result;
+    for (const auto &item : m_items) {
+        QString uText = item.uEdit->toPlainText().trimmed();
+        QString aText = item.aEdit->toPlainText().trimmed();
+        if (!uText.isEmpty() || !aText.isEmpty()) {
+            result.append({uText, aText});
+        }
+    }
+    return result;
+}
+
+KnowledgeLibraryDialog::KnowledgeLibraryDialog(QWidget *parent) : QDialog(parent) {
+    setWindowTitle("知识库设定");
+    resize(400, 300);
+    setStyleSheet("QDialog { background: white; }");
+
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    QLabel *label = new QLabel("📚 知识库功能开发中，敬请期待...\n(RAG / Vector Database)\n\n目前仅为空界面");
+    label->setAlignment(Qt::AlignCenter);
+    label->setStyleSheet("color: #666; font-size: 14px;");
+    layout->addWidget(label);
+
+    QDialogButtonBox *btnBox = new QDialogButtonBox(QDialogButtonBox::Ok);
+    btnBox->button(QDialogButtonBox::Ok)->setText("知道了");
+    btnBox->button(QDialogButtonBox::Ok)->setStyleSheet(
+        "background: #db2777; color: white; border: none; padding: 6px 15px; border-radius: 4px; outline: none;"
+        );
+    connect(btnBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    layout->addWidget(btnBox);
+}
+// ====================================================

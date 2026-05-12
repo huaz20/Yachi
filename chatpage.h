@@ -16,6 +16,7 @@
 #include <QScrollArea>
 #include <QJsonArray>
 #include <QPlainTextEdit>
+#include <QDialog>
 
 ///
 /// \brief The BarPreset class
@@ -151,18 +152,19 @@ private:
     QLabel *barAvatarLabel;          //酒吧模式圆形头像框
     QString m_barAvatarPath;         //存储用户头像的路径
 
-    QPlainTextEdit *barPersonaEdit;       //人格设定
+    QPlainTextEdit *barPersonaEdit;  //人格设定
     QComboBox *presetCombo;          //预设下拉框声明
 
-    QLabel *exampleCountLabel;       //示例对话计数标签
-    QVBoxLayout *talkExamplesLayout; //对话条目的布局
-    QList<TalkExamplePair> m_talkExamples;
+    //底部跳转按钮
+    QPushButton *btnTalkExamples;
+    QPushButton *btnKnowledgeLibrary;
+    QList<QPair<QString, QString>> m_activeTalkExamples;  //存储
 
     QWidget *personaContainer;       //人格设定容器
     QWidget *examplesContainer;      //辅助对话容器
 
     QTextBrowser *barChatHistory;    //聊天记录
-    QPlainTextEdit *barChatInput;         //输入框
+    QPlainTextEdit *barChatInput;    //输入框
 
     QWidget *barChatToolbar;         //酒吧模式工具栏容器
     QPushButton *btnEmoji;           //表情
@@ -174,9 +176,6 @@ private:
     QString m_currentPresetName;        //当前正在使用的预设名称
 
     //辅助函数
-    void addTalkExampleItem(const QString &userText = "", const QString &aiText = "");  //添加示例对话条目
-    void clearTalkExamples();                 //清空示例对话条目
-    void updateExampleCount();                //更新计数显示
     void handleAvatarUpload();                //处理头像上传逻辑
     void setCircularAvatar(QLabel* label, const QString& path);  //确保头像框是圆形效果的辅助函数
 
@@ -187,6 +186,33 @@ private:
     void loadBarPreset(const QString &name);      //加载酒吧预设
     void collectUItoPreset(const QString &name);  //将当前UI内容收集到 m_presets 缓存中
     // ------
+};
+
+class TalkExampleDialog : public QDialog {
+    Q_OBJECT
+public:
+    explicit TalkExampleDialog(const QList<QPair<QString, QString>> &examples, QWidget *parent = nullptr);
+    QList<QPair<QString, QString>> getExamples() const;
+
+private:
+    QVBoxLayout *listLayout;
+    QLabel *countLabel;
+
+    struct Item {
+        QWidget *container;
+        QPlainTextEdit *uEdit;
+        QPlainTextEdit *aEdit;
+    };
+    QList<Item> m_items;
+
+    void addItem(const QString &u = "", const QString &a = "");
+    void updateCount();
+};
+
+class KnowledgeLibraryDialog : public QDialog {
+    Q_OBJECT
+public:
+    explicit KnowledgeLibraryDialog(QWidget *parent = nullptr);
 };
 
 #endif // CHATPAGE_H
