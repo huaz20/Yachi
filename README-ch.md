@@ -11,20 +11,20 @@
 </p>
 
 <p align="center">
-the AI Assistant, mini and local.
+一个迷你、本地的AI助手。
 </p>
 
 ---
 
-### 📦Quick Start
+### 📦快速开始
 
-Simply download a version from the [Release](https://github.com/maomaonwn/Yachi/releases) page. The program works out of the box.
+在[Release](https://github.com/maomaonwn/Yachi/releases)下载一个版本的程序即可，程序本身开箱即用！
 
 ---
 
 ### 😽PR
-I have many ideas to implement, but since this is a solo proj developed in my spare time, progress might be a bit slow.
+还有很多想法想实现出来，但是因为是一个人在业余时间开发的，所以可能速度会稍微慢一点。
 
-Pull Requests are highly welcome!
+欢迎大家提PR！
 
-Any and all feedback is also greatly appreciated!
+各种反馈也非常欢迎！
