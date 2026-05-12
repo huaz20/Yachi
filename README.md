@@ -1,8 +1,18 @@
 # Yachi
-![Windows](https://img.shields.io/badge/Platform-Windows-lightgrey) ![License](https://img.shields.io/badge/License-Apache%202.0-green) ![C++](https://img.shields.io/badge/Language-C%2B%2B-blue)
-![Qt](https://img.shields.io/badge/Framework-Qt%20Widget-41CD52)
+<p align="center">
+  <a href="./README.md">简体中文</a> | <a href="./README-en.md">English</a>
+</p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-Windows-lightgrey" />
+  <img src="https://img.shields.io/badge/Language-C%2B%2B-blue" />
+  <img src="https://img.shields.io/badge/Framework-Qt%20Widget-41CD52" />
+  <img src="https://img.shields.io/badge/License-Apache%202.0-green" />
+</p>
+
+<p align="center">
 一个迷你、本地的AI助手。
+</p>
 
 ---
 
