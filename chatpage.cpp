@@ -1382,6 +1382,8 @@ TalkExampleDialog::TalkExampleDialog(const QList<QPair<QString, QString>> &examp
 
 void TalkExampleDialog::addItem(const QString &u, const QString &a) {
     QFrame *frame = new QFrame();
+
+    frame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed); //水平可拉伸，垂直不可拉伸
     frame->setStyleSheet(
         "QFrame { background: #ffffff; border: 1px solid #e1e4e8; border-radius: 10px; margin-bottom: 5px; }"
         "QFrame:hover { border-color: #f9a8d4; }"
@@ -1412,8 +1414,7 @@ void TalkExampleDialog::addItem(const QString &u, const QString &a) {
     uLabel->setStyleSheet("color: #0078d4; font-weight: bold; font-size: 13px; border: none; background: transparent;");
     QPlainTextEdit *uEdit = new QPlainTextEdit(u);
     uEdit->setPlaceholderText("用户可能会问的话...");
-    uEdit->setMinimumHeight(45);
-    uEdit->setMaximumHeight(100);
+    uEdit->setFixedHeight(45);
     uEdit->setStyleSheet(
         "QPlainTextEdit { border: 1px solid #f0f0f0; background: #f8faff; border-radius: 6px; padding: 4px; color: #333; }"
         "QPlainTextEdit:focus { border: 1px solid #0078d4; }"
@@ -1428,8 +1429,7 @@ void TalkExampleDialog::addItem(const QString &u, const QString &a) {
     aLabel->setStyleSheet("color: #db2777; font-weight: bold; font-size: 13px; border: none; background: transparent;");
     QPlainTextEdit *aEdit = new QPlainTextEdit(a);
     aEdit->setPlaceholderText("期望 AI 回复的内容...");
-    aEdit->setMinimumHeight(60);
-    aEdit->setMaximumHeight(150);
+    aEdit->setFixedHeight(75);
     aEdit->setStyleSheet(
         "QPlainTextEdit { border: 1px solid #f0f0f0; background: #fff9fb; border-radius: 6px; padding: 4px; color: #333; }"
         "QPlainTextEdit:focus { border: 1px solid #db2777; }"

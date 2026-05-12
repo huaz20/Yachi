@@ -561,6 +561,8 @@ CMakeFiles/YachiAgent.dir/YachiAgent_autogen/mocs_compilation.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qglyphrun.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qrawfont.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qfontdatabase.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDialog \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
  C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_homepage.cpp \
  C:/Programming/cpp/Yachi/homepage.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QList \

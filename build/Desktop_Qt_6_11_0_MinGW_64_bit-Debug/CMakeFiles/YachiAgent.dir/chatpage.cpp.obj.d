@@ -480,9 +480,9 @@ CMakeFiles/YachiAgent.dir/chatpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qglyphrun.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qrawfont.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qfontdatabase.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/QEvent \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDialog \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QEvent \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDialogButtonBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialogbuttonbox.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/QTextDocument \
