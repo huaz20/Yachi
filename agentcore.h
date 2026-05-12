@@ -6,36 +6,145 @@
 #include <QtNetwork/QNetworkReply>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QDir>
+#include <QFile>
+#include <QCoreApplication>
+#include <QMap>
+
+//能被Agent使用的模型所需的信息
+struct ModelToUseInfo
+{
+    QString baseUrl;
+    QString apiKey;
+    QString model;
+};
 
 class AgentCore : public QObject
 {
     Q_OBJECT
-public:
+public: 
     explicit AgentCore(QObject* parent = nullptr);
 
-    // 动态更新配置 (替代了原来的 setApiKey)
-    void setConfig(const QString &baseUrl, const QString &apiKey, const QString &model);
-    // 设置角色提示词（如：扮演翻译官）
+    //设置模型配置
+    void setModelConfig(const QList<ModelToUseInfo> &configs);
+    //设置提示词
     void setSystemPrompt(const QString &prompt);
-    // 清空历史记忆
+
+    //清空历史记忆
     void clearHistory();
-    // 发送消息
+
+    //发送消息接口
     void sendMsg(const QString &userPrompt);
+    //发送网络请求逻辑
+    void sendWebRequest();
+    //中止当前网络请求
+    void abort();
+
+    //模型可用性检查
+    void testConnection(const QString &baseUrl, const QString &apiKey, const QString &model);
+
+    //设置当前工作目录
+    void setWorkspacePath(const QString &path);
+
+    //开闭环境感知开关
+    void setEnvSenseEnabled(bool _status);
+    //开闭持久化记忆开关
+    void setYachiMemoryEnabled(bool _status);
+
+    //切换当前活跃会话
+    void switchSession(const QString &sessionId);
+    QString getActiveSessionId() const {return m_activeSessionId;}
+    //获取指定会话的历史记录（用于UI重绘）
+    QJsonArray getSessionHistory(const QString &sessionId) { return m_sessionMap.value(sessionId); }
+    //删除会话
+    void deleteSessionId(const QString &sessionId) { m_sessionMap.remove(sessionId); }
+    //保存特定的会话到磁盘
+    void saveSessionToFile(const QString &sessionId);
+    //程序启动时，从磁盘加载所有已知的会话内容
+    void loadAllSessionsFromDisk();
+    //删除会话数据
+    void deleteSessionData(const QString &sessionId);
+    /* 会话的持久化保存逻辑：
+     * 1、对话内容：可能很大，每个对话独立成一个.json放在sys/history/session/目录下，文件名是对话的UUID
+     * 2、目录树结构：比较轻量，直接转成JSON字符串存在系统的QSettings（注册表）里
+     * 3、触发时机：切换对话时自动保存上一段对话；程序关闭时保存当前的对话，并保存整个目录树；
+     * 4、初始化：agent（chatAgent）初始化配置时从磁盘加载所有历史记录，并从注册表里加载目录树结构。
+     */
 
 signals:
-    void responseMsg(const QString &reply);
+    void responseMsg(const QString &reply);        //最终完整回复
+    void partialResponseMsg(const QString &text);  //流式的回复
     void errorMsg(const QString &error);
+    void testFinishedMsg(bool success, const QString &msg);  //模型配置可用性检查结束的返回
 
 private slots:
-    void onFinished(QNetworkReply *reply);
+    void onReadyRead();  //处理流式增量数据
+    void onFinished();   //当流传输结束时
 
 private:
+    // --- 备用链路逻辑层 ---
+    //可用模型列表（主模型+备用链路）
+    QList<ModelToUseInfo> m_modelConfigList;
+    //当前模型索引
+    int m_currentConfigIndex = 0;
+    //根据索引设置模型配置
+    void setModelConfigWithIndex(const int &index);
+    // ------
+
+    QString m_streamingBuffer;  //流式内容暂存区
+
     QNetworkAccessManager *m_networkManager;
+    QNetworkReply *m_currentReply = nullptr;  //记录当前网络请求
+
     QString m_baseUrl;
     QString m_apiKey;
     QString m_model;
     QString m_systemPrompt;
     QJsonArray m_history;
+
+    // --- 压缩历史记录 ---
+    //检测并压缩历史记录
+    void TriggerHistoryCompact();
+    //总结历史记录的接口
+    void requestSummary(const QJsonArray &toSummarize);
+
+    int m_historyThreshold= 10;  //触发压缩的历史记录条数
+    int m_historyKept = 4;       //压缩后保留的历史记录条数
+    bool m_isSummarizing = false;
+    /* 以这里的阈值10、和最近保留条数4为例，说明压缩后的m_history中会有多少个成员？
+     * 保留最近的4条原始历史记录；
+     * 插入1条压缩过的历史记录；
+     * sendMsg时会加入1条用户的输入；
+     * 因为压缩是在sendMsg里自动检测并执行的，所以一般还会加1条sendMsg的返回结果，即AI的回复；
+     * 4（保留的上下文）+1（历史总结）+1（当前提问）+1（当前回答） = 7
+     */
+    // ------
+
+    // --- 系统提示词、及持久化记忆 ---
+    //读取持久化记忆文件
+    QString getYachiMemory();
+    //获取系统提示词
+    QString buildFinalSystemPrompt();
+
+    //当前工作目录
+    QString m_workspacePath;
+
+    //是否在系统提示词里注入环境感知信息（是否开启环境感知）
+    bool m_envSenseEnabled = true; //默认开启
+    //是否在系统提示词里注入持久化记忆（是否开启持久化记忆）
+    bool m_YachiMemoryEnabled = true;  //默认开启
+    // ------
+
+    // --- 多对话机制 ---
+    QMap<QString, QJsonArray> m_sessionMap;
+    QString m_activeSessionId;  //当前选中的会话Id
+    /* 这里讲述多对话机制功能逻辑和UI层逻辑的工作机制
+     * 1、新建对话：ChatPage里会生成一个新的UUID，绑定到树节点，并发信号给MainWindow
+     * 2、点击列表：ChatPage提取节点的UUID，发信号给MainWindow
+     * 3、切换对话：MainWindow调用 AgentCore::switchSession(uuid) , AgentCore自动保存旧历史并加载新历史
+     * 4、UI刷新：MainWindow调取该UUID对应的 QJsonArray，传回给ChatPage调用 rebuildChatFromHistory，清空屏幕并重新画出所有气泡。
+     */
+    // ------
 };
 
 #endif // AGENTCORE_H

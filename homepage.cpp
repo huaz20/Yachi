@@ -3,6 +3,7 @@
 #include <QLabel>
 #include <QFrame>
 #include <QHBoxLayout>
+#include <QMessageBox>
 
 HomePage::HomePage(const QMap<QString, ModelInfo>& vendorMap, QWidget *parent)
     : QWidget(parent), m_vendorMap(vendorMap)
@@ -52,8 +53,16 @@ HomePage::HomePage(const QMap<QString, ModelInfo>& vendorMap, QWidget *parent)
     // 信号连接
     connect(addBtn, &QPushButton::clicked, this, &HomePage::addFallbackUI);
 
-    // 默认添加一个副模型框
-    addFallbackUI();
+    //“保存并应用配置”按钮交互信号
+    connect(saveBtn, &QPushButton::clicked, this, [this,saveBtn]() {
+        saveToSettings();  //数据保存到注册表（磁盘）里
+
+        //当用户点击保存时，触发settingsApplied信号
+        emit settingsApplied();
+    });
+
+    //加载数据并构建对应UI
+    loadFromSettings();
 }
 
 void HomePage::addFallbackUI() {
@@ -111,6 +120,11 @@ void HomePage::addFallbackUI() {
     });
 }
 
+///
+/// \brief HomePage::getAllConfigs
+/// \brief 获取vendormap.json文件中的配置
+/// \return
+///
 QList<ModelConfigWidget::ConfigData> HomePage::getAllConfigs() {
     QList<ModelConfigWidget::ConfigData> list;
     list.append(mainConfig->getConfig());
@@ -118,4 +132,85 @@ QList<ModelConfigWidget::ConfigData> HomePage::getAllConfigs() {
         list.append(item.configWidget->getConfig());
     }
     return list;
+}
+
+///
+/// \brief HomePage::saveToSettings
+/// \brief UI数据写进注册表（磁盘）
+///
+void HomePage::saveToSettings()
+{
+    QSettings settings("Yachi","PersistentData"); //分别填写注册表中的组织名和应用名
+
+    auto configs = getAllConfigs();
+    settings.beginWriteArray("Models"); //数组键名可以自定义
+    for(int i = 0; i<configs.size(); i++)
+    {
+        settings.setArrayIndex(i);
+        settings.setValue("vendor",configs[i].vendor);
+        settings.setValue("model",configs[i].model);
+        settings.setValue("apiKey", configs[i].apiKey);
+        settings.setValue("baseUrl", configs[i].baseUrl);
+    }
+    settings.endArray();
+}
+
+///
+/// \brief HomePage::loadFromSettings
+/// \brief 注册表（磁盘）数据读取到UI
+///
+void HomePage::loadFromSettings()
+{
+    QSettings settings("Yachi","PersistentData");
+
+    int size = settings.beginReadArray("Models");
+    //如果数组成员为空
+    if(size<=0)
+    {
+        settings.endArray();
+        return;
+    }
+
+    // 1.加载模型的持久化数据
+    settings.setArrayIndex(0);
+    ModelConfigWidget::ConfigData mainData = {
+        settings.value("vendor").toString(),
+        settings.value("model").toString(),
+        settings.value("apiKey").toString(),
+        settings.value("baseUrl").toString()
+    };
+    //阻塞信号防止在设置时触发不必要的刷新逻辑
+    mainConfig->blockSignals(true);
+    mainConfig->setConfig(mainData);  //更新配置数据
+    mainConfig->blockSignals(false);
+
+    // 2.更新homepage UI
+    for (const auto& item : m_fallbackItems) {
+        fallbackListLayout->removeWidget(item.container); //先从布局移除
+        item.container->deleteLater();                    //再销毁
+    }
+    m_fallbackItems.clear();
+
+    //重新构建副模型UI
+    for (int i = 1; i < size; ++i) {
+        addFallbackUI(); //这会向m_fallbackItems添加新项
+        settings.setArrayIndex(i);
+
+        ModelConfigWidget::ConfigData subData = {
+            settings.value("vendor").toString(),
+            settings.value("model").toString(),
+            settings.value("apiKey").toString(),
+            settings.value("baseUrl").toString()
+        };
+
+        m_fallbackItems.last().configWidget->blockSignals(true);
+        m_fallbackItems.last().configWidget->setConfig(subData);
+        m_fallbackItems.last().configWidget->blockSignals(false);
+    }
+    settings.endArray();
+}
+
+void HomePage::showEvent(QShowEvent *event) {
+    QWidget::showEvent(event);
+    loadFromSettings(); //只要切回这个页面，就强制从磁盘同步数据到UI
 }

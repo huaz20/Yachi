@@ -2,12 +2,13 @@
 #define TRANSLATIONPAGE_H
 
 #include <QWidget>
-#include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QComboBox>
 #include <QLineEdit>
 #include <QLabel>
 #include <QGroupBox>
+#include <QStackedWidget>
 #include "agentcore.h"
 
 class TranslationPage : public QWidget {
@@ -17,11 +18,20 @@ public:
 
 private slots:
     void doTranslate();
-    void onTranslationResult(const QString &result);
+    //流式增量文本渲染
+    void onPartialTranslationResult(const QString &text);
+    //块文本结束回调
+    void onChunkTranslationResult(const QString &result);
     void onTranslationError(const QString &error);
     void exportToTxt();
 
-    // 预设管理
+    void abortTranslation();   //中止翻译
+
+    //网页读取
+    void fetchUrlContent();    //读取网页内容的接口
+    void showFilterDetails();  //显示详细过滤设置的UI
+
+    //预设管理
     void addNewPreset();
     void renamePreset();
     void deletePreset();
@@ -29,27 +39,56 @@ private slots:
     void refreshPresetList();
     void loadSelectedPrompt();
 
-    // 历史记录
+    //历史记录
     void showHistory();
     void saveToHistory(const QString &source, const QString &lang, const QString &result);
-
 private:
     void initTutorialPresets();
 
-    // UI 组件
-    QTextEdit *sourceText;
-    QTextEdit *targetText;
-    QTextEdit *promptEdit;
+    //UI组件
+    QPlainTextEdit *sourceText;
+    QPlainTextEdit *targetText;
+    QPlainTextEdit *promptEdit;
     QComboBox *langCombo;
     QComboBox *presetCombo;
 
+    QStackedWidget *btnStack;
     QPushButton *translateBtn;
+    QPushButton *stopBtn;
+
     QPushButton *exportBtn;
     QPushButton *historyBtn;
     QPushButton *addPresetBtn;
     QPushButton *renamePresetBtn;
     QPushButton *deletePresetBtn;
     QPushButton *savePromptBtn;
+
+    // --- 网页读取相关 ---
+    //UI
+    QGroupBox *urlGroup;
+    QLineEdit *urlEdit;
+    QPushButton *fetchBtn;
+    QLabel *urlTipLabel;
+    QPushButton *filterStatusBtn; //过滤状态显示按钮
+
+    QNetworkAccessManager *m_urlManager; //专门用于网页抓取的网络管理
+
+    bool m_hardFilterEnabled = true;  //硬代码过滤（一级过滤）启动开关
+    QString applyHardFilter(const QString &input);  //硬代码过滤接口
+    // ------
+
+    // --- 分块翻译相关 ---
+    QStringList m_chunkList;       //待翻译的文本块队列
+    QString m_accumulatedResult;   //累加的结果
+    QString m_currentChunkResult;  //暂存当前块的流式结果
+    int m_totalChunks = 0;         //总块数，用于进度控制
+    bool m_isProcessing = false;   //是否正在进行分块翻译
+
+    //处理队列中的下一个块
+    void processNextChunk();
+    //文本分块算法
+    QStringList splitText(const QString &text, int maxLength);
+    // ------
 
     AgentCore *m_agent;
     QString m_lastSourceText;

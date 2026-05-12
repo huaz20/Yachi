@@ -5,3 +5,5 @@
 #include "EWIEGA46WW/moc_mainwindow.cpp"
 #include "EWIEGA46WW/moc_modelconfigwidget.cpp"
 #include "EWIEGA46WW/moc_translationpage.cpp"
+#include "EWIEGA46WW/moc_voiceagentcore.cpp"
+#include "EWIEGA46WW/moc_voicepage.cpp"

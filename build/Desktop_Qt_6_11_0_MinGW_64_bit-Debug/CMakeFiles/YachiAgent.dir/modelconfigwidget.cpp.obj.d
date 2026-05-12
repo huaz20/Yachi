@@ -1,6 +1,6 @@
 CMakeFiles/YachiAgent.dir/modelconfigwidget.cpp.obj: \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\modelconfigwidget.cpp \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\modelconfigwidget.h \
+ C:\Programming\cpp\Yachi\modelconfigwidget.cpp \
+ C:\Programming\cpp\Yachi\modelconfigwidget.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QWidget \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qwidget.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -415,4 +415,13 @@ CMakeFiles/YachiAgent.dir/modelconfigwidget.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlayoutitem.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qboxlayout.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgridlayout.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/QMap
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QMap \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPushButton \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qpushbutton.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractbutton.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QTimer \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qtimer.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qbasictimer.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qabstracteventdispatcher.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qeventloop.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qdeadlinetimer.h

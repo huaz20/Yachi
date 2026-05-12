@@ -6,82 +6,577 @@ AgentCore::AgentCore(QObject *parent) : QObject(parent) {
     m_networkManager = new QNetworkAccessManager(this);
 }
 
-void AgentCore::setConfig(const QString &baseUrl, const QString &apiKey, const QString &model) {
-    m_baseUrl = baseUrl;
-    m_apiKey = apiKey;
-    m_model = model;
+void AgentCore::setModelConfig(const QList<ModelToUseInfo> &configs) {
+    m_modelConfigList = configs;
+
+    //优先使用主模型
+    m_currentConfigIndex = 0;
+
+    if(!configs.isEmpty())
+    {
+        m_baseUrl = configs[0].baseUrl;
+        m_apiKey = configs[0].apiKey;
+        m_model = configs[0].model;
+    }
+}
+
+///
+/// \brief AgentCore::setModelConfigWithIndex
+/// \brief 根据索引设置模型配置
+/// \param index 要切换的模型的m_modelConfigList索引
+///
+void AgentCore::setModelConfigWithIndex(const int &index)
+{
+    m_currentConfigIndex = index;
+
+    //更新模型配置
+    ModelToUseInfo currentConfig = m_modelConfigList[m_currentConfigIndex];
+    m_baseUrl = currentConfig.baseUrl;
+    m_apiKey = currentConfig.apiKey;
+    m_model = currentConfig.model;
 }
 
 void AgentCore::setSystemPrompt(const QString &prompt) {
     m_systemPrompt = prompt;
 }
 
+///
+/// \brief AgentCore::clearHistory
+/// \brief 清空当前会话的历史记录
+///
 void AgentCore::clearHistory() {
-    m_history = QJsonArray(); // 重置为空
+    m_history = QJsonArray(); //重置为空
+    if(!m_activeSessionId.isEmpty()) m_sessionMap[m_activeSessionId] = m_history;
 }
 
+///
+/// \brief AgentCore::sendMsg
+/// \brief 发送消息
+/// \param userPrompt
+///
 void AgentCore::sendMsg(const QString &userPrompt) {
-    if(m_baseUrl.isEmpty()) {
-        emit errorMsg("[Error] 尚未配置 Base URL！(本地模型通常为 http://localhost:11434/v1)");
+    if(m_modelConfigList.isEmpty()) {
+        emit errorMsg("[Error] 尚未配置任何模型！");
         return;
     }
+    if(userPrompt.trimmed().isEmpty())return;
 
+    // 1.检查是否需要压缩历史记录
+    TriggerHistoryCompact();
+
+    // 2.记录当前用户消息
     QJsonObject userMsg;
     userMsg.insert("role", "user");
     userMsg.insert("content", userPrompt);
     m_history.append(userMsg);
 
+    // 3.在chatPage的多对话机制里同步历史记录
+    if(!m_activeSessionId.isEmpty()) m_sessionMap[m_activeSessionId] = m_history;
+
+    // 4.每次发送新消息，强制切回主模型
+    setModelConfigWithIndex(0);
+
+    // 4.发送网络请求
+    sendWebRequest();
+}
+
+///
+/// \brief AgentCore::sendWebRequest
+/// \brief 发送网络请求
+///
+void AgentCore::sendWebRequest()
+{
+    //无可用模型，返回
+    if(m_currentConfigIndex >= m_modelConfigList.size()) return;
+
+    // 1.构建完整的请求（模型信息 + System Prompt + History）
+    //模型信息
     QJsonObject root;
     root.insert("model", m_model.isEmpty() ? "llama3" : m_model);
+    root.insert("stream", true);  //开启流式
 
     QJsonArray messagesToSend;
-    if (!m_systemPrompt.isEmpty()) {
-        QJsonObject sysMsg;
+
+    QString finalSystemPrompt = buildFinalSystemPrompt();
+    if (!finalSystemPrompt.isEmpty()) {
+        QJsonObject sysMsg;                 //System Prompt
         sysMsg.insert("role", "system");
-        sysMsg.insert("content", m_systemPrompt);
+        sysMsg.insert("content", finalSystemPrompt);
         messagesToSend.append(sysMsg);
     }
     for(auto val : m_history) {
-        messagesToSend.append(val);
+        messagesToSend.append(val);         //History
     }
     root.insert("messages", messagesToSend);
+    // root.insert("max_tokens",4096);      //显式要求模型输出更多内容
 
+    // 2.处理 URL EndPoint
     QString endpoint = m_baseUrl;
     if(!endpoint.endsWith("/")) endpoint += "/";
     endpoint += "chat/completions";
 
+    // 3.配置网络头
     QNetworkRequest request((QUrl(endpoint)));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     if (!m_apiKey.isEmpty()) {
         request.setRawHeader("Authorization", QString("Bearer %1").arg(m_apiKey).toUtf8());
     }
 
+    // 4.清空缓冲区
+    m_streamingBuffer.clear();
+
+    // 5.发送POST请求
+    m_currentReply = m_networkManager->post(request, QJsonDocument(root).toJson());
+
+    // 6.绑定信号
+    //流式输出的信号
+    connect(m_currentReply, &QNetworkReply::readyRead, this, &AgentCore::onReadyRead);
+    connect(m_currentReply, &QNetworkReply::finished, this, &AgentCore::onFinished);
+}
+
+// **************** 槽 ****************
+void AgentCore::onReadyRead()
+{
+    if(!m_currentReply)return;
+
+    //只要有数据可读，就按行循环读取
+    while(m_currentReply->canReadLine())
+    {
+        //去掉空格
+        QByteArray line = m_currentReply->readLine().trimmed();
+
+        //去掉典型SSE格式的 "data: " 开头
+        if(line.startsWith("data"))
+        {
+            QString dataStr = line.mid(6);
+
+            if(dataStr == "[DONE]")
+            {
+                return;  //传输正常结束
+            }
+
+            //行内容转为Json
+            QJsonDocument doc = QJsonDocument::fromJson(dataStr.toUtf8());
+            if (doc.isNull()) continue;
+
+            //流式Json结构通常是：choices[0].delta.content
+            QJsonObject delta = doc.object()["choices"].toArray()[0].toObject()["delta"].toObject();
+            if (delta.contains("content")) {
+                QString content = delta["content"].toString();
+                m_streamingBuffer += content;      //累加到缓冲区
+                emit partialResponseMsg(content);  //发送增量给UI
+            }
+        }
+    }
+}
+
+void AgentCore::onFinished() {
+    // 非流式输出
+    // if(!reply) return;
+    // reply->deleteLater();
+
+    // if(reply->error() == QNetworkReply::NoError) {
+    //     QByteArray responseData = reply->readAll();
+    //     QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
+
+    //     QJsonArray choices = jsonResponse.object()["choices"].toArray();
+    //     if(!choices.isEmpty()) {
+    //         QString assistantText = choices[0].toObject()["message"].toObject()["content"].toString();
+
+    //         QJsonObject asstMsg;
+    //         asstMsg.insert("role", "assistant");
+    //         asstMsg.insert("content", assistantText);
+    //         m_history.append(asstMsg);
+
+    //         emit responseMsg(assistantText);
+    //     }
+    //     else if(reply->error() ==  QNetworkReply::OperationCanceledError)  //玩家手动中断网络请求
+    //     {
+    //         qDebug()<<"Network request was aborted by user.";
+    //     }
+    //     else
+    //     {
+    //         emit errorMsg(QString("[网络错误] %1").arg(reply->errorString()));
+    //     }
+    // }
+
+    //局部变量暂存网络句柄
+    QNetworkReply *reply = m_currentReply;
+    m_currentReply = nullptr;
+
+    if(!reply) return;
+
+    if (reply->error() == QNetworkReply::NoError) {
+        //将AI完整的回答存入历史记录中
+        QJsonObject assistantMsg;
+        assistantMsg.insert("role", "assistant");
+        assistantMsg.insert("content", m_streamingBuffer);
+        m_history.append(assistantMsg);
+
+        //在chatPage的多对话机制里同步历史记录
+        if(!m_activeSessionId.isEmpty()) m_sessionMap[m_activeSessionId] = m_history;
+
+        //发送完整回答信号（可选，有些UI只需要partialResponseMsg）
+        emit responseMsg(m_streamingBuffer);
+    }
+    else
+    {
+        if(m_currentConfigIndex + 1 < m_modelConfigList.size())
+        {
+            //尝试切换下一个模型
+            m_currentConfigIndex++;
+
+            emit errorMsg(QString("模型 [%1] 连接失败，正在自动切换至备用模型 #%2...")
+                              .arg(m_model).arg(m_currentConfigIndex));
+
+            //重新发起网络请求
+            sendWebRequest();
+        }
+        else
+        {
+            emit errorMsg(QString("[网络错误] 所有配置模型均已失效: %1").arg(reply->errorString()));
+        }
+    }
+
+    //销毁本轮旧的网络请求
+    reply->deleteLater();
+}
+// ********************************
+
+///
+/// \brief AgentCore::testConnection
+/// \brief 模型配置可用性的检查接口
+/// \param baseUrl
+/// \param apiKey
+/// \param model
+///
+void AgentCore::testConnection(const QString &baseUrl, const QString &apiKey, const QString &model)
+{
+    // 1.处理baseUrl
+    QString endpoint = baseUrl;
+    if(!endpoint.endsWith("/")) endpoint += "/";  //如果不是'/'结尾
+    endpoint += "chat/completions";
+
+    // 2.写一个Json报文
+    QJsonObject root;
+    root.insert("model", model.isEmpty() ? "gpt-3.5-turbo" : model);
+
+    QJsonArray messages;
+    QJsonObject msg;
+    msg.insert("role","user");  //"role" : "user"
+    msg.insert("content","This is a connection test, please reply 'OK'.");  //"content" : "比较特殊的测试词，以防和用户的内容产生污染"
+    messages.append(msg);
+    root.insert("messages",messages);
+
+    // 3.写网络头
+    QNetworkRequest request((QUrl(endpoint)));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    if (!apiKey.isEmpty()) {
+        request.setRawHeader("Authorization", QString("Bearer %1").arg(apiKey).toUtf8());
+    }
+
     QNetworkReply *reply = m_networkManager->post(request, QJsonDocument(root).toJson());
+
+    //连接到一个临时的处理槽
     connect(reply, &QNetworkReply::finished, this, [this, reply]() {
-        onFinished(reply);
+        reply->deleteLater();
+        if(reply->error() == QNetworkReply::NoError) {
+            emit testFinishedMsg(true, "连接成功！");
+        } else {
+            //解析错误码，转换报错提示为用户容易懂的
+            QString userError;
+            int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+
+            switch (statusCode) {
+            case 401: userError = "API Key 无效，请检查填写的 Key 是否正确。"; break;
+            case 404: userError = "Base URL 路径错误，未找到 API 接口。"; break;
+            case 403: userError = "服务器拒绝访问，可能是权限不足或地区被封锁。"; break;
+            case 429: userError = "频率限制：请求过于频繁，或账户额度已用完。"; break;
+            default:
+                if(reply->error() == QNetworkReply::ConnectionRefusedError)
+                    userError = "无法连接到服务器，请检查网络或代理设置。";
+                else
+                    userError = QString("网络错误 (%1): %2").arg(statusCode).arg(reply->errorString());
+            }
+            emit testFinishedMsg(false, userError);
+        }
     });
 }
 
-void AgentCore::onFinished(QNetworkReply *reply) {
-    reply->deleteLater();
-    if(reply->error() == QNetworkReply::NoError) {
-        QByteArray responseData = reply->readAll();
-        QJsonDocument jsonResponse = QJsonDocument::fromJson(responseData);
-
-        QJsonArray choices = jsonResponse.object()["choices"].toArray();
-        if(!choices.isEmpty()) {
-            QString assistantText = choices[0].toObject()["message"].toObject()["content"].toString();
-
-            QJsonObject asstMsg;
-            asstMsg.insert("role", "assistant");
-            asstMsg.insert("content", assistantText);
-            m_history.append(asstMsg);
-
-            emit responseMsg(assistantText);
-        } else {
-            emit errorMsg("[Error] API 返回格式异常");
-        }
-    } else {
-        emit errorMsg(QString("[Network Error] %1").arg(reply->errorString()));
+///
+/// \brief AgentCore::abort
+/// \brief 中断当前的网络请求
+///
+void AgentCore::abort()
+{
+    if(m_currentReply && m_currentReply->isRunning())
+    {
+        m_currentReply->abort();   //调用Qt原生的中断接口
+        m_currentReply = nullptr;  //请求置空
     }
 }
+
+///
+/// \brief AgentCore::setWorkspacePath
+/// \brief 设置当前工作目录
+/// \param path
+///
+void AgentCore::setWorkspacePath(const QString &path) {
+    m_workspacePath = path;
+    qDebug() << "Agent workspace set to:" << m_workspacePath;
+}
+
+// **************** AGENT优化 ****************
+
+// **** 历史记录压缩 ****
+///
+/// \brief AgentCore::TriggerHistoryCompact
+/// \brief 判断并触发历史记录压缩
+///
+void AgentCore::TriggerHistoryCompact()
+{
+    //如果正在总结 或者 还没达到触发压缩的阈值，跳过
+    if(m_isSummarizing || m_history.size() < m_historyThreshold)return;
+
+    qDebug() << "History too long. Starting History Compaction...";
+
+    // 1.处理需要压缩的部分
+    //提取出来放进一个Json
+    int numToCompact = m_history.size() - m_historyKept;
+    QJsonArray toSummarize;
+    for(int i = 0; i < numToCompact; ++i) {
+        toSummarize.append(m_history.at(i));
+    }
+
+    //从主历史中移除这些旧消息
+    for(int i = 0; i < numToCompact; ++i) {
+        m_history.removeFirst();
+    }
+
+    // 2.启动异步总结
+    requestSummary(toSummarize);
+}
+
+///
+/// \brief AgentCore::requestSummary
+/// \brief 历史记录压缩逻辑
+/// \param toSummarize
+///
+void AgentCore::requestSummary(const QJsonArray &toSummarize)
+{
+    m_isSummarizing = true;
+
+    //构建用户信息
+    QJsonObject summaryPrompt;
+    summaryPrompt.insert("role", "system");
+    summaryPrompt.insert("content", "你是一个对话压缩助手。请简要总结以下对话的历史要点、已达成的共识和待处理的任务。请保持客观，字数控制在200字以内。");
+
+    QJsonArray messages;
+    messages.append(summaryPrompt);
+    for(auto m : toSummarize) messages.append(m);
+
+    //构建完整请求
+    QJsonObject root;
+    root.insert("model", m_model);
+    root.insert("messages", messages);
+    root.insert("stream", false); //总结请求不需要流式
+
+    //发送POST请求
+    QNetworkRequest request(m_baseUrl + "/chat/completions");
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    if(!m_apiKey.isEmpty()) request.setRawHeader("Authorization", "Bearer " + m_apiKey.toUtf8());
+
+    QNetworkReply *reply = m_networkManager->post(request, QJsonDocument(root).toJson());
+
+    //处理总结结果，并插入历史记录顶端（prepend）
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+        if(reply->error() == QNetworkReply::NoError) {
+            QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
+            QString summary = doc.object()["choices"].toArray()[0].toObject()["message"].toObject()["content"].toString();
+
+            //将总结作为“历史背景”插入历史记录的最前面
+            QJsonObject historyContext;
+            historyContext.insert("role", "system");
+            historyContext.insert("content", "[之前的对话总结]: " + summary);
+
+            m_history.prepend(historyContext);
+
+            qDebug() << "Compaction successful. New History size:" << m_history.size();
+        }
+        m_isSummarizing = false;
+        reply->deleteLater();
+    });
+}
+// ********
+
+// **** 系统提示词、及持久化记忆 ****
+
+///
+/// \brief setPersistentMemoryEnabled
+/// \brief 开闭持久化记忆开关
+/// \param enabled
+///
+void AgentCore::setYachiMemoryEnabled(bool _status)
+{
+    m_YachiMemoryEnabled = _status;
+}
+
+void AgentCore::setEnvSenseEnabled(bool _status)
+{
+    m_envSenseEnabled = _status;
+}
+
+///
+/// \brief AgentCore::getYachiMemory
+/// \brief 读取持久化记忆文件
+/// \details 持久化记忆文件名字设定为YACHI.md
+/// \return 持久化记忆文件中的内容
+///
+QString AgentCore::getYachiMemory() {
+    // 1.拼接持久化记忆文档的路径
+    //如果工作目录为空，使用程序所在目录
+    QDir dir(m_workspacePath.isEmpty() ? QCoreApplication::applicationDirPath() : m_workspacePath);
+    QFile memoryFile(dir.filePath("YACHI.md"));
+
+    // 2.尝试读取文件
+    if (memoryFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QString content = QString::fromUtf8(memoryFile.readAll());
+        memoryFile.close();
+
+        qDebug()<<"Have got Yachi's memory.";
+
+        return content;
+    }
+
+    qDebug()<<"[Warning] Can't find Yachi's memory.";
+    return ""; //如果没有找到文件，返回空
+}
+
+///
+/// \brief AgentCore::buildFinalSystemPrompt
+/// \brief 组装最终的系统提示词
+/// \return Final System Prompt
+///
+QString AgentCore::buildFinalSystemPrompt() {
+    // 1.以外界通过setSystemPrompt设置的提示词作为开头
+    QString finalPrompt = m_systemPrompt;
+
+    // 2.注入动态系统环境信息
+    if (m_envSenseEnabled)  //开关控制
+    {
+        finalPrompt += "\n\n[系统环境状态]\n";
+        finalPrompt += QString("- 当前系统时间: %1\n").arg(QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss"));
+        finalPrompt += QString("- 操作系统: %1\n").arg(QSysInfo::prettyProductName());
+    }
+
+    // 3.注入持久化记忆
+    if (m_YachiMemoryEnabled) {
+        QString yachiMemory = getYachiMemory();
+        if (!yachiMemory.isEmpty()) {
+            finalPrompt += "\n\n[项目长期记忆 (YACHI.md)]\n";
+            finalPrompt += "在回答时，请务必参考并严格遵守其中内容：\n";
+            finalPrompt += "----------------------------------------\n";
+            finalPrompt += yachiMemory + "\n";
+            finalPrompt += "----------------------------------------\n";
+        }
+    }
+
+    return finalPrompt.trimmed();
+}
+
+// ********
+
+// ********************************
+
+// **************** 多对话机制 ****************
+///
+/// \brief AgentCore::switchSession
+/// \brief 切换会话
+/// \param sessionId 目标会话Id
+///
+void AgentCore::switchSession(const QString &sessionId)
+{
+    // 1.在切换前，确保当前的内存历史同步回Map
+    if (!m_activeSessionId.isEmpty()){
+        m_sessionMap[m_activeSessionId] = m_history;
+    }
+
+    // 2.切换ID
+    m_activeSessionId = sessionId;
+
+    // 3.如果是新会话，初始化空历史；如果是旧会话，加载历史
+    if (!m_sessionMap.contains(sessionId)) {
+        m_sessionMap.insert(sessionId, QJsonArray());
+    }
+    m_history = m_sessionMap.value(sessionId);
+
+    // 4.中断之前正在进行的请求（防止回复串位）
+    abort();
+}
+
+///
+/// \brief AgentCore::saveSessionToFile
+/// \brief 保存特定的会话到磁盘
+/// \param sessionId
+///
+void AgentCore::saveSessionToFile(const QString &sessionId) {
+    if (m_workspacePath.isEmpty() || !m_sessionMap.contains(sessionId)) return;
+
+    //定义目标路径
+    QDir dir(m_workspacePath + "/history/session");
+    if (!dir.exists()) dir.mkpath(".");
+
+    QFile file(dir.filePath(sessionId + ".json"));
+    if (file.open(QIODevice::WriteOnly)) {
+        //将 QJsonArray 转为 JSON 文档并写入
+        QJsonDocument doc(m_sessionMap[sessionId]);
+        file.write(doc.toJson());
+        file.close();
+    }
+}
+
+///
+/// \brief AgentCore::loadAllSessionsFromDisk
+/// \brief 程序启动时，从磁盘加载所有已知的会话内容
+///
+void AgentCore::loadAllSessionsFromDisk() {
+    //定义目标路径
+    QDir dir(m_workspacePath + "/history/session");
+    if (!dir.exists()) return;
+
+    //查找文件夹下所有的 .json 文件
+    QStringList filters;
+    filters << "*.json";
+    for (const QString &fileName : dir.entryList(filters, QDir::Files)) {
+        QString sessionId = fileName.section('.', 0, 0); //取文件名作为 UUID
+        QFile file(dir.filePath(fileName));
+        if (file.open(QIODevice::ReadOnly)) {
+            QJsonArray history = QJsonDocument::fromJson(file.readAll()).array();
+            m_sessionMap.insert(sessionId, history);
+            file.close();
+        }
+    }
+}
+///
+/// \brief AgentCore::deleteSessionData
+/// \brief 删除会话数据
+/// \details 本函数实现里会调用一次 deleteSessionId 把ID也给删除。
+/// \param sessionId
+///
+void AgentCore::deleteSessionData(const QString &sessionId) {
+    // 1.删除Id
+    deleteSessionId(sessionId);
+
+    // 2.从磁盘物理删除
+    if (!m_workspacePath.isEmpty()) {
+        //目标路径
+        QDir dir(m_workspacePath + "/history/session");
+        //目标文件
+        QFile file(dir.filePath(sessionId + ".json"));
+        if (file.exists()) {
+            file.remove();
+            qDebug() << "Successfully deleted session file:" << sessionId;
+        }
+    }
+}
+// ********************************

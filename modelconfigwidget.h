@@ -6,6 +6,7 @@
 #include <QLineEdit>
 #include <QFormLayout>
 #include <QMap>
+#include <QPushButton>
 
 struct ModelInfo {
     QStringList models;
@@ -33,6 +34,7 @@ private:
     QComboBox *vendorCombo;
     QComboBox *modelCombo;
     QLineEdit *apiKeyEdit;
+    QPushButton *toggleKeyBtn;  //切换apiKey可见性的按钮
     QLineEdit *baseUrlEdit;
     const QMap<QString, ModelInfo>& m_vendorMap;
 };

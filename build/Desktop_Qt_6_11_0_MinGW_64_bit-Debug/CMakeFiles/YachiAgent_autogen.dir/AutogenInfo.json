@@ -1,20 +1,20 @@
 {
 	"AUTOGEN_COMMAND_LINE_LENGTH_MAX" : 32000,
-	"BUILD_DIR" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen",
-	"CMAKE_BINARY_DIR" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug",
-	"CMAKE_CURRENT_BINARY_DIR" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug",
-	"CMAKE_CURRENT_SOURCE_DIR" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent",
+	"BUILD_DIR" : "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen",
+	"CMAKE_BINARY_DIR" : "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug",
+	"CMAKE_CURRENT_BINARY_DIR" : "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug",
+	"CMAKE_CURRENT_SOURCE_DIR" : "C:/Programming/cpp/Yachi",
 	"CMAKE_EXECUTABLE" : "C:/Qt/Tools/CMake_64/bin/cmake.exe",
 	"CMAKE_LIST_FILES" : 
 	[
-		"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/CMakeLists.txt",
-		"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/.qtcreator/cmake-helper/qtcreator-project.cmake",
-		"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/.qtcreator/cmake-helper/package-manager.cmake",
-		"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/CMakeFiles/3.30.5/CMakeSystem.cmake",
-		"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/.qtcreator/cmake-helper/maintenance_tool_provider.cmake",
+		"C:/Programming/cpp/Yachi/CMakeLists.txt",
+		"C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/.qtcreator/cmake-helper/qtcreator-project.cmake",
+		"C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/.qtcreator/cmake-helper/package-manager.cmake",
+		"C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/CMakeFiles/3.30.5/CMakeSystem.cmake",
+		"C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/.qtcreator/cmake-helper/maintenance_tool_provider.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeSystemSpecificInitialize.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows-Initialize.cmake",
-		"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/CMakeFiles/3.30.5/CMakeCXXCompiler.cmake",
+		"C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/CMakeFiles/3.30.5/CMakeCXXCompiler.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeSystemSpecificInformation.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeGenericSystem.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeInitializeConfigs.cmake",
@@ -27,7 +27,7 @@
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Compiler/CMakeCommonCompilerMacros.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows-GNU-CXX.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows-GNU.cmake",
-		"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/CMakeFiles/3.30.5/CMakeRCCompiler.cmake",
+		"C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/CMakeFiles/3.30.5/CMakeRCCompiler.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeRCInformation.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows-windres.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows-GNU-CXX-ABI.cmake",
@@ -315,6 +315,40 @@
 		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Network/Qt6NetworkVersionlessAliasTargets.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6MultimediaConfigVersion.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6MultimediaConfigVersionImpl.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6MultimediaConfig.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6MultimediaDependencies.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Concurrent/Qt6ConcurrentConfigVersion.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Concurrent/Qt6ConcurrentConfigVersionImpl.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Concurrent/Qt6ConcurrentConfig.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Concurrent/Qt6ConcurrentDependencies.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Concurrent/Qt6ConcurrentTargetsPrecheck.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Concurrent/Qt6ConcurrentTargets.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Concurrent/Qt6ConcurrentTargets-relwithdebinfo.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Concurrent/Qt6ConcurrentAdditionalTargetInfo.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Concurrent/Qt6ConcurrentVersionlessAliasTargets.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6MultimediaTargetsPrecheck.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6MultimediaTargets.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6MultimediaTargets-relwithdebinfo.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6MultimediaAdditionalTargetInfo.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6MultimediaMacros.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6MultimediaPlugins.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6QFFmpegMediaPluginConfig.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6QFFmpegMediaPluginTargetsPrecheck.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6QFFmpegMediaPluginTargets.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6QFFmpegMediaPluginTargets-relwithdebinfo.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6QFFmpegMediaPluginAdditionalTargetInfo.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6QWindowsMediaPluginConfig.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6QWindowsMediaPluginTargetsPrecheck.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6QWindowsMediaPluginTargets.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6QWindowsMediaPluginTargets-relwithdebinfo.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6QWindowsMediaPluginAdditionalTargetInfo.cmake",
+		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6Multimedia/Qt6MultimediaVersionlessAliasTargets.cmake",
 		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6/Qt6ConfigVersion.cmake",
 		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6/Qt6ConfigVersionImpl.cmake",
 		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6/Qt6Config.cmake",
@@ -361,59 +395,79 @@
 		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6/QtPublicWindowsHelpers.cmake",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
 		"C:/Qt/6.11.0/mingw_64/lib/cmake/Qt6/Qt6Dependencies.cmake",
-		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/GNUInstallDirs.cmake"
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/GNUInstallDirs.cmake",
+		"C:/Programming/cpp/Yachi/res.qrc"
 	],
-	"CMAKE_SOURCE_DIR" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent",
+	"CMAKE_SOURCE_DIR" : "C:/Programming/cpp/Yachi",
 	"CROSS_CONFIG" : false,
-	"DEP_FILE" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/deps",
+	"DEP_FILE" : "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/deps",
 	"DEP_FILE_RULE_NAME" : "YachiAgent_autogen/timestamp",
 	"HEADERS" : 
 	[
 		[
-			"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/agentcore.h",
+			"C:/Programming/cpp/Yachi/agentcore.h",
 			"MU",
 			"EWIEGA46WW/moc_agentcore.cpp",
 			null
 		],
 		[
-			"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/chatPage.h",
+			"C:/Programming/cpp/Yachi/chatPage.h",
 			"MU",
 			"EWIEGA46WW/moc_chatPage.cpp",
 			null
 		],
 		[
-			"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/homepage.h",
+			"C:/Programming/cpp/Yachi/homepage.h",
 			"MU",
 			"EWIEGA46WW/moc_homepage.cpp",
 			null
 		],
 		[
-			"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/mainwindow.h",
+			"C:/Programming/cpp/Yachi/mainwindow.h",
 			"MU",
 			"EWIEGA46WW/moc_mainwindow.cpp",
 			null
 		],
 		[
-			"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/modelconfigwidget.h",
+			"C:/Programming/cpp/Yachi/modelconfigwidget.h",
 			"MU",
 			"EWIEGA46WW/moc_modelconfigwidget.cpp",
 			null
 		],
 		[
-			"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/translationpage.h",
+			"C:/Programming/cpp/Yachi/translationpage.h",
 			"MU",
 			"EWIEGA46WW/moc_translationpage.cpp",
+			null
+		],
+		[
+			"C:/Programming/cpp/Yachi/urlstrategy.h",
+			"MU",
+			"EWIEGA46WW/moc_urlstrategy.cpp",
+			null
+		],
+		[
+			"C:/Programming/cpp/Yachi/voiceagentcore.h",
+			"MU",
+			"EWIEGA46WW/moc_voiceagentcore.cpp",
+			null
+		],
+		[
+			"C:/Programming/cpp/Yachi/voicepage.h",
+			"MU",
+			"EWIEGA46WW/moc_voicepage.cpp",
 			null
 		]
 	],
 	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
-	"INCLUDE_DIR" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/include",
-	"MOC_COMPILATION_FILE" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/mocs_compilation.cpp",
+	"INCLUDE_DIR" : "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/include",
+	"MOC_COMPILATION_FILE" : "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/mocs_compilation.cpp",
 	"MOC_DEFINITIONS" : 
 	[
 		"MINGW_HAS_SECURE_API=1",
 		"QT_CORE_LIB",
 		"QT_GUI_LIB",
+		"QT_MULTIMEDIA_LIB",
 		"QT_NEEDS_QMAIN",
 		"QT_NETWORK_LIB",
 		"QT_QML_DEBUG",
@@ -440,6 +494,7 @@
 		"C:/Qt/6.11.0/mingw_64/include/QtWidgets",
 		"C:/Qt/6.11.0/mingw_64/include/QtGui",
 		"C:/Qt/6.11.0/mingw_64/include/QtNetwork",
+		"C:/Qt/6.11.0/mingw_64/include/QtMultimedia",
 		"C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++",
 		"C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32",
 		"C:/Qt/Tools/mingw1310_64/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/backward",
@@ -467,50 +522,28 @@
 		"-c",
 		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeCXXCompilerABI.cpp"
 	],
-	"MOC_PREDEFS_FILE" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/moc_predefs.h",
+	"MOC_PREDEFS_FILE" : "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/moc_predefs.h",
 	"MOC_RELAXED_MODE" : false,
 	"MOC_SKIP" : [],
 	"MULTI_CONFIG" : false,
 	"PARALLEL" : 24,
-	"PARSE_CACHE_FILE" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/CMakeFiles/YachiAgent_autogen.dir/ParseCache.txt",
+	"PARSE_CACHE_FILE" : "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/CMakeFiles/YachiAgent_autogen.dir/ParseCache.txt",
 	"QT_MOC_EXECUTABLE" : "C:/Qt/6.11.0/mingw_64/bin/moc.exe",
 	"QT_UIC_EXECUTABLE" : "C:/Qt/6.11.0/mingw_64/bin/uic.exe",
 	"QT_VERSION_MAJOR" : 6,
 	"QT_VERSION_MINOR" : 11,
-	"SETTINGS_FILE" : "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/CMakeFiles/YachiAgent_autogen.dir/AutogenUsed.txt",
+	"SETTINGS_FILE" : "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/CMakeFiles/YachiAgent_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
-		[
-			"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/agentcore.cpp",
-			"MU",
-			null
-		],
-		[
-			"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/chatpage.cpp",
-			"MU",
-			null
-		],
-		[
-			"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/homepage.cpp",
-			"MU",
-			null
-		],
-		[ "C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/main.cpp", "MU", null ],
-		[
-			"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/mainwindow.cpp",
-			"MU",
-			null
-		],
-		[
-			"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/modelconfigwidget.cpp",
-			"MU",
-			null
-		],
-		[
-			"C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/translationpage.cpp",
-			"MU",
-			null
-		]
+		[ "C:/Programming/cpp/Yachi/agentcore.cpp", "MU", null ],
+		[ "C:/Programming/cpp/Yachi/chatpage.cpp", "MU", null ],
+		[ "C:/Programming/cpp/Yachi/homepage.cpp", "MU", null ],
+		[ "C:/Programming/cpp/Yachi/main.cpp", "MU", null ],
+		[ "C:/Programming/cpp/Yachi/mainwindow.cpp", "MU", null ],
+		[ "C:/Programming/cpp/Yachi/modelconfigwidget.cpp", "MU", null ],
+		[ "C:/Programming/cpp/Yachi/translationpage.cpp", "MU", null ],
+		[ "C:/Programming/cpp/Yachi/voiceagentcore.cpp", "MU", null ],
+		[ "C:/Programming/cpp/Yachi/voicepage.cpp", "MU", null ]
 	],
 	"UIC_OPTIONS" : [],
 	"UIC_SEARCH_PATHS" : [],

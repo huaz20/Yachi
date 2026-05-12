@@ -1,5 +1,5 @@
-C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/EWIEGA46WW/moc_modelconfigwidget.cpp: C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/modelconfigwidget.h \
-  C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/moc_predefs.h \
+C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/EWIEGA46WW/moc_modelconfigwidget.cpp: C:/Programming/cpp/Yachi/modelconfigwidget.h \
+  C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/moc_predefs.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/QMap \
   C:/Qt/6.11.0/mingw_64/include/QtCore/q17memory.h \
   C:/Qt/6.11.0/mingw_64/include/QtCore/q20bit.h \
@@ -169,7 +169,9 @@ C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QFormLayout \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLayout \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLineEdit \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPushButton \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QWidget \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractbutton.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractitemdelegate.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractslider.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractspinbox.h \
@@ -181,6 +183,7 @@ C:/Programming/C_AND_CPP/YachiAgent/YachiAgent/build/Desktop_Qt_6_11_0_MinGW_64_
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlayout.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlayoutitem.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlineedit.h \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qpushbutton.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qrubberband.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qsizepolicy.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qslider.h \

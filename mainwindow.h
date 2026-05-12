@@ -10,6 +10,8 @@
 #include "chatPage.h"
 #include "agentcore.h"
 #include "translationpage.h"
+#include "voicepage.h"
+#include "voiceagentcore.h"
 
 class MainWindow : public QMainWindow
 {
@@ -24,27 +26,30 @@ private slots:
     void handleSendRequest(const QString &text);
 
 private:
-    void setupUi();
+    void setupUI();
 
+    //导航栏
     QListWidget *navigationBar;
+    //导航栏的栈结构
     QStackedWidget *mainStack;
 
+    //各一级页面
     HomePage *homePageWidget;
     ChatPage *chatPageWidget;
     TranslationPage *translationPageWidget;
     QWidget *settingsPage;
+    VoicePage *voicePageWidget;
 
-    // 为不同功能分配独立的AgentCore
-    AgentCore *m_chatAgent;
+    //为不同功能分配独立的AgentCore
+    AgentCore *m_chatAgent;      //对话普通模式的Agent
+    AgentCore *m_barAgent;       //对话酒吧模式的Agent
     AgentCore *m_translateAgent;
-    AgentCore *m_titleAgent; // 专职生成对话标题的 Agent
+    AgentCore *m_titleAgent;     //对话标题生成Agent
+    VoiceAgentCore *m_voiceAgent;
 
-    const QMap<QString, ModelInfo> VENDOR_MAP = {
-        {"Anthropic", {{"claude-3-5-sonnet-20241022", "claude-3-opus-20240229"}, "https://api.anthropic.com/v1/"}},
-        {"OpenAI", {{"gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo"}, "https://api.openai.com/v1/"}},
-        {"Ollama 本地模型", {{"qwen2.5", "llama3.1", "deepseek-coder"}, "http://localhost:11434/v1"}},
-        {"deepseek", {{"deepseek-chat", "deepseek-coder"}, "https://api.deepseek.com/v1"}}
-    };
+    //厂商映射表
+    QMap<QString, ModelInfo> m_vendorMap;
+    void loadVendorMapFromJson();  //vendormap.json
 };
 
 #endif // MAINWINDOW_H

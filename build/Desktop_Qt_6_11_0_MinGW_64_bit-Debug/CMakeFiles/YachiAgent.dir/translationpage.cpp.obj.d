@@ -1,6 +1,6 @@
 CMakeFiles/YachiAgent.dir/translationpage.cpp.obj: \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\translationpage.cpp \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\translationpage.h \
+ C:\Programming\cpp\Yachi\translationpage.cpp \
+ C:\Programming\cpp\Yachi\translationpage.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QWidget \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qwidget.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -384,7 +384,8 @@ CMakeFiles/YachiAgent.dir/translationpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qsizepolicy.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qcursor.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qbitmap.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/QTextEdit \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPlainTextEdit \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qplaintextedit.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtextedit.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractscrollarea.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qframe.h \
@@ -394,6 +395,38 @@ CMakeFiles/YachiAgent.dir/translationpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qtextcursor.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qtextformat.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qpen.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qabstracttextdocumentlayout.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qtextlayout.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qevent.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qcoreevent.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qbasictimer.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qabstracteventdispatcher.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qeventloop.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qdeadlinetimer.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qiodevice.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qeventpoint.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qvector2d.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qvectornd.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qpointingdevice.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qinputdevice.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qscreen.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QList \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QObject \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QRect \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QSize \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QSizeF \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/QTransform \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qnativeinterface.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qscreen_platform.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qguiapplication.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qcoreapplication.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qcoreapplication_platform.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qinputmethod.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qlocale.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qguiapplication_platform.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qglyphrun.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qrawfont.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qfontdatabase.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QPushButton \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qpushbutton.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractbutton.h \
@@ -401,7 +434,6 @@ CMakeFiles/YachiAgent.dir/translationpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcombobox.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractitemdelegate.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qstyleoption.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/qlocale.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractspinbox.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qvalidator.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qregularexpression.h \
@@ -417,10 +449,11 @@ CMakeFiles/YachiAgent.dir/translationpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLabel \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlabel.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qpicture.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/qiodevice.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QGroupBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgroupbox.h \
- C:\Programming\C_AND_CPP\YachiAgent\YachiAgent\agentcore.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QStackedWidget \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qstackedwidget.h \
+ C:\Programming\cpp\Yachi\agentcore.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QObject \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkAccessManager \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/qnetworkaccessmanager.h \
@@ -437,8 +470,6 @@ CMakeFiles/YachiAgent.dir/translationpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QUrl \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QVariant \
  C:/Qt/6.11.0/mingw_64/include/QtCore/q26numeric.h \
- C:/Qt/6.11.0/mingw_64/include/QtCore/QList \
- C:/Qt/6.11.0/mingw_64/include/QtCore/QObject \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/QSslConfiguration \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/qsslconfiguration.h \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/qsslsocket.h \
@@ -467,14 +498,7 @@ CMakeFiles/YachiAgent.dir/translationpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonparseerror.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QJsonObject \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qjsonobject.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/QHBoxLayout \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qboxlayout.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlayout.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlayoutitem.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgridlayout.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/QVBoxLayout \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/QFileDialog \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qfiledialog.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QDir \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qdir.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qdirlisting.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qfiledevice.h \
@@ -511,8 +535,23 @@ CMakeFiles/YachiAgent.dir/translationpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qfile.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qfileinfo.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qtimezone.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QFile \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QCoreApplication \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QMap \
+ C:\Programming\cpp\Yachi\urlstrategy.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QString \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QRegularExpression \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QStringList \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QJsonDocument \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QHBoxLayout \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qboxlayout.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlayout.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlayoutitem.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgridlayout.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QVBoxLayout \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QFileDialog \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qfiledialog.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QTextStream \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QMessageBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qmessagebox.h \
@@ -527,4 +566,12 @@ CMakeFiles/YachiAgent.dir/translationpage.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlistview.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qabstractitemview.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qitemselectionmodel.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDialog
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDialog \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QCheckBox \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcheckbox.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QApplication \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qapplication.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QTimer \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/qtimer.h \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/QClipboard \
+ C:/Qt/6.11.0/mingw_64/include/QtGui/qclipboard.h

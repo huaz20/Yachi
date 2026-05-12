@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>vendormap.json</file>
+        <file>images/yachiyo_heart.jpg</file>
+    </qresource>
+</RCC>
