@@ -12,6 +12,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp" "CMakeFiles/YachiAgent.dir/YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp.obj" "gcc" "CMakeFiles/YachiAgent.dir/YachiAgent_autogen/EWIEGA46WW/qrc_res.cpp.obj.d"
   "C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_autogen/mocs_compilation.cpp" "CMakeFiles/YachiAgent.dir/YachiAgent_autogen/mocs_compilation.cpp.obj" "gcc" "CMakeFiles/YachiAgent.dir/YachiAgent_autogen/mocs_compilation.cpp.obj.d"
   "C:/Programming/cpp/Yachi/agentcore.cpp" "CMakeFiles/YachiAgent.dir/agentcore.cpp.obj" "gcc" "CMakeFiles/YachiAgent.dir/agentcore.cpp.obj.d"
+  "C:/Programming/cpp/Yachi/announcementdialog.cpp" "CMakeFiles/YachiAgent.dir/announcementdialog.cpp.obj" "gcc" "CMakeFiles/YachiAgent.dir/announcementdialog.cpp.obj.d"
   "C:/Programming/cpp/Yachi/chatpage.cpp" "CMakeFiles/YachiAgent.dir/chatpage.cpp.obj" "gcc" "CMakeFiles/YachiAgent.dir/chatpage.cpp.obj.d"
   "C:/Programming/cpp/Yachi/homepage.cpp" "CMakeFiles/YachiAgent.dir/homepage.cpp.obj" "gcc" "CMakeFiles/YachiAgent.dir/homepage.cpp.obj.d"
   "C:/Programming/cpp/Yachi/main.cpp" "CMakeFiles/YachiAgent.dir/main.cpp.obj" "gcc" "CMakeFiles/YachiAgent.dir/main.cpp.obj.d"

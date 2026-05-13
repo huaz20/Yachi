@@ -2,6 +2,8 @@ YachiAgent_autogen/timestamp: \
 	C:/Programming/cpp/Yachi/CMakeLists.txt \
 	C:/Programming/cpp/Yachi/agentcore.cpp \
 	C:/Programming/cpp/Yachi/agentcore.h \
+	C:/Programming/cpp/Yachi/announcementdialog.cpp \
+	C:/Programming/cpp/Yachi/announcementdialog.h \
 	C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/.qtcreator/cmake-helper/maintenance_tool_provider.cmake \
 	C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/.qtcreator/cmake-helper/package-manager.cmake \
 	C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/.qtcreator/cmake-helper/qtcreator-project.cmake \

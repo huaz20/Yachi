@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "announcementdialog.h"
 #include <QMessageBox>
 #include <QTimer>
 #include <QHBoxLayout>
@@ -90,6 +91,26 @@ MainWindow::MainWindow(QWidget *parent)
             m_chatAgent->setModelConfig(modelConfigs);
             m_translateAgent->setModelConfig(modelConfigs);
             m_titleAgent->setModelConfig(modelConfigs);
+        }
+    });
+
+    //公告弹窗
+    QTimer::singleShot(500, this, [this]() {
+        QSettings settings("Yachi", "PersistentData");
+        QString key = "WelcomeAnnouncement_v1";  //每次大版本更新可以改这个 key 强制再次弹出
+
+        if (settings.value(key, true).toBool()) {
+            QString content =
+                "<div style='line-height: 1.8;'>"  //设置行高为1.8倍
+                "✨欢迎使用 Yachi Agent！<br>"
+                "一步即可使用：<br>"
+                "在首页填上您的 API 吧！<br>"
+                "<b>注意：</b><br>"
+                "<b>语音生成功能实在肝不动了，目前无法正常运行。</b>"
+                "</div>";
+
+            AnnouncementDialog dlg("v1.0.0alpha", content, key, this);
+            dlg.exec();
         }
     });
 }

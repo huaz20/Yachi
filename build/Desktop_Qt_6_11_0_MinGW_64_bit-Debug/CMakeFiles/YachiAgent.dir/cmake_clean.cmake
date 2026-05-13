@@ -8,6 +8,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/YachiAgent.dir/YachiAgent_autogen/mocs_compilation.cpp.obj.d"
   "CMakeFiles/YachiAgent.dir/agentcore.cpp.obj"
   "CMakeFiles/YachiAgent.dir/agentcore.cpp.obj.d"
+  "CMakeFiles/YachiAgent.dir/announcementdialog.cpp.obj"
+  "CMakeFiles/YachiAgent.dir/announcementdialog.cpp.obj.d"
   "CMakeFiles/YachiAgent.dir/chatpage.cpp.obj"
   "CMakeFiles/YachiAgent.dir/chatpage.cpp.obj.d"
   "CMakeFiles/YachiAgent.dir/homepage.cpp.obj"
