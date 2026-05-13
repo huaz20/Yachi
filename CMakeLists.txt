@@ -56,6 +56,7 @@ else()
     else()
         add_executable(YachiAgent
             ${PROJECT_SOURCES}
+            app.rc
         )
     endif()
 endif()
