@@ -449,16 +449,17 @@ CMakeFiles/YachiAgent.dir/YachiAgent_autogen/mocs_compilation.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qtmochelpers.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qtmocconstants.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/q20algorithm.h \
- C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_chatPage.cpp \
- C:/Programming/cpp/Yachi/chatPage.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/QWidget \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qwidget.h \
+ C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_announcementdialog.cpp \
+ C:/Programming/cpp/Yachi/announcementdialog.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDialog \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtwidgetsglobal.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qtguiglobal.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qtgui-config.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qtguiexports.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtwidgets-config.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qtwidgetsexports.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qwidget.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qwindowdefs.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qwindowdefs_win.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qmargins.h \
@@ -489,6 +490,10 @@ CMakeFiles/YachiAgent.dir/YachiAgent_autogen/mocs_compilation.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qsizepolicy.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qcursor.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qbitmap.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QString \
+ C:\Programming\cpp\Yachi\build\Desktop_Qt_6_11_0_MinGW_64_bit-Debug\YachiAgent_autogen\EWIEGA46WW/moc_chatPage.cpp \
+ C:/Programming/cpp/Yachi/chatPage.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QWidget \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QLineEdit \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qlineedit.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qframe.h \

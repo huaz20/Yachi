@@ -36,6 +36,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         voicepage.h voicepage.cpp
         urlstrategy.h
         voiceagentcore.h voiceagentcore.cpp
+        announcementdialog.h announcementdialog.cpp
 
 
 

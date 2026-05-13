@@ -276,6 +276,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtNetwork/qtnetworkglobal.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QCheckBox \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QComboBox \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDialog \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDoubleSpinBox \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QFormLayout \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/QFrame \
@@ -309,6 +310,7 @@ C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/YachiAgent_a
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qboxlayout.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcheckbox.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcombobox.h \
+  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qformlayout.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qframe.h \
   C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgridlayout.h \

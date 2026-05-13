@@ -411,6 +411,12 @@
 			null
 		],
 		[
+			"C:/Programming/cpp/Yachi/announcementdialog.h",
+			"MU",
+			"EWIEGA46WW/moc_announcementdialog.cpp",
+			null
+		],
+		[
 			"C:/Programming/cpp/Yachi/chatPage.h",
 			"MU",
 			"EWIEGA46WW/moc_chatPage.cpp",
@@ -536,6 +542,7 @@
 	"SOURCES" : 
 	[
 		[ "C:/Programming/cpp/Yachi/agentcore.cpp", "MU", null ],
+		[ "C:/Programming/cpp/Yachi/announcementdialog.cpp", "MU", null ],
 		[ "C:/Programming/cpp/Yachi/chatpage.cpp", "MU", null ],
 		[ "C:/Programming/cpp/Yachi/homepage.cpp", "MU", null ],
 		[ "C:/Programming/cpp/Yachi/main.cpp", "MU", null ],

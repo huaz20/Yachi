@@ -2,6 +2,8 @@ YachiAgent_autogen/timestamp: \
 	C:/Programming/cpp/Yachi/CMakeLists.txt \
 	C:/Programming/cpp/Yachi/agentcore.cpp \
 	C:/Programming/cpp/Yachi/agentcore.h \
+	C:/Programming/cpp/Yachi/announcementdialog.cpp \
+	C:/Programming/cpp/Yachi/announcementdialog.h \
 	C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/.qtcreator/cmake-helper/maintenance_tool_provider.cmake \
 	C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/.qtcreator/cmake-helper/package-manager.cmake \
 	C:/Programming/cpp/Yachi/build/Desktop_Qt_6_11_0_MinGW_64_bit-Debug/.qtcreator/cmake-helper/qtcreator-project.cmake \
@@ -295,6 +297,7 @@ YachiAgent_autogen/timestamp: \
 	C:/Qt/6.11.0/mingw_64/include/QtNetwork/qtnetworkglobal.h \
 	C:/Qt/6.11.0/mingw_64/include/QtWidgets/QCheckBox \
 	C:/Qt/6.11.0/mingw_64/include/QtWidgets/QComboBox \
+	C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDialog \
 	C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDoubleSpinBox \
 	C:/Qt/6.11.0/mingw_64/include/QtWidgets/QFormLayout \
 	C:/Qt/6.11.0/mingw_64/include/QtWidgets/QFrame \
@@ -328,6 +331,7 @@ YachiAgent_autogen/timestamp: \
 	C:/Qt/6.11.0/mingw_64/include/QtWidgets/qboxlayout.h \
 	C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcheckbox.h \
 	C:/Qt/6.11.0/mingw_64/include/QtWidgets/qcombobox.h \
+	C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
 	C:/Qt/6.11.0/mingw_64/include/QtWidgets/qformlayout.h \
 	C:/Qt/6.11.0/mingw_64/include/QtWidgets/qframe.h \
 	C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgridlayout.h \

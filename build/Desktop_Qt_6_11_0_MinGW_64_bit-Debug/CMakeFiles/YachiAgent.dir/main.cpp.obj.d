@@ -494,6 +494,8 @@ CMakeFiles/YachiAgent.dir/main.cpp.obj: C:\Programming\cpp\Yachi\main.cpp \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qglyphrun.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qrawfont.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qfontdatabase.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDialog \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
  C:\Programming\cpp\Yachi\agentcore.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QObject \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkAccessManager \

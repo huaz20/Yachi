@@ -495,6 +495,8 @@ CMakeFiles/YachiAgent.dir/mainwindow.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qglyphrun.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qrawfont.h \
  C:/Qt/6.11.0/mingw_64/include/QtGui/qfontdatabase.h \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/QDialog \
+ C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
  C:\Programming\cpp\Yachi\agentcore.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QObject \
  C:/Qt/6.11.0/mingw_64/include/QtNetwork/QNetworkAccessManager \
@@ -601,9 +603,10 @@ CMakeFiles/YachiAgent.dir/mainwindow.cpp.obj: \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qprocess.h \
  C:\Programming\cpp\Yachi\voiceagentcore.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QByteArray \
+ C:\Programming\cpp\Yachi\announcementdialog.h \
+ C:/Qt/6.11.0/mingw_64/include/QtCore/QString \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/QMessageBox \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qmessagebox.h \
- C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
  C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialogbuttonbox.h \
  C:/Qt/6.11.0/mingw_64/include/QtCore/QTimer \
  C:/Qt/6.11.0/mingw_64/include/QtCore/qtimer.h \
