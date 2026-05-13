@@ -98,7 +98,7 @@ TranslationPage::TranslationPage(AgentCore *agent, QWidget *parent)
     urlInputLayout->addWidget(fetchBtn);
     urlInputLayout->addWidget(filterStatusBtn);
 
-    urlTipLabel = new QLabel("<font color='#888'>💡提示：部分动态渲染或反爬严格的网页（如推特/FB）可能无法读取。抓取由Jina Reader提供。</font>");
+    urlTipLabel = new QLabel("<font color='#888'>💡提示：部分动态渲染或反爬严格的网页可能无法读取，一些网站有特别优化（如Pixiv）。</font>");
     urlTipLabel->setStyleSheet("font-size: 11px;");
 
     urlLayout->addLayout(urlInputLayout);
@@ -263,6 +263,10 @@ void TranslationPage::initTutorialPresets() {
     QSettings settings("Yachi", "PersistentData");
     if (!settings.contains("Trans_PromptPresets/预设1：基础翻译")) {
         settings.setValue("Trans_PromptPresets/预设1：基础翻译", "翻译用户提供的内容，不要有任何多余的解释。");
+    }
+
+    if (!settings.contains("Trans_PromptPresets/预设2：超时空辉夜姬 同人翻译")) {
+        settings.setValue("Trans_PromptPresets/预设2：超时空辉夜姬 同人翻译", "为我翻译日语小说，【禁止删改】，人名翻译参考：かぐや -> 辉夜、酒寄（さかより） 彩葉（いろは） -> 酒寄彩叶、月見（るなみ） ヤチヨ -> 月见八千代、FUSHI -> FUSHI、ろか -> 芦花、まみ -> 真实、帝（みかど） アキラ -> 帝明、のい -> 乃依、らい -> 雷、オタ公 -> 宅公。");
     }
 }
 
